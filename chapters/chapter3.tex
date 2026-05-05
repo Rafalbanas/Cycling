@@ -3,24 +3,24 @@
 \section{Charakterystyka przygotowanego zbioru danych}
 Dane telemetryczne po etapie preprocessingu oraz inżynierii cech zostały przekształcone do ustrukturyzowanej postaci tabelarycznej~\cite{garmin_fit_sdk, topografix_gpx}. W przygotowanym zbiorze danych~\cite{kaggle_redlineracer_road_cycling_performance_testing, figshare_cycling_analytics_datasets} pojedyncza obserwacja odpowiada jednej sesji treningowej lub wybranemu segmentowi sesji, z przypisaną jej zbiorem wyliczonych cech oraz etykietą, stanowiącą docelową wartość FTP z odpowiedniego, zdefiniowanego w metodyce okna czasowego (np. z~uwzględnieniem pewnego przesunięcia tej samej sesji, estymowaną jako 95\% najlepszej 20-minutowej mocy (MMP20)). Taka reprezentacja umożliwiła bezpośrednie zastosowanie standardowych algorytmów uczenia maszynowego. 
 
-Aby zapewnić rzetelną ocenę zdolności uogólniania modeli, zbiór danych został podzielony na podzbiory: treningowy, walidacyjny oraz testowy. Zastosowano ustalone proporcje podziału 80/20 (odpowiednio dla zbioru treningowego i testowego, z wykorzystaniem GroupShuffleSplit), z zachowaniem szczególnej ostrożności w odniesieniu do ryzyka przecieku danych (ang. \textit{data leakage}). W przypadku danych zawierających próbki od wielu zawodników, podział został zrealizowany w taki sposób, aby obserwacje tego samego kolarza nie znajdowały się jednocześnie w zbiorze treningowym i testowym, lub też zastosowano podział chronologiczny dla każdego zawodnika z osobna.
+Aby zapewnić rzetelną ocenę zdolności uogólniania modeli, zbiór danych został podzielony na podzbiory: treningowy, walidacyjny oraz testowy. Zastosowano ustalone proporcje podziału 80/20 (odpowiednio dla zbioru treningowego i testowego, z wykorzystaniem GroupShuffleSplit), z zachowaniem szczególnej ostrożności w odniesieniu do ryzyka przecieku danych. W przypadku danych zawierających próbki od wielu zawodników, podział został zrealizowany w taki sposób, aby obserwacje tego samego kolarza nie znajdowały się jednocześnie w zbiorze treningowym i testowym, lub też zastosowano podział chronologiczny dla każdego zawodnika z osobna.
 
 \section{Konfiguracja eksperymentu}
-Wszystkie modele poddano procesowi strojenia hiperparametrów (ang. \textit{hyperparameter tuning}) w oparciu o zbiór walidacyjny lub wykorzystując metodę walidacji krzyżowej (ang. \textit{cross-validation}) na zbiorze treningowym. Do ostatecznej ewaluacji wykorzystano niezależny zbiór testowy, który nie brał udziału na żadnym wcześniejszym etapie budowy i optymalizacji modelu.
+Wszystkie modele poddano procesowi strojenia hiperparametrów w oparciu o zbiór walidacyjny lub wykorzystując metodę walidacji krzyżowej na zbiorze treningowym. Do ostatecznej ewaluacji wykorzystano niezależny zbiór testowy, który nie brał udziału na żadnym wcześniejszym etapie budowy i optymalizacji modelu.
 
 \section{Zastosowane modele regresyjne}
 Do estymacji wartości funkcjonalnego progu mocy wytypowano i przetestowano kilka modeli regresyjnych o różnym stopniu złożoności:
 \begin{itemize}
-    \item \textbf{Ridge Regression (Regresja grzbietowa):} Stanowi ona model referencyjny (ang. \textit{baseline}), pozwalający na identyfikację podstawowych zależności liniowych w danych. Dzięki regularyzacji L2, model ten jest bardziej odporny na problem współliniowości cech niż klasyczna regresja liniowa.
-    \item \textbf{Random Forest (Las losowy):} Jest to model oparty na zespołach drzew decyzyjnych (ang. \textit{ensemble learning} i metoda \textit{bagging}). Jego główną zaletą jest zdolność do modelowania nieliniowych zależności oraz odporność na wartości odstające.
+    \item \textbf{Ridge Regression (Regresja grzbietowa):} Stanowi ona model referencyjny, pozwalający na identyfikację podstawowych zależności liniowych w danych. Dzięki regularyzacji L2, model ten jest bardziej odporny na problem współliniowości cech niż klasyczna regresja liniowa.
+    \item \textbf{Random Forest (Las losowy):} Jest to model oparty na zespołach drzew decyzyjnych. Jego główną zaletą jest zdolność do modelowania nieliniowych zależności oraz odporność na wartości odstające.
     \item \textbf{Gradient Boosting (np. XGBoost):} Zaawansowany model sekwencyjny oparty na zespołach drzew decyzyjnych, wykorzystujący technikę \textit{boosting}. Modele z tej rodziny często osiągają najwyższą skuteczność w zadaniach z danymi tabelarycznymi dzięki iteracyjnemu poprawianiu błędów popełnianych przez poprzednie estymatory.
 \end{itemize}
 
 \section{Wyniki predykcji FTP}
 Wydajność zastosowanych modeli została oceniona za pomocą trzech powszechnie stosowanych metryk \cite{scikit_model_evaluation}:
 \begin{itemize}
-    \item \textbf{Średni błąd bezwzględny (MAE -- Mean Absolute Error):} Określa średnią różnicę absolutną między przewidywaną a rzeczywistą wartością FTP wyrażoną w watach~\cite{scikit_mae}.
-    \item \textbf{Pierwiastek błędu średniokwadratowego (RMSE -- Root Mean Square Error):} Podobnie jak MAE mierzy błąd w jednostkach docelowych, jednak silniej karze większe pomyłki predykcyjne~\cite{scikit_mse}.
+    \item \textbf{Średni błąd bezwzględny (MAE):} Określa średnią różnicę absolutną między przewidywaną a rzeczywistą wartością FTP wyrażoną w watach~\cite{scikit_mae}.
+    \item \textbf{Pierwiastek błędu średniokwadratowego (RMSE):} Podobnie jak MAE mierzy błąd w jednostkach docelowych, jednak silniej karze większe pomyłki predykcyjne~\cite{scikit_mse}.
     \item \textbf{Współczynnik determinacji ($R^2$):} Wskazuje, jaka część wariancji zmiennej zależnej (FTP) jest tłumaczona przez dany model~\cite{scikit_r2}.
 \end{itemize}
 
@@ -33,9 +33,9 @@ Zestawienie wyników na zbiorze testowym dla wszystkich analizowanych algorytmó
 \begin{tabular}{|l|c|c|c|}
 \hline
 \textbf{Model} & \textbf{MAE [W]} & \textbf{RMSE [W]} & \textbf{$\mathbf{R^2}$} \\ \hline
-Ridge Regression & 0.0 & [TODO: RMSE] & [TODO: R2] \\ \hline
-Random Forest & 0.0 & [TODO: RMSE] & [TODO: R2] \\ \hline
-XGBoost & 0.7 & [TODO: RMSE] & [TODO: R2] \\ \hline
+Ridge Regression & 0.01 & 0.01 & 1.000 \\ \hline
+Random Forest & 0.02 & 0.11 & 1.000 \\ \hline
+XGBoost & 0.65 & 3.33 & 0.997 \\ \hline
 \end{tabular}
 \end{table}
 
@@ -44,39 +44,39 @@ Na podstawie uzyskanych metryk można stwierdzić, że modele oparte na zespoła
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{../data/processed/porownanie_bledow.png}
+\includegraphics[width=0.9\textwidth]{data/processed/porownanie_bledow.png}
 \caption{Zestawienie wartości błędu MAE oraz RMSE dla testowanych modeli uczenia maszynowego.}
 \label{fig:porownanie_bledow}
 \end{figure}
 
 \section{Analiza błędów predykcji}
-Szczegółowa analiza rozkładu błędów (reziduów) pozwala na ocenę ewentualnej systematyczności w odchyleniach. Wykres wartości przewidywanych względem rzeczywistych (rys.~\ref{fig:rzeczywiste_vs_przewidywane}) dostarcza informacji o tym, czy model ma tendencję do przeszacowywania (ang. \textit{overestimation}) lub niedoszacowywania (ang. \textit{underestimation}) formy zawodników dla określonych przedziałów FTP.
+Szczegółowa analiza rozkładu błędów (reziduów) pozwala na ocenę ewentualnej systematyczności w odchyleniach. Wykres wartości przewidywanych względem rzeczywistych (rys.~\ref{fig:rzeczywiste_vs_przewidywane}) dostarcza informacji o tym, czy model ma tendencję do przeszacowywania lub niedoszacowywania formy zawodników dla określonych przedziałów FTP.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{../data/processed/rzeczywiste_vs_przewidywane.png}
+\includegraphics[width=0.9\textwidth]{data/processed/rzeczywiste_vs_przewidywane.png}
 \caption{Porównanie rzeczywistych wartości FTP w stosunku do wartości przewidywanych przez najlepszy z modeli na zbiorze testowym.}
 \label{fig:rzeczywiste_vs_przewidywane}
 \end{figure}
 
-Kształt rozkładu błędów, zaprezentowany na rysunku~\ref{fig:rozklad_bledow}, w wariancie zbliżonym do rozkładu normalnego o średniej w okolicach zera, stanowi pożądany rezultat, świadczący o braku znaczących obciążeń (ang. \textit{bias}) w predykcjach wybranego estymatora.
+Kształt rozkładu błędów, zaprezentowany na rysunku~\ref{fig:rozklad_bledow}, w wariancie zbliżonym do rozkładu normalnego o średniej w okolicach zera, stanowi pożądany rezultat, świadczący o braku znaczących obciążeń w predykcjach wybranego estymatora.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{../data/processed/rozklad_bledow.png}
+\includegraphics[width=0.9\textwidth]{data/processed/rozklad_bledow.png}
 \caption{Histogram i rozkład gęstości błędów predykcji (reziduów) na zbiorze testowym.}
 \label{fig:rozklad_bledow}
 \end{figure}
 
 \section{Znaczenie cech wejściowych}
-Algorytmy oparte na drzewach decyzyjnych pozwalają na wyznaczenie obiektywnej miary istotności zmiennych wejściowych (ang. \textit{feature importance}). Taka analiza umożliwia identyfikację tych czynników telemetrycznych, które najbardziej rzutują na estymację aktualnej wartości progu funkcjonalnego. 
+Algorytmy oparte na drzewach decyzyjnych pozwalają na wyznaczenie obiektywnej miary istotności zmiennych wejściowych. Taka analiza umożliwia identyfikację tych czynników telemetrycznych, które najbardziej rzutują na estymację aktualnej wartości progu funkcjonalnego. 
 
-Z analizy struktury wytrenowanego modelu wynika, że kluczowe w procesie estymacji są określone grupy atrybutów Największy wpływ na predykcję FTP wywarły zmienne reprezentujące uśrednioną moc z dłuższych przedziałów czasu (głównie mmp_20min oraz mmp_10min)..
+Z analizy struktury wytrenowanego modelu wynika, że kluczowe w procesie estymacji są określone grupy atrybutów Największy wpływ na predykcję FTP wywarły zmienne reprezentujące uśrednioną moc z dłuższych przedziałów czasu (głównie mmp\_20min oraz mmp\_10min).
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{../data/processed/waznosc_cech.png}
-\caption{Wykres ważności cech (ang. \textit{Feature Importance}) dla wybranego modelu zespołowego.}
+\includegraphics[width=0.9\textwidth]{data/processed/waznosc_cech.png}
+\caption{Wykres ważności cech dla wybranego modelu zespołowego.}
 \label{fig:waznosc_cech}
 \end{figure}
 

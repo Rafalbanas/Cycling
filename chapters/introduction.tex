@@ -6,7 +6,7 @@
 Wydolność tlenowa w kolarstwie jest jednym z kluczowych czynników determinujących wynik sportowy \cite{borszcz2018ftp}.
 Jej ilościowy opis od lat stanowi przedmiot badań fizjologów wysiłku i trenerów.
 W praktyce treningowej potrzebne są wskaźniki, które z jednej strony dobrze odzwierciedlają możliwości zawodnika, a z drugiej są możliwe do regularnego monitorowania w warunkach terenowych.
-Jednym z najczęściej stosowanych parametrów jest funkcjonalny próg mocy (ang. \textit{Functional Threshold Power}, $\mathrm{FTP}$) \cite{borszcz2018ftp,allen2019power}.
+Jednym z najczęściej stosowanych parametrów jest funkcjonalny próg mocy ($\mathrm{FTP}$) \cite{borszcz2018ftp,allen2019power}.
 
 Rozwój czujników pomiaru mocy, opasek rejestrujących tętno oraz szerokie wykorzystanie liczników rowerowych i platform treningowych powoduje, że powstają liczne zbiory danych treningowych.
 Dane te mogą zostać wykorzystane w modelach uczenia maszynowego do estymacji $\mathrm{FTP}$ na podstawie codziennych jazd, bez potrzeby wykonywania osobnych, wyczerpujących testów.
@@ -44,7 +44,7 @@ $\mathrm{FTP}$ nie jest bezpośrednim pomiarem żadnego pojedynczego mechanizmu 
 \subsection{Znaczenie pomiaru mocy w treningu kolarskim}
 
 Współczesny trening kolarski coraz częściej opiera się na pomiarze mocy generowanej przez zawodnika.
-W przeciwieństwie do tętna czy subiektywnego odczucia wysiłku (ang.\ \textit{Rate of Perceived Exertion}, $\mathrm{RPE}$), moc jest parametrem bezpośrednio opisującym pracę mechaniczną wykonywaną na rowerze.
+W przeciwieństwie do tętna czy subiektywnego odczucia wysiłku ($\mathrm{RPE}$), moc jest parametrem bezpośrednio opisującym pracę mechaniczną wykonywaną na rowerze.
 Informuje wprost, ile energii w jednostce czasu kolarz przekazuje na napędzanie roweru, niezależnie od takich czynników jak stres, temperatura otoczenia czy chwilowe wahania nastroju \cite{allen2019power,phases2023ftp}.
 
 Pomiar mocy ma kilka kluczowych zalet z punktu widzenia planowania i analizy treningu:
@@ -79,14 +79,13 @@ Aby poprawnie interpretować dane używane przez model oraz ograniczenia tradycy
 \begin{itemize}
   \item \textbf{Układ krążenia i tlen.} W trakcie wysiłku mięśnie potrzebują tlenu do wytwarzania energii. Serce pompuje krew bogatą w tlen, a tętno rośnie wraz z intensywnością wysiłku. W średnich intensywnościach wzrost mocy często wiąże się z niemal liniowym wzrostem tętna.
   \item \textbf{Progi metaboliczne.} Przy coraz większej intensywności organizm w coraz większym stopniu korzysta z procesów beztlenowych, a we krwi kumuluje się mleczan. W okolicach progów mleczanowych lub wentylacyjnych równowaga pomiędzy produkcją a usuwaniem mleczanu jest na granicy: organizm jest jeszcze w stanie utrzymać wysiłek, ale przy dalszym zwiększaniu obciążenia równowaga się załamuje i dochodzi do szybkiego narastania zmęczenia. $\mathrm{FTP}$ jest zwykle zlokalizowane w pobliżu tych progów, ale nie jest z nimi tożsame \cite{borszcz2018ftp,karsten2021cpftp,denham2020predictftp}.
-  \item \textbf{Dryf tętna (ang.\ \textit{cardiac drift}).} Podczas dłuższych wysiłków przy stałej mocy często obserwuje się zjawisko stopniowego wzrostu tętna w czasie, mimo że moc nie rośnie. Wynika to m.in.\ z narastającego zmęczenia, zmian w termoregulacji i niewielkiego spadku objętości krwi krążącej. Oznacza to, że relacja „moc--tętno” nie jest idealnie stała: ta sama moc po $5$ minutach i po $40$ minutach może odpowiadać innemu tętnu. Ponadto tętno reaguje na zmiany mocy z opóźnieniem (tzw.\ \textit{HR lag}), więc po nagłym zwiększeniu lub zmniejszeniu obciążenia serce potrzebuje zwykle kilkudziesięciu sekund, aby „dogonić” nowy poziom wysiłku. Z punktu widzenia modeli uczonych na danych sekunda-po-sekundzie oznacza to, że bieżąca wartość tętna odzwierciedla raczej średnie obciążenie z ostatnich kilkudziesięciu sekund niż chwilowy odczyt mocy.
+  \item \textbf{Dryf tętna.} Podczas dłuższych wysiłków przy stałej mocy często obserwuje się zjawisko stopniowego wzrostu tętna w czasie, mimo że moc nie rośnie. Wynika to m.in.\ z narastającego zmęczenia, zmian w termoregulacji i niewielkiego spadku objętości krwi krążącej. Oznacza to, że relacja „moc--tętno” nie jest idealnie stała: ta sama moc po $5$ minutach i po $40$ minutach może odpowiadać innemu tętnu. Ponadto tętno reaguje na zmiany mocy z opóźnieniem (tzw.\ opóźnieniem tętna), więc po nagłym zwiększeniu lub zmniejszeniu obciążenia serce potrzebuje zwykle kilkudziesięciu sekund, aby „dogonić” nowy poziom wysiłku. Z punktu widzenia modeli uczonych na danych sekunda-po-sekundzie oznacza to, że bieżąca wartość tętna odzwierciedla raczej średnie obciążenie z ostatnich kilkudziesięciu sekund niż chwilowy odczyt mocy.
 \end{itemize}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/fig1_hr_drift_hr_lag.png}
-  \caption{Ilustracja zjawiska dryfu tętna przy stałej mocy oraz widoczne opóźnienie narastania tętna (\textit{HR lag}) w początkowej fazie wysiłku \cite{nomadfrontiers_power_hr,bikeradar_power_hr}. Źródło: Opracowanie własne.
-  }
+  \caption{Ilustracja zjawiska dryfu tętna przy stałej mocy oraz widoczne opóźnienie narastania tętna w początkowej fazie wysiłku \cite{nomadfrontiers_power_hr,bikeradar_power_hr}. Źródło: Opracowanie własne.}
   \label{fig:hr_drift_hr_lag}
 \end{figure}
 
@@ -110,7 +109,7 @@ Najpopularniejszy protokół używany w praktyce do wyznaczania $\mathrm{FTP}$ t
 W literaturze i poradnikach trenerskich spotyka się różne wersje, ale typowy schemat wygląda następująco:
 \begin{itemize}
   \item \textbf{Rozgrzewka} (ok.\ $10$--$20$ minut): jazda o niskiej i umiarkowanej intensywności, często z krótkimi przyspieszeniami.
-  \item \textbf{Wysiłki przygotowujące} (ang.\ \textit{openers}): krótki, kilku-minutowy wysiłek na wysokiej intensywności (np.\ $3$--$5$ minut powyżej $\mathrm{FTP}$), a następnie etap spokojnej jazdy.
+  \item \textbf{Wysiłki przygotowujące}: krótki, kilku-minutowy wysiłek na wysokiej intensywności (np.\ $3$--$5$ minut powyżej $\mathrm{FTP}$), a następnie etap spokojnej jazdy.
   \item \textbf{Odpoczynek / spokojna jazda} (kilka--kilkanaście minut): częściowa regeneracja przy utrzymaniu „rozgrzania”.
   \item \textbf{Część główna}: $20$-minutowy wysiłek maksymalny; zawodnik stara się utrzymać możliwie najwyższą średnią moc przez pełne $20$ minut.
 \end{itemize}
@@ -134,7 +133,7 @@ Wymaga to jednak bardzo wysokiej dyspozycji, odpowiedniego przygotowania mentaln
 Typowy protokół $60$-minutowy można przedstawić następująco:
 \begin{itemize}
   \item \textbf{Rozgrzewka} ($15$--$20$ minut): jazda o niższej i umiarkowanej intensywności z kilkoma krótkimi przyspieszeniami.
-  \item \textbf{Wstępne pobudzenie} (ang.\ \textit{openers}): kilkuminutowy wysiłek na wysokiej intensywności (np.\ $2$--$4$ minuty powyżej $\mathrm{FTP}$), po którym następuje spokojniejszy fragment jazdy.
+  \item \textbf{Wstępne pobudzenie}: kilkuminutowy wysiłek na wysokiej intensywności (np.\ $2$--$4$ minuty powyżej $\mathrm{FTP}$), po którym następuje spokojniejszy fragment jazdy.
   \item \textbf{Krótki etap spokojniejszej jazdy} ($5$--$10$ minut): tętno nieco opada, zawodnik pozostaje przygotowany do części głównej.
   \item \textbf{Część główna}: $60$-minutowy wysiłek submaksymalny o możliwie stałej mocy; średnia moc z tego odcinka jest bezpośrednio interpretowana jako $\mathrm{FTP}$ (bez przelicznika).
 \end{itemize}
@@ -149,12 +148,12 @@ Typowy protokół $60$-minutowy można przedstawić następująco:
 \subsection{Krzywa mocy i zależność FTP od czasu trwania wysiłku}
 
 Schematyczną zależność maksymalnej możliwej do utrzymania mocy od czasu trwania wysiłku przedstawiono na rysunku \ref{fig:power_duration_curve}.
-Dla bardzo krótkich czasów wartości mocy są wysokie i szybko maleją, natomiast przy dłuższych wysiłkach krzywa stopniowo zbliża się do poziomu odpowiadającego mocy krytycznej (ang.\ \textit{Critical Power}, $\mathrm{CP}$), która jest blisko spokrewniona z funkcjonalnym progiem mocy ($\mathrm{FTP}$) \cite{borszcz2018ftp,allen2019power,karsten2021cpftp}.
+Dla bardzo krótkich czasów wartości mocy są wysokie i szybko maleją, natomiast przy dłuższych wysiłkach krzywa stopniowo zbliża się do poziomu odpowiadającego mocy krytycznej ($\mathrm{CP}$), która jest blisko spokrewniona z funkcjonalnym progiem mocy ($\mathrm{FTP}$) \cite{borszcz2018ftp,allen2019power,karsten2021cpftp}.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/fig4_power_duration_curve_cp_ftp.png}
-  \caption{Przykładowa krzywa mocy (\textit{power--duration}) na podstawie koncepcji mocy krytycznej, z zaznaczonym $2$-minutowym odcinkiem wysiłku i przykładowymi wartościami $\mathrm{FTP}$ (opracowanie własne na podstawie \textit{PerfectPace, The Critical Power Chart}). Źródło: Opracowanie własne.}
+  \caption{Przykładowa krzywa mocy na podstawie koncepcji mocy krytycznej, z zaznaczonym $2$-minutowym odcinkiem wysiłku i przykładowymi wartościami $\mathrm{FTP}$ (opracowanie własne na podstawie \textit{PerfectPace, The Critical Power Chart}). Źródło: Opracowanie własne.}
   \label{fig:power_duration_curve}
 \end{figure}
 
@@ -182,13 +181,13 @@ W realnych warunkach jazdy rejestrowane szeregi zawierają liczne fragmenty, kt�
 Dodatkowo w otwartych zbiorach danych spotyka się brakujące wartości, niespójne nazewnictwo treningów oraz różne częstotliwości próbkowania.
 Zanim dane zostaną wykorzystane w modelu, konieczne jest przeprowadzenie operacji wstępnego przetwarzania (filtrowanie, ujednolicanie częstotliwości próbkowania, uzupełnianie lub usuwanie braków oraz segmentacja jazd).
 
-W kolejnych rozdziałach pracy opisane zostaną konkretne zbiory danych użyte w części eksperymentalnej oraz przyjęte decyzje dotyczące ich czyszczenia, łączenia i przygotowania do uczenia modeli.
+W kolejnym rozdziale pracy opisane zostaną konkretne zbiory danych użyte w części eksperymentalnej oraz przyjęte decyzje dotyczące ich czyszczenia, łączenia i przygotowania do uczenia modeli.
 
 \section{Klasyczne podejścia a uczenie maszynowe w szacowaniu FTP}
 
 Tradycyjnie do wyznaczania $\mathrm{FTP}$ stosuje się metody oparte na prostych zależnościach matematycznych i z góry ustalonych protokołach testowych.
 Przykładem jest $20$-minutowy test czasowy, w którym $\mathrm{FTP}$ definiuje się jako stały procent średniej mocy z próby \cite{allen2019power,sitko2023_ac20to60_update,phasescycling2023_ftp_variability}.
-Inne podejścia bazują na modelu mocy--czasu (ang.\ \textit{critical power}, $\mathrm{CP}$), gdzie na podstawie kilku testów o różnym czasie trwania estymuje się parametry krzywej opisującej zależność pomiędzy czasem wysiłku a możliwą do utrzymania mocą \cite{denham2020predictftp}.
+Inne podejścia bazują na modelu mocy--czasu ($\mathrm{CP}$), gdzie na podstawie kilku testów o różnym czasie trwania estymuje się parametry krzywej opisującej zależność pomiędzy czasem wysiłku a możliwą do utrzymania mocą \cite{denham2020predictftp}.
 W praktyce trenerskiej szeroko wykorzystuje się także progi wyznaczane na podstawie stężenia mleczanu lub wentylacji oddechowej, jednak wymagają one specjalistycznej aparatury laboratoryjnej \cite{borszcz2018ftp,karsten2021cpftp}.
 
 Zaletą klasycznych metod jest prostota i łatwość interpretacji.
@@ -197,11 +196,11 @@ Zmiany wydolności pomiędzy testami pozostają niewidoczne, co utrudnia bieżą
 
 Rozwój uczenia maszynowego oraz dostęp do dużych zbiorów danych treningowych otwierają alternatywną ścieżkę: zamiast opierać się wyłącznie na dedykowanych testach, można wykorzystać informacje zawarte w codziennych jazdach.
 W literaturze pojawiają się projekty open-source, w których na podstawie historii treningów buduje się modele regresyjne przewidujące wartość $\mathrm{FTP}$ wyznaczoną testem referencyjnym \cite{stockwell2023mlftp,denham2020predictftp}.
-Rozwiązania te stanowią naturalny punkt odniesienia (\textit{baseline}) dla niniejszej pracy i pokazują, że podejście oparte na danych ma potencjał praktycznego zastosowania.
+Rozwiązania te stanowią naturalny punkt odniesienia dla niniejszej pracy i pokazują, że podejście oparte na danych ma potencjał praktycznego zastosowania.
 
 Typowo stosowane modele można podzielić na dwie główne grupy:
 \begin{itemize}
-  \item \textbf{Modele oparte na cechach zagregowanych.} Z surowych szeregów czasowych wyznacza się zestaw cech opisujących jazdę lub jej fragment (np.\ średnia moc i tętno, maksymalna moc z $5$- czy $20$-minutowego okresu, czas w strefach, miary zmienności). Na tak przygotowanych danych uczone są algorytmy regresji, takie jak regresja liniowa, lasy losowe (\textit{Random Forest}) czy modele \textit{gradient boosting} (np.\ \textit{XGBoost}). Zaletą jest interpretowalność i relatywnie niewielkie wymagania obliczeniowe \cite{stockwell2023mlftp}.
+  \item \textbf{Modele oparte na cechach zagregowanych.} Z surowych szeregów czasowych wyznacza się zestaw cech opisujących jazdę lub jej fragment (np.\ średnia moc i tętno, maksymalna moc z $5$- czy $20$-minutowego okresu, czas w strefach, miary zmienności). Na tak przygotowanych danych uczone są algorytmy regresji, takie jak regresja liniowa, lasy losowe czy modele wzmacniania gradientowego (np.\ XGBoost). Zaletą jest interpretowalność i relatywnie niewielkie wymagania obliczeniowe \cite{stockwell2023mlftp}.
   \item \textbf{Modele sekwencyjne.} Podejście polega na bezpośrednim modelowaniu szeregów czasowych (bez redukcji do kilku wskaźników). Wykorzystuje się architektury neuronowe takie jak $\mathrm{LSTM}$, $\mathrm{GRU}$ czy modele typu \textit{Transformer} przystosowane do danych czasowych. Umożliwia to uchwycenie złożonych wzorców dynamiki wysiłku, jednak wymaga większej ilości danych, starannego doboru hiperparametrów i jest trudniejsze do interpretacji \cite{stockwell2023mlftp}.
 \end{itemize}
 
@@ -218,23 +217,23 @@ W literaturze przedmiotu najczęściej wymienia się następujące podejścia \c
 
 Podstawowym narzędziem w zadaniach predykcji wartości ciągłej (jaką jest $\mathrm{FTP}$) jest regresja liniowa.
 Zakłada ona liniową zależność między cechami wejściowymi (np.\ średnim tętnem, mocą z określonych przedziałów czasowych) a zmienną celu.
-Choć fizjologia wysiłku ma charakter nieliniowy, modele liniowe stanowią dobry punkt odniesienia (\textit{baseline}).
+Choć fizjologia wysiłku ma charakter nieliniowy, modele liniowe stanowią dobry punkt odniesienia.
 Aby zapobiec przeuczeniu przy dużej liczbie skorelowanych cech, stosuje się regularyzację:
 \begin{itemize}
   \item \textbf{Lasso} ($\ell_1$) - umożliwia selekcję cech poprzez zerowanie współczynników przy mniej istotnych zmiennych,
   \item \textbf{Ridge} ($\ell_2$) - zmniejsza wariancję modelu, co jest korzystne przy współliniowości danych treningowych.
 \end{itemize}
 
-\subsubsection{Metody zespołowe (ang.\ \textit{Ensemble Learning})}
+\subsubsection{Metody zespołowe}
 
 Jednymi z najskuteczniejszych algorytmów w pracy z danymi tabelarycznymi są metody oparte na drzewach decyzyjnych.
 Pojedyncze drzewo ma tendencję do nadmiernego dopasowania, dlatego stosuje się:
 \begin{itemize}
-  \item \textbf{\textit{Random Forest}} - wykorzystuje bagging (\textit{bootstrap aggregating}); trenuje wiele drzew na losowych podzbiorach danych i uśrednia ich wyniki.
-  \item \textbf{\textit{Gradient Boosting}} (np.\ \textit{XGBoost}, \textit{LightGBM}, \textit{CatBoost}) - buduje model sekwencyjnie, gdzie kolejne drzewa korygują błędy poprzednich.
+  \item \textbf{Random Forest} - wykorzystuje agregację bootstrapową; trenuje wiele drzew na losowych podzbiorach danych i uśrednia ich wyniki.
+  \item \textbf{Gradient Boosting} (np.\ \textit{XGBoost}, \textit{LightGBM}, \textit{CatBoost}) - buduje model sekwencyjnie, gdzie kolejne drzewa korygują błędy poprzednich.
 \end{itemize}
 
-\subsubsection{Sieci neuronowe i głębokie uczenie (ang.\ \textit{Deep Learning})}
+\subsubsection{Sieci neuronowe i głębokie uczenie}
 
 Gdy dane wejściowe traktujemy jako surowy szereg czasowy (sekwencja próbek moc/tętno co $1$ sekundę), intensywna inżynieria cech może prowadzić do utraty informacji o dynamice zmian.
 W takich przypadkach zastosowanie znajdują:
@@ -262,10 +261,10 @@ Następnie dla treningów wykonywanych w określonym oknie czasowym względem te
 Jest to świadome założenie modelowe: w krótkim horyzoncie czasu $\mathrm{FTP}$ zmienia się relatywnie wolno.
 
 \paragraph{Inżynieria cech.}
-Z surowych danych wyznacza się cechy opisujące wysiłek i reakcję organizmu: średnie i maksymalne moce w oknach czasowych, rozkład czasu w strefach, relacje moc--tętno (\textit{power-to-heart-rate ratio}), miary zmienności tętna oraz wskaźniki dryfu tętna.
+Z surowych danych wyznacza się cechy opisujące wysiłek i reakcję organizmu: średnie i maksymalne moce w oknach czasowych, rozkład czasu w strefach, relacje mocy do tętna, miary zmienności tętna oraz wskaźniki dryfu tętna.
 
 \paragraph{Trening i ewaluacja.}
-Zbiór danych dzielony jest na część treningową, walidacyjną i testową z uwzględnieniem unikania wycieku informacji (\textit{data leakage}), np.\ poprzez grupowanie obserwacji na poziomie zawodnika lub bloku czasowego.
+Zbiór danych dzielony jest na część treningową, walidacyjną i testową z uwzględnieniem unikania wycieku informacji, np.\ poprzez grupowanie obserwacji na poziomie zawodnika lub bloku czasowego.
 Do strojenia hiperparametrów stosuje się walidację krzyżową lub podział czasowy.
 Jako miary jakości predykcji stosuje się typowo $\mathrm{MAE}$, $\mathrm{RMSE}$ oraz miary korelacji i determinacji, w tym $R^2$ \cite{james2021isl,hastie2009esl}.
 
@@ -274,7 +273,8 @@ Jako miary jakości predykcji stosuje się typowo $\mathrm{MAE}$, $\mathrm{RMSE}
 Aby obiektywnie ocenić jakość estymacji $\mathrm{FTP}$ przez model, konieczne jest zdefiniowanie miar błędu.
 W problemach regresji standardowo stosuje się m.in.\ następujące metryki \cite{james2021isl,hastie2009esl}.
 
-\paragraph{Pierwiastek błędu średniokwadratowego (RMSE).}
+Metryki te obejmują:
+
 \begin{equation}
 \label{eq:rmse}
 \mathrm{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2},
