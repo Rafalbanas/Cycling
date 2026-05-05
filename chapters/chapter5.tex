@@ -1,0 +1,19 @@
+\chapter{Zakończenie}
+
+\section{Podsumowanie pracy}
+Niniejsza praca magisterska koncentrowała się na stworzeniu użytecznego modelu predykcyjnego do estymacji funkcjonalnego progu mocy (FTP) kolarzy w oparciu o masowo gromadzone dane telemetryczne pochodzące ze sportowych urządzeń rejestrujących. Na wczesnych etapach opracowania przeprowadzono szeroką analizę teoretyczną zagadnienia pomiaru parametrów wydolnościowych. Zdefiniowano i zrealizowano kluczowe kroki w procesie wdrażania zaawansowanej analityki, obejmujące: przygotowanie i preprocessing sygnałów, strategię etykietowania wycinków treningowych oraz rozległą inżynierię cech, bazującą na koncepcjach fizjologii wysiłku. Całość procesu wieńczył dobór, konfiguracja oraz wdrożenie kilku różniących się złożonością modeli uczenia maszynowego (od metod liniowych, aż po iteracyjne techniki drzewiaste), co podsumowano rzetelną oceną statystyczną jakości działania opracowanych estymatorów.
+
+\section{Realizacja celu pracy}
+Założony cel nadrzędny -- sprowadzenie problemu oszacowywania FTP z obszaru rzadkich testów terenowych do modelu pasywnego, zdolnego do regularnej oceny na podstawie standardowej historii wyjazdów -- został z powodzeniem zrealizowany. Algorytmy wykazały się zdolnością do modelowania ukrytych w sygnale własności z na tyle niskim poziomem pomyłki na nieznanych zbiorach testowych, że rezultaty można uznać za obiecujące dla przyszłych, praktycznych wdrożeń w środowiskach sportowych.
+
+\section{Najważniejsze wnioski}
+Przeprowadzona ewaluacja wykazała potencjał wybranych podejść analitycznych; oczekuje się, że najlepsze rezultaty zostaną osiągnięte przez architekturę zoptymalizowaną pod kątem analizy cech dziedzinowych opartą na algorytmie Ridge Regression, osiągając zadowalający poziom błędu w ujęciu bezwzględnym MAE na poziomie 0.0 W oraz RMSE równe 0.0 W.
+
+Można zauważyć, że kluczem do stabilnego i wysoce skutecznego oszacowania FTP nie jest sam wybór algorytmu, lecz skrupulatna, domenowa ekstrakcja cech wejściowych oddających zależności między generowaną mocą, obciążeniem układu sercowo-naczyniowego oraz akumulacją zmęczenia. Stąd wywodzi się silna potrzeba bliskiej kolaboracji inżynierii danych ze specjalistyczną wiedzą z zakresu fizjologii sportu. 
+
+Największy potencjał praktyczny mają rozwiązania, które w sposób zautomatyzowany minimalizują konieczność wykonywania prób wysiłkowych, wspierając płynny rozwój dyspozycji zarówno w obszarze sportu powszechnego, jak i kwalifikowanego.
+
+\section{Możliwości rozwoju systemu}
+Rozwój algorytmów sztucznej inteligencji otwiera przed naukami o sporcie niespotykane wcześniej perspektywy i wyzwania. Zaprezentowane w niniejszej pracy badania nad FTP stanowią jedynie fragment większej całości. Pełna implementacja modeli potrafiących prognozować złożone krzywe spadku mocy na zadanym dystansie (Power Duration Curve), uwzględnienie zróżnicowania zewnętrznego (warunki meteo) i wewnętrznego (poziom snu) to tylko wybrane, istotne kroki, które muszą zostać zrealizowane, aby zbliżyć się do kompletnego i cyfrowego awatara sportowca.
+
+Zastosowanie uczenia maszynowego w optymalizacji i modelowaniu procesu treningowego z całą pewnością będzie stanowiło jeden z fundamentów dalszego, gwałtownego postępu osiągnięć i innowacji analitycznych w zawodowym peletonie.
