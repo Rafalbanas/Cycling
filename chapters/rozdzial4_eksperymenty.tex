@@ -200,16 +200,16 @@ Ważność cech należy traktować jako narzędzie diagnostyczne modelu, a nie r
 
 W wariancie B dominowała cecha \texttt{mmp\_10min}; znaczenie miały również statystyki mocy oraz cechy opisujące rozkład intensywności. Po usunięciu całej grupy \texttt{mmp\_*} wariant C opierał się w większym stopniu na kwantylach mocy, udziale czasu w strefach intensywności oraz relacji mocy do tętna. Zestawienie wskazuje, że model wykorzystuje kilka grup cech, a nie pojedynczy predyktor.
 
-Zmiana rankingu pomiędzy wariantami B i C jest informacyjna sama w sobie. Po usunięciu cech MMP algorytm nie traci całkowicie zdolności predykcyjnej, lecz przenosi ciężar decyzji na pozostałe podsumowania sesji. Potwierdza to, że dataset zawiera sygnał rozproszony w kilku grupach predyktorów. Jednocześnie nie pozwala rozstrzygnąć, które cechy byłyby najbardziej stabilne w innym repozytorium danych lub w walidacji prospektywnej.
+Zmiana rankingu pomiędzy wariantami B i C jest informacyjna sama w sobie. Po usunięciu cech MMP algorytm nie traci całkowicie zdolności predykcyjnej, lecz przenosi ciężar decyzji na pozostałe podsumowania sesji. Potwierdza to, że dataset zawiera sygnał rozproszony w kilku grupach predyktorów. Jednocześnie nie pozwala rozstrzygnąć, które cechy byłyby najbardziej stabilne w innym zbiorze danych lub w walidacji prospektywnej.
 
 \FloatBarrier
 \section{Dodatkowa próba kontrolna skalowalności}
 
-Po zakończeniu eksperymentu bazowego wykonano dodatkową próbę kontrolną na rozszerzonym zbiorze GoldenCheetah OpenData obejmującym 5000 archiwów ZIP. Próba ta nie zastępuje wyników opisanych w poprzednich sekcjach, lecz służy ocenie stabilności potoku oraz sprawdzeniu, czy główne obserwacje utrzymują się przy większej liczbie zawodników. Zachowano tę samą definicję etykiety, filtr FTP, warianty A/B/C, modele oraz podział po \texttt{athlete\_id}.
+Po zakończeniu eksperymentu bazowego wykonano dodatkową próbę kontrolną na rozszerzonym zbiorze GoldenCheetah OpenData obejmującym 5000 archiwów ZIP. Celem tej próby nie było zastąpienie eksperymentu głównego, lecz sprawdzenie, czy ten sam potok przetwarzania pozostaje stabilny przy większej skali danych oraz czy najważniejsze obserwacje z mniejszej próby nie są skutkiem przypadkowej struktury konkretnego podzbioru. Próba kontrolna pełni zatem funkcję testu skalowalności i powtarzalności w ramach tego samego źródła danych.
 
-Po filtracji FTP zbiór kontrolny obejmował 4645 zawodników i 979\,672 sesje treningowe. W wariancie A ponownie uzyskano niemal idealne metryki, co potwierdza, że konfiguracja ta pozostaje obciążona leakage i nie powinna być interpretowana jako właściwy wynik badawczy. W wariancie B najlepszy wynik w próbie kontrolnej uzyskał Random Forest: MAE = 6{,}01 W oraz $R^2 = 0{,}9679$. Wariant C osiągnął niższą jakość, ale nadal zachował wysoką zdolność odtwarzania etykiety FTP.
+W próbie kontrolnej zachowano tę samą definicję etykiety FTP, ten sam filtr wartości referencyjnej, te same warianty cech A/B/C, te same klasy modeli oraz ten sam sens podziału po identyfikatorze \texttt{athlete\_id}. Modele były więc oceniane na sesjach zawodników niewystępujących w zbiorze treningowym, tak jak w eksperymencie bazowym. Po filtracji FTP zbiór kontrolny obejmował 4645 zawodników i 979\,672 sesje treningowe. Porównanie skali eksperymentu bazowego i próby kontrolnej przedstawiono w tabeli~\ref{tab:baseline_control_scale}.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \caption{Porównanie skali eksperymentu bazowego i próby kontrolnej}
 \label{tab:baseline_control_scale}
@@ -225,19 +225,51 @@ Najlepsze MAE wariantu B & 6{,}55 W & 6{,}01 W \\ \hline
 Najlepsze $R^2$ wariantu B & 0{,}9630 & 0{,}9679 \\ \hline
 \end{tabular}
 \par\smallskip
-\raggedright\footnotesize Źródło: Opracowanie własne na podstawie plików \texttt{results/model\_comparison\_partial.csv} oraz \texttt{experiments/control\_5000/results/control\_5000\_metrics.csv}.
+\raggedright\footnotesize Źródło: Opracowanie własne na podstawie wyników przeprowadzonych eksperymentów.
 \end{table}
+
+\FloatBarrier
+
+W wariancie A ponownie uzyskano niemal idealne metryki. Powtórzenie tego zjawiska na większej próbie wzmacnia interpretację przedstawioną wcześniej: konfiguracja A jest obciążona wyciekiem informacji, ponieważ zawiera cechę bezpośrednio związaną ze sposobem wyznaczania etykiety \texttt{ftp\_label}. Z tego powodu wariant A pozostaje wariantem diagnostycznym, pokazującym skalę problemu leakage, a nie właściwą oceną zdolności generalizacji modelu.
+
+Najważniejszym praktycznie wariantem pozostaje wariant B, w którym usunięto bezpośrednie źródło wycieku, czyli cechę \texttt{mmp\_20min}. W próbie kontrolnej najlepszy wynik wariantu B uzyskał model Random Forest: MAE = 6{,}01 W oraz $R^2 = 0{,}9679$. Jest to wynik zbliżony do jakości uzyskanej w eksperymencie bazowym i wskazuje, że procedura uczenia oraz oceny zachowuje stabilność przy większej liczbie archiwów. Wariant C, po usunięciu całej grupy cech \texttt{mmp\_*}, osiągnął niższą jakość, ale nadal zachował wysoką zdolność odtwarzania operacyjnej etykiety FTP. Oznacza to, że w pozostałych cechach telemetrycznych nadal występuje sygnał predykcyjny, choć usunięcie informacji o maksymalnych mocach pogarsza dokładność.
 
 Rysunek~\ref{fig:baseline_vs_control_5000_metrics} porównuje metryki MAE i $R^2$ dla wariantów B i C w eksperymencie bazowym oraz w próbie kontrolnej. Wariant A pominięto na wykresie, ponieważ jego bardzo niskie błędy wynikają z bezpośredniego wycieku informacji z cechy \texttt{mmp\_20min}.
 
-\begin{figure}[htbp]
+\begin{center}
+\captionsetup{type=figure,hypcap=false}
 \centering
-\includegraphics[width=0.98\textwidth]{figures/control_5000/baseline_vs_control_5000_metrics.png}
+\includegraphics[width=0.92\textwidth]{figures/control_5000/baseline_vs_control_5000_metrics.png}
 \caption[Porównanie eksperymentu bazowego i próby kontrolnej 5000 archiwów]{Porównanie wartości MAE i $R^2$ dla wariantów B i C w eksperymencie bazowym oraz w próbie kontrolnej obejmującej 5000 archiwów GoldenCheetah.\par Źródło: Opracowanie własne na podstawie zapisanych wyników eksperymentów.}
 \label{fig:baseline_vs_control_5000_metrics}
-\end{figure}
+\end{center}
 
-Wyniki próby kontrolnej są zgodne z główną interpretacją pracy: usunięcie \texttt{mmp\_20min} ogranicza bezpośredni wyciek, wariant B pozostaje najsilniejszą praktyczną konfiguracją, a wariant C pokazuje koszt bardziej konserwatywnego usunięcia całej grupy cech MMP. Różnice pomiędzy modelami nie zmieniają metodologii ani wniosków bazowego eksperymentu; wskazują jedynie, że potok zachowuje stabilność przy większej skali danych.
+\FloatBarrier
+
+Dodatkową ocenę zachowania najlepszego sensownego wariantu przedstawiono na rysunkach~\ref{fig:predicted_vs_actual_baseline_control} i~\ref{fig:residuals_baseline_control}. Wykres wartości przewidywanych względem referencyjnych pokazuje, że obserwacje koncentrują się w pobliżu linii idealnej zgodności, zarówno w eksperymencie bazowym, jak i w próbie kontrolnej. Nie oznacza to jednak niezależnego potwierdzenia fizjologicznej trafności etykiety FTP, lecz wskazuje na powtarzalne zachowanie modelu względem przyjętej etykiety operacyjnej.
+
+\vspace*{-2.2cm}
+\begin{center}
+\captionsetup{type=figure,hypcap=false}
+\centering
+\includegraphics[width=0.86\textwidth]{figures/control_5000/predicted_vs_actual_baseline_control.png}
+\caption{Porównanie wartości rzeczywistych i przewidywanych FTP w eksperymencie bazowym oraz w próbie kontrolnej 5000 archiwów. Linia przerywana oznacza idealną zgodność predykcji z wartością referencyjną.}
+\label{fig:predicted_vs_actual_baseline_control}
+\end{center}
+
+Wykres reszt pozwala ocenić, czy błędy predykcji mają charakter systematyczny względem poziomu FTP. Rozrzut błędów wokół linii zerowej jest zgodny z interpretacją metryk zagregowanych: próba kontrolna nie zastępuje eksperymentu bazowego, ale potwierdza stabilność zachowania modelu przy większej skali danych.
+
+\begin{center}
+\captionsetup{type=figure,hypcap=false}
+\centering
+\includegraphics[width=0.86\textwidth]{figures/control_5000/residuals_baseline_control.png}
+\caption{Rozkład błędów predykcji FTP względem wartości rzeczywistej w eksperymencie bazowym i próbie kontrolnej. Wartość dodatnia oznacza przeszacowanie, a ujemna niedoszacowanie FTP.}
+\label{fig:residuals_baseline_control}
+\end{center}
+
+\FloatBarrier
+
+Wyniki próby kontrolnej są zgodne z główną interpretacją pracy: usunięcie \texttt{mmp\_20min} ogranicza bezpośredni wyciek, wariant B pozostaje najsilniejszą praktyczną konfiguracją, a wariant C pokazuje koszt bardziej konserwatywnego usunięcia całej grupy cech MMP. Jednocześnie większa skala danych nie usuwa ograniczeń definicji etykiety. Próba kontrolna nadal pochodzi z tego samego źródła GoldenCheetah OpenData, a wartość FTP nadal jest rekonstruowana z danych historycznych, nie zaś mierzona w kontrolowanym teście laboratoryjnym. Z tego powodu wyników kontrolnych nie należy interpretować jako niezależnego dowodu precyzyjnej predykcji fizjologicznej. Ich główna wartość polega na zwiększeniu wiarygodności technicznej, potwierdzeniu powtarzalności potoku i wykazaniu, że podstawowa interpretacja wariantów A/B/C utrzymuje się przy większej skali danych.
 
 \FloatBarrier
 \section{Podsumowanie uzyskanych rezultatów}

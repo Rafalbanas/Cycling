@@ -248,22 +248,25 @@ def build_models() -> dict[str, object]:
     }
 
 
-def train_models(df: pd.DataFrame, variants: dict[str, list[str]]) -> pd.DataFrame:
+def train_models(df: pd.DataFrame, variants: dict[str, list[str]]) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
     splitter = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=RANDOM_SEED)
     train_idx, test_idx = next(splitter.split(df, groups=df["athlete_id"]))
     train = df.iloc[train_idx]
     test = df.iloc[test_idx]
     rows: list[dict] = []
+    predictions_by_variant: dict[str, pd.DataFrame] = {}
+    best_mae_by_variant: dict[str, float] = {}
     for variant, features in variants.items():
         for model_name, model in build_models().items():
             logging.info("Trenowanie: %s / %s", variant, model_name)
             model.fit(train[features], train["ftp_label"])
             predicted = model.predict(test[features])
+            mae = float(mean_absolute_error(test["ftp_label"], predicted))
             rows.append(
                 {
                     "Variant": variant,
                     "Model": model_name,
-                    "MAE": float(mean_absolute_error(test["ftp_label"], predicted)),
+                    "MAE": mae,
                     "RMSE": float(np.sqrt(mean_squared_error(test["ftp_label"], predicted))),
                     "R2": float(r2_score(test["ftp_label"], predicted)),
                     "MedAE": float(median_absolute_error(test["ftp_label"], predicted)),
@@ -273,7 +276,24 @@ def train_models(df: pd.DataFrame, variants: dict[str, list[str]]) -> pd.DataFra
                     "Test_Sessions": int(len(test)),
                 }
             )
-    return pd.DataFrame(rows)
+
+            if variant in {"Variant_B", "Variant_C"} and (
+                variant not in best_mae_by_variant or mae < best_mae_by_variant[variant]
+            ):
+                prediction_frame = pd.DataFrame(
+                    {
+                        "experiment": "control_5000",
+                        "variant": variant,
+                        "model": model_name,
+                        "athlete_id": test["athlete_id"].to_numpy(),
+                        "y_true": test["ftp_label"].to_numpy(),
+                        "y_pred": predicted,
+                    }
+                )
+                prediction_frame["residual"] = prediction_frame["y_pred"] - prediction_frame["y_true"]
+                predictions_by_variant[variant] = prediction_frame
+                best_mae_by_variant[variant] = mae
+    return pd.DataFrame(rows), predictions_by_variant
 
 
 def describe_sessions(filtered: pd.DataFrame) -> dict:
@@ -497,7 +517,7 @@ def analyze(args: argparse.Namespace, data_root: Path, paths: dict[str, Path], f
         raise SystemExit("Za mało zawodników po filtracji do uruchomienia GroupShuffleSplit.")
 
     variants = numeric_feature_variants(filtered)
-    metrics = train_models(filtered, variants)
+    metrics, predictions_by_variant = train_models(filtered, variants)
     comparison = compare_with_baseline(metrics)
     rejections = archive_rejection_reasons(selected_zips, archive_stats, filtered)
 
@@ -505,6 +525,9 @@ def analyze(args: argparse.Namespace, data_root: Path, paths: dict[str, Path], f
     unfiltered.to_csv(paths["ssd_outputs"] / "features_ftp_control_5000_unfiltered.csv", index=False)
     metrics.to_csv(paths["results"] / "control_5000_metrics.csv", index=False)
     comparison.to_csv(paths["results"] / "baseline_vs_control_5000.csv", index=False)
+    for variant, prediction_frame in predictions_by_variant.items():
+        suffix = variant.lower()
+        prediction_frame.to_csv(paths["results"] / f"control_5000_predictions_{suffix}.csv", index=False)
     pd.Series(missing_counts(filtered), name="missing_count").rename_axis("feature").to_csv(
         paths["results"] / "missing_key_features.csv"
     )
