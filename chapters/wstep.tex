@@ -1,0 +1,62 @@
+\chapter*{Wstęp}
+\addcontentsline{toc}{chapter}{Wstęp}
+
+\paragraph{Uzasadnienie wyboru tematu.}
+Rozwój mierników mocy, czujników tętna oraz sportowych urządzeń treningowych sprawił, że zarówno zawodnicy amatorscy, jak i profesjonalni mogą systematycznie gromadzić dane telemetryczne opisujące przebieg aktywności fizycznej. W kolarstwie do najważniejszych rejestrowanych zmiennych należą moc generowana przez zawodnika, tętno, kadencja, prędkość oraz parametry trasy. Rosnąca popularność pomiaru mocy zwiększa znaczenie metod, które pozwalają wykorzystać te dane do monitorowania formy bez konieczności częstego wykonywania testów maksymalnych.
+
+Temat pracy wpisuje się w nurt badań łączących naukę o sporcie z metodami uczenia maszynowego. Analiza dużych zbiorów danych telemetrycznych może wspierać ocenę dyspozycji zawodnika na podstawie rutynowych treningów. Ma to znaczenie zarówno dla zawodników amatorskich, jak i dla trenerów oraz platform analitycznych.
+
+Aktualność problemu wynika nie tylko z rozwoju algorytmów, lecz także ze zmiany sposobu rejestrowania treningu. Miernik mocy, który wcześniej był narzędziem stosowanym przede wszystkim w sporcie wyczynowym, jest coraz częściej elementem wyposażenia ambitnego amatora. Liczniki rowerowe i zegarki sportowe zapisują parametry aktywności w sposób automatyczny, a platformy treningowe przechowują wielomiesięczne lub wieloletnie historie jazd. W rezultacie powstaje materiał empiryczny, którego wartość wykracza poza podsumowanie pojedynczego treningu. Odpowiednio przetworzona historia aktywności może służyć do obserwacji zmian dyspozycji zawodnika w czasie.
+
+Rosnąca dostępność danych nie eliminuje problemu ich interpretacji. Rejestracja mocy, tętna i kadencji odbywa się w zmiennych warunkach terenowych: podczas podjazdów, zjazdów, postojów, jazdy w grupie oraz jednostek o odmiennych celach treningowych. Pojedynczy odczyt lub prosta średnia nie wystarczają zatem do wiarygodnej oceny formy. Potrzebne jest podejście, które potrafi agregować wiele sygnałów, uwzględniać ich zmienność oraz oddzielać informację o wydolności od zakłóceń wynikających z przebiegu trasy i jakości pomiaru.
+
+Znaczenie praktyczne pasywnej estymacji jest szczególnie widoczne w treningu amatorskim. Formalny test FTP wymaga zaplanowania wysiłku o wysokiej intensywności, właściwego rozłożenia tempa i odpowiedniej regeneracji. Zawodnik bez doświadczenia może rozpocząć próbę zbyt mocno, przerwać ją przed czasem albo wykonać ją w warunkach nieporównywalnych z poprzednim pomiarem. Estymacja wykorzystująca rutynowe jazdy nie zastępuje kontrolowanego testu, ale może ograniczyć potrzebę jego częstego powtarzania i wskazać moment, w którym ponowna weryfikacja stref treningowych jest zasadna.
+
+\paragraph{Problem badawczy.}
+Funkcjonalny próg mocy (ang.\ \textit{Functional Threshold Power}, FTP) jest istotnym parametrem nowoczesnego treningu kolarskiego. Służy do wyznaczania indywidualnych stref intensywności wysiłku, sterowania obciążeniem oraz obserwacji zmian dyspozycji zawodnika. Wyznaczanie FTP w warunkach rzeczywistych wiąże się jednak z trudnościami: klasyczna procedura wymaga bardzo obciążającego testu 60-minutowego lub jego 20-minutowego uproszczenia. Test taki może zaburzać strukturę planu treningowego, a jego częste powtarzanie jest trudne ze względów fizycznych, mentalnych i logistycznych. Istnieje zatem potrzeba opracowania metod pozwalających szacować FTP na podstawie telemetrii rejestrowanej podczas rutynowych jednostek treningowych.
+
+Pojęcie „formy kolarskiej” jest wielowymiarowe i obejmuje zarówno zdolności tlenowe i beztlenowe, jak i sprawność nerwowo-mięśniową, taktykę wyścigową, stan psychiczny, regenerację oraz odporność na zmęczenie. W niniejszej pracy pojęcie to zostało świadomie zawężone do wymiaru operacyjnego: forma kolarska jest utożsamiana z poziomem funkcjonalnego progu mocy (FTP). Takie ujęcie wynika z celu pracy, jakim jest estymacja parametru mierzalnego za pomocą telemetrii rowerowej. FTP nie opisuje pełnego spektrum dyspozycji sportowej zawodnika -- nie uwzględnia sprinterskich zdolności szczytowych, zdolności taktycznych ani odporności psychicznej. Jest jednak jednym z najszerzej stosowanych wskaźników ilościowych w treningu kolarskim i jednocześnie parametrem, którego zmianę można obserwować na podstawie danych z rutynowych treningów. Ograniczenie zakresu pojęciowego formy do FTP pozwala sformułować zadanie uczenia maszynowego w sposób jednoznaczny, a jednocześnie wymaga od czytelnika świadomości, że wynik modelu nie stanowi pełnej oceny stanu sportowego kolarza.
+
+Potencjalni odbiorcy takiego rozwiązania mają różne potrzeby. Dla zawodnika istotna jest czytelna informacja o trendzie formy i możliwej potrzebie aktualizacji stref. Trener może wykorzystać estymację jako dodatkową przesłankę podczas interpretowania obciążeń i reakcji organizmu. Platforma analityczna może natomiast zestawiać wynik modelu z historią aktywności, jakością danych i okresowymi testami referencyjnymi. We wszystkich tych zastosowaniach predykcja powinna pozostać narzędziem wspomagającym decyzję, a nie automatycznym rozstrzygnięciem.
+
+\paragraph{Hipoteza badawcza.}
+W związku z powyższym sformułowano następującą hipotezę badawczą:
+\begin{quote}
+    \textit{Pasywne algorytmy uczenia maszynowego, wytrenowane na zagregowanych cechach telemetrycznych z codziennych jazd kolarskich, z wyłączeniem bezpośrednich wskaźników testowych takich jak 20-minutowa moc maksymalna MMP20, są w stanie estymować funkcjonalny próg mocy (FTP) z dokładnością umożliwiającą ich praktyczne wykorzystanie jako narzędzia wspomagającego monitorowanie formy sportowej.}
+\end{quote}
+
+\paragraph{Cel główny pracy.}
+Celem głównym pracy jest zaprojektowanie, implementacja oraz ewaluacja prototypowego systemu analitycznego opartego na uczeniu maszynowym, służącego do pasywnego szacowania progu FTP u kolarzy na podstawie danych telemetrycznych z rutynowych treningów.
+
+\paragraph{Cele szczegółowe pracy.}
+W ramach realizacji celu głównego wyróżniono trzy kategorie celów szczegółowych:
+\begin{itemize}
+    \item \textbf{Cel poznawczy:} usystematyzowanie wiedzy dotyczącej fizjologicznych podstaw oceny wydolności kolarskiej oraz metod uczenia maszynowego stosowanych w analizie danych telemetrycznych, ze szczególnym uwzględnieniem FTP, mocy krytycznej i progów metabolicznych.
+    \item \textbf{Cel metodologiczny (badawczy):} opracowanie i weryfikacja powtarzalnego potoku ETL (ang.\ \textit{Extract--Transform--Load}) dla surowych danych kolarskich, obejmującego filtrację artefaktów, inżynierię cech, heurystyczne etykietowanie FTP oraz ocenę modeli regresyjnych w warunkach ograniczających wyciek danych.
+    \item \textbf{Cel utylitarny (praktyczny):} ocena, czy opracowane rozwiązanie może stanowić podstawę narzędzia wspomagającego trening bez konieczności częstego przeprowadzania maksymalnych prób wysiłkowych.
+\end{itemize}
+
+\paragraph{Pytania badawcze.}
+Realizacja celu głównego i celów szczegółowych prowadzona jest z uwzględnieniem następujących pytań badawczych:
+\begin{enumerate}
+    \item Czy modele regresyjne uczone na zagregowanych cechach telemetrycznych bez cechy \texttt{mmp\_20min} są w stanie szacować FTP dla kolarzy nieobecnych w zbiorze treningowym?
+    \item Który spośród testowanych algorytmów: Ridge Regression, Random Forest i XGBoost, osiąga najwyższą jakość predykcji mierzoną metrykami MAE, RMSE i $R^2$?
+    \item Jakie grupy cech telemetrycznych niosą największą informację predykcyjną o poziomie FTP?
+    \item W jakim stopniu uwzględnienie cechy \texttt{mmp\_20min}, bezpośrednio powiązanej z etykietą, prowadzi do wycieku danych i sztucznego zawyżenia wyników modeli?
+\end{enumerate}
+
+\paragraph{Zakres pracy.}
+Praca obejmuje zagadnienia z obszaru uczenia maszynowego, przetwarzania danych telemetrycznych z kolarstwa oraz fizjologicznych podstaw szacowania wydolności. Badaniem objęto anonimowe dane 726 zawodników o zróżnicowanym poziomie wytrenowania. Finalny zbiór eksperymentalny, przygotowany na podstawie 781 archiwów ZIP repozytorium GoldenCheetah OpenData, obejmował 151\,399 rekordów po zastosowaniu filtra FTP.
+
+Zakres przestrzenny badania ma charakter międzynarodowy i nie został ograniczony do jednego kraju ani regionu, ponieważ wykorzystany zbiór GoldenCheetah OpenData obejmuje dane treningowe udostępnione przez użytkowników platformy pochodzących z różnych lokalizacji. Przestrzeń badawcza została zatem określona przez zakres dostępnego repozytorium danych, a nie przez klasycznie rozumiany obszar geograficzny.
+
+Zakres czasowy badania obejmuje historyczne aktywności treningowe znajdujące się w wersji repozytorium GoldenCheetah OpenData pozyskanej na potrzeby niniejszego badania. Analizie poddano dane dostępne w momencie pobrania zbioru do projektu, traktując repozytorium jako zamknięty zbiór danych empirycznych wykorzystywany do budowy i walidacji prototypowego rozwiązania analitycznego.
+
+\paragraph{Zastosowane metody.}
+W pracy porównano trzy modele regresyjne: Ridge Regression, Random Forest oraz XGBoost. Dane podzielono na zbiór treningowy i testowy na poziomie zawodników z użyciem mechanizmu \texttt{GroupShuffleSplit}. Szczegółowy opis źródeł danych, filtracji, inżynierii cech, konfiguracji wariantów eksperymentalnych i metryk oceny przedstawiono w rozdziale metodologicznym.
+
+\paragraph{Struktura pracy.}
+Praca składa się z czterech rozdziałów merytorycznych, wstępu oraz zakończenia. Rozdział pierwszy stanowi część teoretyczno-literaturową: przedstawia FTP, charakterystykę danych treningowych, klasyczne metody oceny wydolności, zastosowania uczenia maszynowego oraz przegląd badań i istniejących rozwiązań. Rozdziały drugi, trzeci i czwarty tworzą część empiryczną i projektowo-badawczą. Rozdział drugi opisuje metodologię badań i projekt rozwiązania, rozdział trzeci przedstawia eksperymenty oraz wyniki, natomiast rozdział czwarty zawiera ocenę rozwiązania, dyskusję ograniczeń i kierunki dalszych prac. Zakończenie syntetyzuje wnioski wynikające z części teoretycznej i empirycznej.
+
+\paragraph{Charakterystyka wykorzystanej literatury.}
+Podstawy fizjologiczne oparto na pracach dotyczących treningu z pomiarem mocy oraz wiarygodności FTP \parencite{allen2019power,borszcz2018ftp,karsten2021cpftp}. Zastosowania uczenia maszynowego omówiono na podstawie publikacji poświęconych predykcji parametrów wydolnościowych i klasycznych podręczników metod statystycznych \parencite{stockwell2023mlftp,denham2020predictftp,james2021isl,hastie2009esl}. Dane empiryczne pozyskano z repozytorium GoldenCheetah OpenData udostępnionego w ramach projektu Open Science Framework (OSF) \parencite{osf_goldencheetah_opendata}.

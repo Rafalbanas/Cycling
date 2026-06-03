@@ -1,27 +1,96 @@
-\usepackage[utf8]{inputenc}                                      
-\usepackage[T1]{fontenc}  
-\usepackage{helvet}
-\renewcommand{\familydefault}{\sfdefault}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage[scaled=0.95]{helvet}
+  \renewcommand{\familydefault}{\sfdefault}
+\else
+  \usepackage{fontspec}
+  \setmainfont{Arial}
+  \setsansfont{Arial}
+\fi
 \usepackage{amsmath,amsfonts,amssymb,amsthm}
 \usepackage[british,polish]{babel}
 \usepackage{csquotes}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[top=2.5cm,bottom=2.5cm,left=3.5cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{array}
+\usepackage{caption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 \graphicspath{ {images/} } % folder z grafiką
-\usepackage{url}
+\usepackage{xurl}
 \usepackage[hidelinks]{hyperref}
+\urlstyle{same}
 \usepackage{indentfirst}
 \usepackage{microtype}
+\usepackage{enumitem}
 \tolerance=1000
 \emergencystretch=3em
 \hfuzz=2pt
-\usepackage[style=numeric,natbib=true,backend=biber,maxbibnames=99,defernumbers=true,sorting=none]{biblatex}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\usepackage[style=authoryear,citestyle=authoryear,backend=biber,sorting=nyt,maxcitenames=2,maxbibnames=99,uniquelist=false,uniquename=false]{biblatex}
+\DefineBibliographyStrings{polish}{andothers={i\addabbrvspace in\adddot}}
+\DeclareDelimFormat{nameyeardelim}{\addcomma\space}
+\newcounter{bibliographyitem}
+\defbibenvironment{numberedbibliography}
+  {\list{\arabic{bibliographyitem}.}
+    {\setlength{\leftmargin}{1.8em}
+     \setlength{\labelwidth}{1.4em}
+     \setlength{\labelsep}{0.4em}
+     \setlength{\itemsep}{0.2\baselineskip}
+     \setlength{\parsep}{0pt}}}
+  {\endlist}
+  {\stepcounter{bibliographyitem}\item}
 \usepackage{listings}
 \usepackage{fancyhdr}
 \usepackage{etoolbox}
+\usepackage{titlesec}
+\usepackage{placeins}
 \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\fontsize{16}{19}\selectfont}
+  {Rozdział \thechapter}
+  {0.4em}
+  {}
+
+\titlespacing*{\chapter}
+  {0pt}
+  {18pt}
+  {18pt}
+
+\titleformat{\section}
+  {\normalfont\bfseries\fontsize{14}{17}\selectfont}
+  {\thesection.}
+  {0.6em}
+  {}
+
+\titlespacing*{\section}
+  {0pt}
+  {12pt}
+  {12pt}
+
+\titleformat{\subsection}
+  {\normalfont\bfseries\fontsize{12}{14}\selectfont}
+  {\thesubsection.}
+  {0.6em}
+  {}
+
+\titlespacing*{\subsection}
+  {0pt}
+  {6pt}
+  {6pt}
+
+\setlist{topsep=0.3\baselineskip,itemsep=0.15\baselineskip,parsep=0pt,partopsep=0pt}
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{0pt}
+\setlength{\textfloatsep}{0.8\baselineskip plus 0.2\baselineskip minus 0.2\baselineskip}
+\setlength{\floatsep}{0.7\baselineskip plus 0.2\baselineskip minus 0.2\baselineskip}
+\setlength{\intextsep}{0.8\baselineskip plus 0.2\baselineskip minus 0.2\baselineskip}
+\captionsetup{font={small,stretch=1},justification=raggedright,singlelinecheck=false}
 
 % % *** Listings Style ***
 \definecolor{codegreen}{rgb}{0,0.6,0}

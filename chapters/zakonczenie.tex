@@ -1,0 +1,31 @@
+\chapter*{Zakończenie}
+\addcontentsline{toc}{chapter}{Zakończenie}
+
+Niniejsza praca miała na celu zaprojektowanie, implementację oraz ewaluację prototypowego systemu analitycznego służącego do pasywnego szacowania funkcjonalnego progu mocy (FTP) na podstawie danych telemetrycznych z treningów kolarskich.
+
+\paragraph{Wnioski z części teoretycznej.}
+FTP jest praktycznym, ale uproszczonym wskaźnikiem wydolności kolarskiej. Tradycyjne testy terenowe i diagnostyka laboratoryjna dostarczają wartościowych informacji, lecz są obciążające, kosztowne lub trudne do częstego powtarzania. Dane telemetryczne rejestrowane podczas rutynowych treningów tworzą podstawę do pasywnej estymacji FTP z wykorzystaniem modeli regresyjnych. Warunkiem rzetelnej oceny jest kontrola jakości danych oraz ryzyka wycieku informacji.
+
+Część teoretyczna pokazała również, że FTP nie powinno być utożsamiane bezpośrednio z mocą krytyczną, maksymalnym stanem równowagi mleczanowej ani progami mleczanowymi i wentylacyjnymi. Pojęcia te opisują powiązane aspekty wydolności, ale wynikają z odmiennych definicji i protokołów. Podobnie współczynnik $0{,}95$ stosowany do przeliczenia próby 20-minutowej ma charakter heurystyczny. Wniosek ten wyznacza właściwy sposób interpretacji wyników empirycznych: model przybliża operacyjną etykietę FTP, a nie zastępuje pełnej diagnostyki fizjologicznej.
+
+\paragraph{Wnioski z części empirycznej.}
+W ramach pracy przygotowano potok przetwarzania danych obejmujący ekstrakcję, filtrację i inżynierię cech. Finalny zbiór eksperymentalny obejmował 151\,399 sesji treningowych 726 zawodników, przygotowanych na podstawie 781 archiwów ZIP.
+
+Zbudowano trzy warianty eksperymentalne. Wariant A, zawierający \texttt{mmp\_20min}, ujawnił wyciek danych i pełnił wyłącznie funkcję kontrolną. Główny wariant badawczy B po usunięciu \texttt{mmp\_20min} uzyskał wysoką jakość predykcji; najlepszy model XGBoost osiągnął MAE = 6{,}55 W, RMSE = 9{,}68 W oraz $R^2 = 0{,}9630$. Konserwatywny wariant C, pozbawiony wszystkich cech \texttt{mmp\_*}, osiągnął wyższy błąd, ale nadal pozwalał odtworzyć znaczną część wariancji etykiety FTP.
+
+Znaczenie części empirycznej nie sprowadza się do wyboru najlepszego algorytmu. Porównanie wariantów pokazało, jak silnie wynik może zależeć od pochodzenia predyktorów. Podział po \texttt{athlete\_id} ograniczył dodatkowo ryzyko, że model będzie oceniany na sesjach osób częściowo znanych z treningu. Otrzymane metryki odnoszą się więc do zawodników nieobecnych w zbiorze uczącym, ale nadal pozostają wynikiem historycznej ewaluacji na jednym repozytorium danych.
+
+\paragraph{Weryfikacja hipotezy badawczej.}
+Uzyskane wyniki pozwalają uznać hipotezę badawczą za potwierdzoną w znacznym stopniu, z uwzględnieniem ograniczeń badania. Modele uczone na zagregowanych cechach telemetrycznych bez bezpośredniego wskaźnika testowego \texttt{mmp\_20min} mogą wspierać monitorowanie formy. Weryfikacja hipotezy dotyczy prototypowego rozwiązania ocenianego historycznie na danych GoldenCheetah OpenData względem heurystycznej etykiety FTP. Nie oznacza równoważności z kontrolowanym testem laboratoryjnym ani potwierdzenia pełnej gotowości produkcyjnej systemu bez dalszej walidacji prospektywnej.
+
+Ostrożność jest szczególnie istotna w odniesieniu do słowa „pasywne”. W głównym wariancie B usunięto bezpośrednią cechę etykietującą, ale pozostawiono inne statystyki MMP. Wariant C pokazuje rezultat bardziej rygorystyczny, uzyskany bez całej grupy \texttt{mmp\_*}. Oba warianty są potrzebne: pierwszy odpowiada głównemu scenariuszowi badawczemu, a drugi określa jakość możliwą do utrzymania przy konserwatywnym ograniczeniu cech.
+
+\paragraph{Znaczenie praktyczne.}
+Opracowany system może stanowić podstawę narzędzia wspomagającego analizę trendu FTP, aktualizację stref treningowych oraz pracę trenera z historią aktywności zawodnika. Predykcja powinna być traktowana jako informacja pomocnicza i interpretowana łącznie z kontekstem treningowym oraz jakością danych z sensorów. Aktualizacja stref treningowych na podstawie modelu powinna być traktowana jako rekomendacja wymagająca weryfikacji, a nie jako automatyczna decyzja systemu.
+
+Praktyczna wartość pracy polega również na przygotowaniu powtarzalnego procesu prowadzącego od surowej telemetrii do ocenianej predykcji. Prototyp może być punktem wyjścia dla modułu analitycznego, który nie zastępuje decyzji zawodnika lub trenera, lecz ułatwia wskazanie momentu wymagającego dokładniejszej oceny formy. Kluczowe jest przy tym pamiętanie, że zmienna celu ma charakter operacyjny i heurystyczny: model estymuje przyjętą etykietę FTP obliczoną z przelicznika $0{,}95$, a nie laboratoryjnie zmierzony próg fizjologiczny. Wynik predykcji nie powinien być zatem traktowany jako równoważnik pełnej diagnostyki wydolnościowej.
+
+\paragraph{Perspektywy dalszych badań.}
+Kolejne etapy prac powinny obejmować walidację prospektywną, pełniejszy audyt etykiet FTP, ocenę na zewnętrznym zbiorze testowym oraz analizę błędów dla różnych profili zawodników. Warto również porównać podejście oparte na cechach zagregowanych z modelowaniem sekwencyjnym surowych szeregów czasowych.
+
+Uzupełnieniem może być personalizacja modelu po zgromadzeniu historii nowego zawodnika oraz okresowych testów referencyjnych. Wymaga to osobnego eksperymentu sprawdzającego, czy dostosowanie do osoby poprawia jakość bez utraty odporności na błędy i zmianę warunków treningowych. Dopiero po walidacji prospektywnej, audycie etykiet oraz sprawdzeniu modelu na niezależnych danych zasadne będzie formułowanie dalej idących wniosków wdrożeniowych.
