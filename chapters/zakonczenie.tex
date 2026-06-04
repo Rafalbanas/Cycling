@@ -1,7 +1,7 @@
 \chapter*{Zakończenie}
 \addcontentsline{toc}{chapter}{Zakończenie}
 
-Niniejsza praca miała na celu zaprojektowanie, implementację oraz ewaluację prototypowego systemu analitycznego służącego do pasywnego szacowania funkcjonalnego progu mocy (FTP) na podstawie danych telemetrycznych z treningów kolarskich.
+Niniejsza praca miała na celu zaprojektowanie, implementację oraz ewaluację prototypowego systemu analitycznego służącego do pasywnego szacowania Functional Threshold Power (FTP) na podstawie danych telemetrycznych z treningów kolarskich.
 
 \paragraph{Wnioski z części teoretycznej.}
 FTP jest praktycznym, ale uproszczonym wskaźnikiem wydolności kolarskiej. Tradycyjne testy terenowe i diagnostyka laboratoryjna dostarczają wartościowych informacji, lecz są obciążające, kosztowne lub trudne do częstego powtarzania. Dane telemetryczne rejestrowane podczas rutynowych treningów tworzą podstawę do pasywnej estymacji FTP z wykorzystaniem modeli regresyjnych. Warunkiem rzetelnej oceny jest kontrola jakości danych oraz ryzyka wycieku informacji.
@@ -11,12 +11,12 @@ Część teoretyczna pokazała również, że FTP nie powinno być utożsamiane 
 \paragraph{Wnioski z części empirycznej.}
 W ramach pracy przygotowano potok przetwarzania danych obejmujący ekstrakcję, filtrację i inżynierię cech. Finalny zbiór eksperymentalny obejmował 151\,399 sesji treningowych 726 zawodników, przygotowanych na podstawie 781 archiwów ZIP.
 
-Zbudowano trzy warianty eksperymentalne. Wariant A, zawierający \texttt{mmp\_20min}, ujawnił wyciek danych i pełnił wyłącznie funkcję kontrolną. Główny wariant badawczy B po usunięciu \texttt{mmp\_20min} uzyskał wysoką jakość predykcji; najlepszy model XGBoost osiągnął MAE = 6{,}55 W, RMSE = 9{,}68 W oraz $R^2 = 0{,}9630$. Konserwatywny wariant C, pozbawiony wszystkich cech \texttt{mmp\_*}, osiągnął wyższy błąd, ale nadal pozwalał odtworzyć znaczną część wariancji etykiety FTP.
+Zbudowano trzy warianty eksperymentalne. Wariant A, zawierający \texttt{mmp\_20min}, ujawnił ryzyko data leakage i pełnił wyłącznie funkcję kontrolną. Główny wariant badawczy B po usunięciu \texttt{mmp\_20min} uzyskał wysoką jakość predykcji; najlepszy model XGBoost osiągnął MAE = 6{,}55 W, RMSE = 9{,}68 W oraz $R^2 = 0{,}9630$. Konserwatywny wariant C, pozbawiony wszystkich cech \texttt{mmp\_*}, osiągnął wyższy błąd, ale nadal pozwalał odtworzyć znaczną część wariancji etykiety FTP.
 
 Znaczenie części empirycznej nie sprowadza się do wyboru najlepszego algorytmu. Porównanie wariantów pokazało, jak silnie wynik może zależeć od pochodzenia predyktorów. Podział po \texttt{athlete\_id} ograniczył dodatkowo ryzyko, że model będzie oceniany na sesjach osób częściowo znanych z treningu. Otrzymane metryki odnoszą się więc do zawodników nieobecnych w zbiorze uczącym, ale nadal pozostają wynikiem historycznej ewaluacji na jednym repozytorium danych.
 
 \paragraph{Weryfikacja hipotezy badawczej.}
-Uzyskane wyniki pozwalają uznać hipotezę badawczą za potwierdzoną w znacznym stopniu, z uwzględnieniem ograniczeń badania. Modele uczone na zagregowanych cechach telemetrycznych bez bezpośredniego wskaźnika testowego \texttt{mmp\_20min} mogą wspierać monitorowanie formy. Weryfikacja hipotezy dotyczy prototypowego rozwiązania ocenianego historycznie na danych GoldenCheetah OpenData względem heurystycznej etykiety FTP. Nie oznacza równoważności z kontrolowanym testem laboratoryjnym ani potwierdzenia pełnej gotowości produkcyjnej systemu bez dalszej walidacji prospektywnej.
+Uzyskane wyniki wspierają hipotezę badawczą w znacznym stopniu, z uwzględnieniem ograniczeń badania. Modele uczone na zagregowanych cechach telemetrycznych bez bezpośredniego wskaźnika testowego \texttt{mmp\_20min} mogą wspierać monitorowanie formy. Weryfikacja hipotezy dotyczy prototypowego rozwiązania ocenianego historycznie na danych GoldenCheetah OpenData względem heurystycznej etykiety FTP. Nie oznacza równoważności z kontrolowanym testem laboratoryjnym ani potwierdzenia pełnej gotowości produkcyjnej systemu bez dalszej walidacji prospektywnej.
 
 Ostrożność jest szczególnie istotna w odniesieniu do słowa „pasywne”. W głównym wariancie B usunięto bezpośrednią cechę etykietującą, ale pozostawiono inne statystyki MMP. Wariant C pokazuje rezultat bardziej rygorystyczny, uzyskany bez całej grupy \texttt{mmp\_*}. Oba warianty są potrzebne: pierwszy odpowiada głównemu scenariuszowi badawczemu, a drugi określa jakość możliwą do utrzymania przy konserwatywnym ograniczeniu cech.
 

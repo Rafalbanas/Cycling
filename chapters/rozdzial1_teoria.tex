@@ -6,7 +6,7 @@
 Wydolność tlenowa w kolarstwie jest jednym z kluczowych czynników determinujących wynik sportowy \parencite{borszcz2018ftp}.
 Jej ilościowy opis od lat stanowi przedmiot badań fizjologów wysiłku i trenerów.
 W praktyce treningowej potrzebne są wskaźniki, które z jednej strony dobrze odzwierciedlają możliwości zawodnika, a z drugiej są możliwe do regularnego monitorowania w warunkach terenowych.
-Jednym z najczęściej stosowanych parametrów jest funkcjonalny próg mocy (ang.\ \textit{Functional Threshold Power}, $\mathrm{FTP}$) \parencite{borszcz2018ftp,allen2019power,gavin2012ftp_lt_field}.
+Jednym z najczęściej stosowanych parametrów jest Functional Threshold Power ($\mathrm{FTP}$), czyli praktyczny wskaźnik progu wysiłkowego używany w treningu kolarskim \parencite{borszcz2018ftp,allen2019power,gavin2012ftp_lt_field}.
 
 Rozwój czujników pomiaru mocy, opasek rejestrujących tętno oraz szerokie wykorzystanie liczników rowerowych i platform treningowych powoduje, że powstają liczne zbiory danych treningowych.
 Dane te mogą zostać wykorzystane w modelach uczenia maszynowego do estymacji $\mathrm{FTP}$ na podstawie codziennych jazd, bez potrzeby wykonywania osobnych, wyczerpujących testów.
@@ -15,12 +15,12 @@ W niniejszym rozdziale przedstawiono podstawowe pojęcia związane z $\mathrm{FT
 
 \section{FTP jako parametr wydolności}
 
-Funkcjonalny próg mocy ($\mathrm{FTP}$) jest jednym z najczęściej stosowanych w praktyce treningowej wskaźników wydolności tlenowej kolarzy \parencite{borszcz2018ftp,allen2019power}.
+Functional Threshold Power ($\mathrm{FTP}$) jest jednym z najczęściej stosowanych w praktyce treningowej wskaźników wydolności tlenowej kolarzy \parencite{borszcz2018ftp,allen2019power}.
 Intuicyjnie można go opisać jako „moc, którą kolarz jest w stanie utrzymać przez dłuższy czas bez narastającego, gwałtownego zmęczenia”.
 W przeciwieństwie do prostych wartości maksymalnych (np.\ maksymalnej mocy szczytowej czy tętna maksymalnego), $\mathrm{FTP}$ odnosi się do zdolności organizmu do długotrwałego utrzymania wysokiej, ale jeszcze zrównoważonej intensywności wysiłku.
 Z tego powodu parametr ten dobrze nadaje się do opisu poziomu sportowego i planowania treningu wytrzymałościowego.
 
-\subsection{Definicja funkcjonalnego progu mocy}
+\subsection{Definicja Functional Threshold Power}
 
 W literaturze związanej z treningiem kolarskim parametr $\mathrm{FTP}$ najczęściej definiuje się jako najwyższą wartość mocy, jaką kolarz jest w stanie utrzymać w stanie quasi-stacjonarnym przez około $60$ minut \parencite{borszcz2018ftp,allen2019power}.
 „Quasi-stacjonarny” oznacza tutaj, że reakcja fizjologiczna organizmu (w szczególności tętno, wentylacja oraz stężenie mleczanu we krwi) stabilizują się na podwyższonym, ale względnie stałym poziomie.
@@ -43,7 +43,7 @@ Współczynnik $0{,}95$ należy traktować jako praktyczną heurystykę, a nie j
 Warto podkreślić, że jest to definicja funkcjonalna, a nie „fizjologiczna” w ścisłym sensie.
 $\mathrm{FTP}$ nie jest bezpośrednim pomiarem żadnego pojedynczego mechanizmu w organizmie (np.\ maksymalnego poboru tlenu), lecz wygodnym parametrem łączącym w sobie kilka aspektów wydolności: zdolność do generowania mocy, tolerancję zmęczenia i efektywność procesów metabolicznych \parencite{borszcz2018ftp,karsten2021cpftp}.
 
-W tym miejscu konieczne jest rozróżnienie kilku pojęć stosowanych w diagnostyce wysiłkowej. Moc krytyczna ($\mathrm{CP}$) jest parametrem modelu matematycznego opisującego relację pomiędzy możliwą do utrzymania mocą a czasem wysiłku. Maksymalny stan równowagi mleczanowej (ang.\ \textit{Maximal Lactate Steady State}, $\mathrm{MLSS}$) odnosi się natomiast do najwyższej intensywności, przy której stężenie mleczanu może pozostawać względnie stabilne podczas wysiłku ciągłego. Progi mleczanowe ($\mathrm{LT}_1$, $\mathrm{LT}_2$) i wentylacyjne ($\mathrm{VT}_1$, $\mathrm{VT}_2$) są wyznaczane na podstawie zmian odpowiednio stężenia mleczanu lub parametrów oddechowych podczas próby o narastającym obciążeniu. Wszystkie te wskaźniki opisują obszar przemian energetycznych istotny dla wysiłku wytrzymałościowego, lecz nie są synonimami FTP \parencite{jones2019mmss,borszcz2018ftp,karsten2021cpftp,mcgrath2021cpftp,jeffries2021ftp_lt,caen2024cp_mlss,chorley2020cpReview,galanRioja2020cpThresholds}.
+W tym miejscu konieczne jest rozróżnienie kilku pojęć stosowanych w diagnostyce wysiłkowej. Critical Power ($\mathrm{CP}$) jest parametrem modelu matematycznego opisującego relację pomiędzy możliwą do utrzymania mocą a czasem wysiłku. Maximal Lactate Steady State ($\mathrm{MLSS}$) odnosi się natomiast do najwyższej intensywności, przy której stężenie mleczanu może pozostawać względnie stabilne podczas wysiłku ciągłego. Progi mleczanowe ($\mathrm{LT}_1$, $\mathrm{LT}_2$) i wentylacyjne ($\mathrm{VT}_1$, $\mathrm{VT}_2$) są wyznaczane na podstawie zmian odpowiednio stężenia mleczanu lub parametrów oddechowych podczas próby o narastającym obciążeniu. Wszystkie te wskaźniki opisują obszar przemian energetycznych istotny dla wysiłku wytrzymałościowego, lecz nie są synonimami FTP \parencite{jones2019mmss,borszcz2018ftp,karsten2021cpftp,mcgrath2021cpftp,jeffries2021ftp_lt,caen2024cp_mlss,chorley2020cpReview,galanRioja2020cpThresholds}.
 
 Różnica ma znaczenie praktyczne. Zawodnik może uzyskać podobne wartości kilku wskaźników, ale ich zgodność nie jest zagwarantowana na poziomie indywidualnym. FTP ma przede wszystkim wartość funkcjonalną: umożliwia planowanie treningu na podstawie mocy rejestrowanej na rowerze. CP wynika z dopasowania modelu do kilku wysiłków, a progi fizjologiczne wymagają obserwacji reakcji organizmu w określonym protokole. Posługiwanie się tymi terminami zamiennie prowadziłoby do nadmiernego uproszczenia i mogłoby sugerować precyzję, której pojedynczy pomiar nie zapewnia.
 
@@ -177,8 +177,8 @@ Schemat ten pełni funkcję porównawczą względem uproszczonej próby 20-minut
 \FloatBarrier
 \subsection{Krzywa mocy i zależność FTP od czasu trwania wysiłku}
 
-Schematyczną zależność maksymalnej możliwej do utrzymania mocy od czasu trwania wysiłku przedstawiono na rysunku \ref{fig:power_duration_curve}.
-Dla bardzo krótkich czasów wartości mocy są wysokie i szybko maleją, natomiast przy dłuższych wysiłkach krzywa stopniowo zbliża się do poziomu odpowiadającego mocy krytycznej ($\mathrm{CP}$), która jest blisko spokrewniona z funkcjonalnym progiem mocy ($\mathrm{FTP}$) \parencite{pinot2011recordPowerProfile,borszcz2018ftp,allen2019power,karsten2021cpftp}.
+Schematyczną zależność maksymalnej możliwej do utrzymania mocy od czasu trwania wysiłku przedstawiono na rysunku~\ref{fig:power_duration_curve}.
+Dla bardzo krótkich czasów wartości mocy są wysokie i szybko maleją, natomiast przy dłuższych wysiłkach krzywa stopniowo przechodzi w obszar mocy progowych związanych z Critical Power ($\mathrm{CP}$) i FTP \parencite{pinot2011recordPowerProfile,borszcz2018ftp,allen2019power,karsten2021cpftp}.
 Krzywa mocy pokazuje, że maksymalna możliwa do utrzymania moc maleje wraz z wydłużaniem czasu wysiłku, a przy długich czasach zbliża się do poziomu odpowiadającego mocy progowej.
 
 \begin{figure}[htbp]
@@ -274,7 +274,7 @@ W części empirycznej pracy modele Random Forest i XGBoost wykorzystano do regr
 
 \paragraph{Ryzyko wycieku danych.}
 
-W zadaniach predykcyjnych należy oddzielić informację dostępną w rzeczywistym zastosowaniu od informacji, która powstała bezpośrednio podczas tworzenia etykiety. Wyciek danych (ang.\ \textit{data leakage}) występuje wtedy, gdy predyktor przekazuje modelowi część odpowiedzi lub pozwala ją odtworzyć w sposób niedostępny w docelowym scenariuszu. Skutkiem może być bardzo wysoka wartość $R^2$ i niski błąd, które nie świadczą o generalizacji modelu \parencite{kaufman2012leakage,bernett2024leakage}.
+W zadaniach predykcyjnych należy oddzielić informację dostępną w rzeczywistym zastosowaniu od informacji, która powstała bezpośrednio podczas tworzenia etykiety. Data leakage występuje wtedy, gdy predyktor przekazuje modelowi część odpowiedzi lub pozwala ją odtworzyć w sposób niedostępny w docelowym scenariuszu. Skutkiem może być bardzo wysoka wartość $R^2$ i niski błąd, które nie świadczą o generalizacji modelu \parencite{kaufman2012leakage,bernett2024leakage}.
 
 W przypadku heurystycznego FTP ryzyko jest szczególnie wyraźne. Jeżeli wartość referencyjną obliczono jako $0{,}95$ maksymalnej średniej mocy 20-minutowej, pozostawienie cechy \texttt{mmp\_20min} w zbiorze wejściowym umożliwia niemal bezpośrednie odtworzenie etykiety. Kontrola listy cech jest zatem równie ważna jak wybór algorytmu i metryk. Sama wysoka jakość dopasowania nie wystarcza do uznania eksperymentu za wiarygodny, jeżeli nie zbadano pochodzenia predyktorów oraz sposobu podziału danych.
 
@@ -310,7 +310,7 @@ Inżynieria cech (ang.\ \textit{feature engineering}) polega na wyznaczeniu z su
 
 \paragraph{Trening i ewaluacja.}
 W zależności od projektu badania zbiór danych może zostać podzielony z uwzględnieniem grupowania obserwacji na poziomie zawodnika lub bloku czasowego.
-W finalnym eksperymencie opisanym w niniejszej pracy zastosowano pojedynczy podział treningowy i testowy z użyciem mechanizmu \texttt{GroupShuffleSplit} grupującego obserwacje po zawodniku. Takie rozwiązanie ogranicza ryzyko wycieku informacji pomiędzy sesjami tej samej osoby \parencite{tougui2021crossValidation,rosenblatt2024leakage}.
+W finalnym eksperymencie opisanym w niniejszej pracy zastosowano pojedynczy podział treningowy i testowy z użyciem mechanizmu \texttt{GroupShuffleSplit} grupującego obserwacje po zawodniku. Takie rozwiązanie ogranicza ryzyko wystąpienia data leakage pomiędzy sesjami tej samej osoby \parencite{tougui2021crossValidation,rosenblatt2024leakage}.
 Jako miary jakości predykcji stosuje się typowo $\mathrm{MAE}$, $\mathrm{RMSE}$ oraz miary korelacji i determinacji, w tym $R^2$ \parencite{chai2014rmseMae,james2021isl,hastie2009esl}.
 
 \paragraph{Metryki ewaluacji modelu.}

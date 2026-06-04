@@ -1,6 +1,6 @@
 \chapter{Metodologia badań i projekt rozwiązania}
 
-Opracowane rozwiązanie ma charakter prototypowego systemu analitycznego. Jego zadaniem jest przekształcenie surowych danych telemetrycznych z treningów kolarskich w tabelaryczny zestaw cech, przygotowanie etykiet FTP oraz ocena modeli regresyjnych. System realizuje potok ETL (ang.\ \textit{Extract--Transform--Load}), obejmujący pozyskanie danych, ich filtrację, ekstrakcję cech oraz przygotowanie zbioru do eksperymentów uczenia maszynowego.
+Opracowane rozwiązanie ma charakter prototypowego systemu analitycznego. Jego zadaniem jest przekształcenie surowych danych telemetrycznych z treningów kolarskich w tabelaryczny zestaw cech, przygotowanie etykiet FTP oraz ocena modeli regresyjnych. System realizuje potok Extract--Transform--Load (ETL), obejmujący pozyskanie danych, ich filtrację, ekstrakcję cech oraz przygotowanie zbioru do eksperymentów uczenia maszynowego.
 
 \section{Architektura potoku przetwarzania}
 
@@ -102,7 +102,7 @@ W zadaniu uczenia nadzorowanego do każdej sesji przypisano referencyjną warto�
 \end{equation}
 gdzie $\mathrm{FTP}_{\mathrm{ref}}^{(i)}$ oznacza referencyjne FTP dla sesji $i$, a $\max(\overline{P}_{20\ \mathrm{min}}(t))$ jest najwyższą wartością 20-minutowej średniej kroczącej mocy zarejestrowaną w tej sesji. W zbiorze cecha ta występuje jako \texttt{mmp\_20min}.
 
-Tak zdefiniowana etykieta ma charakter heurystyczny. Jest przydatna w analizie dużego zbioru historycznego, lecz nie zastępuje wyniku kontrolowanego badania laboratoryjnego. Bezpośredni związek etykiety z cechą \texttt{mmp\_20min} wymaga również jawnej kontroli wycieku danych \parencite{kaufman2012leakage,bernett2024leakage}.
+Tak zdefiniowana etykieta ma charakter heurystyczny. Jest przydatna w analizie dużego zbioru historycznego, lecz nie zastępuje wyniku kontrolowanego badania laboratoryjnego. Bezpośredni związek etykiety z cechą \texttt{mmp\_20min} wymaga również jawnej kontroli ryzyka data leakage \parencite{kaufman2012leakage,bernett2024leakage}.
 
 Maksymalna średnia krocząca mocy z okna 20-minutowego nie musi pochodzić z formalnego testu FTP. Może zostać zarejestrowana podczas interwału, wyścigu, dłuższego podjazdu albo innego fragmentu treningu. Z jednej strony zwiększa to możliwość automatycznego etykietowania danych historycznych. Z drugiej strony oznacza, że warunki uzyskania etykiety nie są jednolite: różnią się przygotowaniem zawodnika, profilem trasy, strategią wysiłku i motywacją.
 
@@ -130,7 +130,7 @@ Z szeregów czasowych wyznaczono zagregowane predyktory opisujące charakter ses
     \item \textbf{Cechy tętna:} wartości średnie, maksymalne i miary zmienności.
     \item \textbf{Cechy kadencji:} statystyki rytmu pedałowania oraz udział fragmentów jazdy bez generowania mocy.
     \item \textbf{Cechy odsprzężenia tętna:} zmiany relacji pomiędzy mocą a tętnem w trakcie wysiłku.
-    \item \textbf{Cechy MMP (ang.\ \textit{Mean Maximal Power}):} maksymalne średnie moce wyznaczane dla różnych długości okna czasowego, w tym \texttt{mmp\_20min}.
+    \item \textbf{Cechy Maximum Mean Power (MMP):} maksymalne średnie moce wyznaczane dla różnych długości okna czasowego, w tym \texttt{mmp\_20min}.
 \end{itemize}
 
 Histogramy intensywności i udziały czasu w zakresach mocy zachowują więcej informacji niż pojedyncza średnia. Dwie sesje o tej samej średniej mocy mogą mieć zupełnie inny przebieg: jedna może być równą jazdą wytrzymałościową, a druga zbiorem krótkich interwałów rozdzielonych odpoczynkiem. Podobnie kwantyle rozkładu pozwalają odróżnić poziom typowego obciążenia od wartości osiąganych jedynie okresowo.
@@ -141,20 +141,20 @@ Cechy \texttt{mmp\_*} opisują maksymalną średnią moc utrzymywaną w oknach o
 
 \section{Warianty eksperymentalne}
 
-W celu oceny wpływu cech MMP oraz identyfikacji wycieku danych przygotowano trzy warianty:
+W celu oceny wpływu cech MMP oraz identyfikacji ryzyka data leakage przygotowano trzy warianty:
 \begin{enumerate}
-    \item \textbf{Wariant A (kontrolny z wyciekiem danych):} zawiera cechę \texttt{mmp\_20min}, z której bezpośrednio obliczana jest etykieta FTP. Wariant służy wyłącznie diagnozie skutków wycieku informacji.
+    \item \textbf{Wariant A (kontrolny z ryzykiem data leakage):} zawiera cechę \texttt{mmp\_20min}, z której bezpośrednio obliczana jest etykieta FTP. Wariant służy wyłącznie diagnozie skutków wycieku informacji.
     \item \textbf{Wariant B (główny wariant badawczy):} zawiera 46 cech po usunięciu \texttt{mmp\_20min}. Jest podstawą oceny jakości modeli.
     \item \textbf{Wariant C (konserwatywny):} zawiera 41 cech po usunięciu wszystkich predyktorów z prefiksem \texttt{mmp\_}. Pozwala ocenić przydatność pozostałych informacji telemetrycznych.
 \end{enumerate}
 
 Wariant B usuwa bezpośredni składnik wzoru etykietującego, czyli \texttt{mmp\_20min}, lecz nie eliminuje całej informacji wynikającej z krzywej mocy zawodnika. Inne cechy MMP, na przykład \texttt{mmp\_10min} lub \texttt{mmp\_30min}, mogą nadal pełnić funkcję silnych pośrednich proxy etykiety FTP. Z tego powodu wariant C potraktowano jako bardziej konserwatywną ocenę zdolności predykcyjnej cech pośrednich, niewykorzystujących bezpośrednio rodziny cech MMP.
 
-Porównanie wariantów nie służy wyborowi dowolnego zestawu dającego najniższy błąd. Każdy wariant odpowiada odrębnemu pytaniu metodologicznemu. Wariant A pokazuje, jak wygląda rezultat obciążony leakage. Wariant B sprawdza, czy po usunięciu bezpośredniej składowej etykiety zachowana zostaje wysoka jakość predykcji. Wariant C ocenia, ile informacji pozostaje w telemetrii po bardziej rygorystycznym usunięciu predyktorów związanych z krzywą MMP. Dopiero wspólna interpretacja trzech konfiguracji pozwala ocenić źródła jakości modelu.
+Porównanie wariantów nie służy wyborowi dowolnego zestawu dającego najniższy błąd. Każdy wariant odpowiada odrębnemu pytaniu metodologicznemu. Wariant A pokazuje, jak wygląda rezultat obciążony data leakage. Wariant B sprawdza, czy po usunięciu bezpośredniej składowej etykiety zachowana zostaje wysoka jakość predykcji. Wariant C ocenia, ile informacji pozostaje w telemetrii po bardziej rygorystycznym usunięciu predyktorów związanych z krzywą MMP. Dopiero wspólna interpretacja trzech konfiguracji pozwala ocenić źródła jakości modelu.
 
 \section{Strategia podziału danych}
 
-Losowy podział pojedynczych rekordów mógłby prowadzić do sytuacji, w której sesje tego samego zawodnika znalazłyby się jednocześnie w zbiorze treningowym i testowym, co grozi wyciekiem danych, konfundowaniem tożsamości i fałszywie optymistyczną oceną jakości na etapie walidacji \parencite{kohavi1995cv,saeb2017useCase,chaibubNeto2019identity,tougui2021crossValidation,rosenblatt2024leakage,richter2021sportsMl}. Ograniczono to ryzyko przez zastosowanie mechanizmu \texttt{GroupShuffleSplit} \parencite{sklearn_groupkfold} z grupowaniem po identyfikatorze \texttt{athlete\_id}. Każdy zawodnik został przypisany wyłącznie do jednego podzbioru. Finalny eksperyment wykorzystywał pojedynczy podział treningowy i testowy z parametrami \texttt{test\_size=0.2} oraz \texttt{random\_state=42}.
+Losowy podział pojedynczych rekordów mógłby prowadzić do sytuacji, w której sesje tego samego zawodnika znalazłyby się jednocześnie w zbiorze treningowym i testowym, co grozi wystąpieniem data leakage, konfundowaniem tożsamości i fałszywie optymistyczną oceną jakości na etapie walidacji \parencite{kohavi1995cv,saeb2017useCase,chaibubNeto2019identity,tougui2021crossValidation,rosenblatt2024leakage,richter2021sportsMl}. Ograniczono to ryzyko przez zastosowanie mechanizmu \texttt{GroupShuffleSplit} \parencite{sklearn_groupkfold} z grupowaniem po identyfikatorze \texttt{athlete\_id}. Każdy zawodnik został przypisany wyłącznie do jednego podzbioru. Finalny eksperyment wykorzystywał pojedynczy podział treningowy i testowy z parametrami \texttt{test\_size=0.2} oraz \texttt{random\_state=42}.
 
 Stabilność wyników dla różnych składów próby testowej mogłaby zostać w przyszłości oceniona przez powtarzany \texttt{GroupShuffleSplit} lub \texttt{GroupKFold}. Obecny pojedynczy podział nadal jest właściwszy niż losowe mieszanie sesji, ponieważ ogranicza wyciek informacji osobniczej.
 
@@ -184,11 +184,11 @@ W eksperymencie porównano trzy modele regresyjne:
     \item \textbf{XGBoost:} implementacja Gradient Boosting, w której kolejne drzewa korygują błędy wcześniejszych predykcji \parencite{chen2016xgboost}.
 \end{itemize}
 
-Jako miary jakości wykorzystano średni błąd bezwzględny (MAE), pierwiastek błędu średniokwadratowego (RMSE), medianowy błąd bezwzględny (MedAE) oraz współczynnik determinacji ($R^2$). Metryki obliczano na zbiorze testowym złożonym z sesji zawodników nieobecnych w zbiorze treningowym \parencite{chai2014rmseMae}.
+Jako miary jakości wykorzystano Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), medianowy błąd bezwzględny (MedAE) oraz coefficient of determination ($R^2$). Metryki obliczano na zbiorze testowym złożonym z sesji zawodników nieobecnych w zbiorze treningowym \parencite{chai2014rmseMae}.
 
 MAE jest podstawową miarą interpretowalną praktycznie, ponieważ opisuje przeciętną bezwzględną różnicę pomiędzy etykietą a predykcją w watach. RMSE również ma jednostkę watów, ale przez podnoszenie błędów do kwadratu silniej reaguje na większe pomyłki. Zestawienie obu miar pozwala zauważyć, czy poza typowymi błędami występują obserwacje wyraźnie trudniejsze dla modelu.
 
-MedAE jest medianą bezwzględnych różnic i w mniejszym stopniu podlega wpływowi obserwacji odstających. Uzupełnia MAE, pokazując błąd typowy dla środkowej części rozkładu. Współczynnik $R^2$ informuje natomiast, jaka część zmienności etykiety jest odtwarzana przez predykcję względem prostego punktu odniesienia opartego na średniej. Nie należy interpretować go samodzielnie: wysoka wartość $R^2$ może współwystępować z leakage, dlatego musi być analizowana łącznie z definicją cech, podziałem danych i błędem wyrażonym w watach.
+MedAE jest medianą bezwzględnych różnic i w mniejszym stopniu podlega wpływowi obserwacji odstających. Uzupełnia MAE, pokazując błąd typowy dla środkowej części rozkładu. Współczynnik $R^2$ informuje natomiast, jaka część zmienności etykiety jest odtwarzana przez predykcję względem prostego punktu odniesienia opartego na średniej. Nie należy interpretować go samodzielnie: wysoka wartość $R^2$ może współwystępować z data leakage, dlatego musi być analizowana łącznie z definicją cech, podziałem danych i błędem wyrażonym w watach.
 
 \section{Wykorzystane technologie i narzędzia}
 
@@ -198,6 +198,6 @@ Wykresy wykorzystywane podczas analizy wyników generowano programowo z użyciem
 
 \section{Podsumowanie}
 
-Przyjęta metodologia umożliwia odtworzenie eksperymentu na podstawie przygotowanych skryptów i plików wynikowych. Kluczowe znaczenie mają dwa zabezpieczenia: osobniczy podział danych z wykorzystaniem \texttt{GroupShuffleSplit} oraz rozdzielenie wariantów A, B i C, które pozwala odróżnić wynik obciążony wyciekiem danych od głównego wyniku badawczego.
+Przyjęta metodologia umożliwia odtworzenie eksperymentu na podstawie przygotowanych skryptów i plików wynikowych. Kluczowe znaczenie mają dwa zabezpieczenia: osobniczy podział danych z wykorzystaniem \texttt{GroupShuffleSplit} oraz rozdzielenie wariantów A, B i C, które pozwala odróżnić wynik obciążony data leakage od głównego wyniku badawczego.
 
 Należy podkreślić, że zmienna celu (\texttt{ftp\_label}) ma charakter operacyjny i heurystyczny. Została zdefiniowana jako $0{,}95$ maksymalnej średniej mocy 20-minutowej, a nie na podstawie kontrolowanego pomiaru laboratoryjnego. Model estymuje zatem przyjętą etykietę FTP, nie bezpośrednio mierzony próg fizjologiczny, taki jak moc krytyczna czy maksymalny stan równowagi mleczanowej. Interpretacja wyników musi uwzględniać to ograniczenie: wysoka jakość predykcji oznacza dobre przybliżenie heurystycznej wartości referencyjnej, a nie równoważność z diagnostyką laboratoryjną.
