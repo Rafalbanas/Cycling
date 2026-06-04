@@ -90,6 +90,8 @@ XGBoost & Brak dodatkowego przetwarzania & \texttt{n\_estimators=100}, \texttt{r
 \raggedright\footnotesize Źródło: Opracowanie własne na podstawie skryptów uczenia maszynowego.
 \end{table}
 
+Warto zauważyć, że model Ridge Regression wymagał uprzedniej standaryzacji cech przy użyciu klasy \texttt{StandardScaler}, podczas gdy modele oparte na drzewach decyzyjnych (Random Forest oraz XGBoost) nie wymagały tego typu skalowania predyktorów. Algorytm lasu losowego (Random Forest) uczył się z parametrami \texttt{n\_estimators=100}, \texttt{random\_state=42} i \texttt{n\_jobs=-1}. Model XGBoost skonfigurowano z parametrami \texttt{n\_estimators=100}, \texttt{objective='reg:squarederror'}, \texttt{random\_state=42} oraz \texttt{n\_jobs=-1}. Wszystkie pozostałe parametry modeli, które nie zostały wymienione jawnie w tabeli~\ref{tab:konfiguracja_modeli}, pozostawiono na poziomie domyślnym dla użytej wersji biblioteki (\texttt{scikit-learn} oraz \texttt{xgboost}). W badaniach nie prowadzono szerokiego strojenia hiperparametrów, ponieważ głównym celem było porównanie stabilnych konfiguracji bazowych modeli, a nie maksymalizacja metryk poprzez dedykowany tuning.
+
 \FloatBarrier
 \section{Wyniki predykcji dla wariantów A, B i C}
 
@@ -179,7 +181,7 @@ Histogram błędów uzupełnia wykres predykcji względem etykiety. Pozwala zoba
 
 \section{Znaczenie i ważność cech predykcyjnych}
 
-Modele drzewiaste umożliwiają analizę względnej ważności cech. Miara ta opisuje wkład predyktorów w decyzje modelu, ale nie pozwala wnioskować o związku przyczynowo-skutkowym. Bardziej szczegółową interpretację lokalnych predykcji można w przyszłości uzupełnić metodą SHAP \parencite{lundberg2017shap}. Rysunki~\ref{fig:waznosc_cech_B} i~\ref{fig:waznosc_cech_C} przedstawiają 20 najważniejszych predyktorów dla modeli XGBoost odpowiednio w wariancie B i C.
+Modele drzewiaste umożliwiają analizę względnej ważności cech. Miara ta opisuje wkład predyktorów w decyzje modelu, ale nie pozwala wnioskować o związku przyczynowo-skutkowym. Bardziej szczegółową interpretację predykcji uzupełniono pomocniczą analizą metodą SHAP \parencite{lundberg2017shap}, której wyniki dla wariantu C omówiono w dalszej części rozdziału. Rysunki~\ref{fig:waznosc_cech_B} i~\ref{fig:waznosc_cech_C} przedstawiają 20 najważniejszych predyktorów dla modeli XGBoost odpowiednio w wariancie B i C.
 
 Ważność cech należy traktować jako narzędzie diagnostyczne modelu, a nie ranking mechanizmów fizjologicznych. Predyktory mogą być ze sobą skorelowane, przez co informacja przypisana jednej zmiennej mogłaby zostać częściowo przejęta przez inną po zmianie zestawu wejściowego. Wysoka pozycja cechy nie dowodzi również, że jej zmiana wywoła zmianę FTP. Pokazuje jedynie, że algorytm korzystał z niej podczas budowania predykcji w analizowanym zbiorze.
 
@@ -201,6 +203,28 @@ Ważność cech należy traktować jako narzędzie diagnostyczne modelu, a nie r
 W wariancie B dominowała cecha \texttt{mmp\_10min}; znaczenie miały również statystyki mocy oraz cechy opisujące rozkład intensywności. Po usunięciu całej grupy \texttt{mmp\_*} wariant C opierał się w większym stopniu na kwantylach mocy, udziale czasu w strefach intensywności oraz relacji mocy do tętna. Zestawienie wskazuje, że model wykorzystuje kilka grup cech, a nie pojedynczy predyktor.
 
 Zmiana rankingu pomiędzy wariantami B i C jest informacyjna sama w sobie. Po usunięciu cech MMP algorytm nie traci całkowicie zdolności predykcyjnej, lecz przenosi ciężar decyzji na pozostałe podsumowania sesji. Potwierdza to, że dataset zawiera sygnał rozproszony w kilku grupach predyktorów. Jednocześnie nie pozwala rozstrzygnąć, które cechy byłyby najbardziej stabilne w innym zbiorze danych lub w walidacji prospektywnej.
+
+\subsection{Pomocnicza analiza interpretowalności SHAP dla wariantu C}
+
+W celu głębszego zbadania zachowania modeli i potwierdzenia kierunku wpływu poszczególnych zmiennych na predykcje, przeprowadzono pomocniczą analizę interpretowalności przy użyciu metody SHAP (ang.\ \textit{SHapley Additive exPlanations}) \parencite{lundberg2017shap}. Analizę tę zrealizowano jako uzupełnienie eksploracyjne dla modeli XGBoost trenowanych w ramach najbardziej konserwatywnego wariantu C (w którym całkowicie wykluczono rodzinę cech \texttt{mmp\_*}). Ze względów wydajnościowych obliczenia wartości SHAP wykonano na losowej próbie $1500$ obserwacji pobranych ze zbioru testowego, zachowując ten sam osobniczy podział danych po identyfikatorze \texttt{athlete\_id}.
+
+Wykres typu \textit{beeswarm} (podsumowanie wartości SHAP) przedstawiono na rysunku~\ref{fig:shap_summary_variant_c}. Każdy punkt na wykresie odpowiada pojedynczej sesji treningowej ze zbioru testowego. Pozycja punktu na osi poziomej wskazuje, czy dana cecha podwyższała (wartości dodatnie), czy obniżała (wartości ujemne) predykcję progu FTP w watach. Kolor punktu (od niebieskiego do czerwonego) reprezentuje względną wartość danej cechy (od niskiej do wysokiej).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/experiments_partial/shap_summary_variant_c.png}
+\caption[Wykres beeswarm SHAP dla modelu XGBoost w wariancie C]{Wykres beeswarm SHAP dla modelu XGBoost w wariancie C. Wartości SHAP wskazują wpływ poszczególnych cech na predykcję FTP, a kolor punktów odpowiada względnej wartości danej cechy. Analizę wykonano na losowej próbie 1500 obserwacji ze zbioru testowego. \par Źródło: Opracowanie własne na podstawie przeprowadzonej analizy interpretowalności modelu.}
+\label{fig:shap_summary_variant_c}
+\end{figure}
+
+Wizualizacja SHAP pozwala zaobserwować, w jaki sposób model decyduje o wartości FTP na poziomie pojedynczych treningów. Wyniki te sugerują następujące zależności:
+\begin{itemize}
+  \item Cechy opisujące typowy i wyższy poziom generowanej mocy, czyli \texttt{power\_p75} (75.\ percentyl mocy) oraz \texttt{mean\_power} (średnia moc), posiadają dominujący, dodatni wpływ na predykcję. Wysokie wartości tych cech (punkty czerwone) wyraźnie przesuwają predykcję w kierunku wyższych watów, co jest zgodne z fizjologicznymi założeniami progu FTP.
+  \item Cecha opisująca odsprzężenie tętna i mocy (\texttt{power\_hr\_decoupling\_pct}) wykazuje również zauważalny wpływ. Model przypisuje wyższy wpływ (punkty czerwone) sesjom o wyższym odsprzężeniu, co w zebranym materiale empirycznym charakteryzuje długie, tlenowe jednostki treningowe realizowane przez lepiej wytrenowanych zawodników.
+  \item Bardzo wyraźną ujemną zależność można zaobserwować dla cechy \texttt{median\_hr} (mediana tętna). Przy tych samych poziomach wygenerowanej mocy, wysokie tętno medianowe (punkty czerwone) obniża predykcję FTP, natomiast niskie tętno medianowe (punkty niebieskie) ją podwyższa. Zależność ta może pośrednio odzwierciedlać odpowiedź krążeniową organizmu: lepiej zaadaptowany aerobowo kolarz generuje daną moc przy niższej częstości skurczów serca.
+\end{itemize}
+
+Przedstawiona interpretacja ma charakter wyłącznie pomocniczy i opisuje zachowanie wytrenowanego algorytmu XGBoost w określonych warunkach wariantu C. Wyniki te objaśniają strukturę decyzji modelu, lecz nie mogą być traktowane jako niezależny dowód fizjologiczny. Analiza SHAP nie usuwa również ograniczeń wynikających z zastosowania heurystycznej etykiety FTP ani nie zastępuje tradycyjnej walidacji prospektywnej.
 
 \FloatBarrier
 \section{Dodatkowa próba kontrolna skalowalności}
