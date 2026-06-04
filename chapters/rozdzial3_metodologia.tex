@@ -55,9 +55,15 @@ Podstawę materiałową badań stanowiły zanonimizowane dane treningowe ze zbio
 
 Użytkownicy GoldenCheetah OpenData nie muszą być reprezentatywni dla całej populacji kolarzy: korzystają z określonego oprogramowania, rejestrują aktywności w określony sposób i zdecydowali się udostępnić dane w otwartym repozytorium. Ograniczenie to dotyczy możliwości uogólniania wyników na inne populacje, a nie użyteczności zbioru w ramach przeprowadzonego badania.
 
-Po kontrolowanym przetwarzaniu wykorzystano 781 archiwów ZIP zawierających dane użytkowników oprogramowania GoldenCheetah. Finalny zbiór eksperymentalny po zastosowaniu filtra FTP obejmował 151\,399 rekordów sesji treningowych wygenerowanych przez 726 zawodników.
+Po kontrolowanym przetwarzaniu wykorzystano 781 archiwów ZIP zawierających dane użytkowników oprogramowania GoldenCheetah. Surowe dane wejściowe miały postać szeregów czasowych opisujących między innymi moc, tętno oraz kadencję. Skrypt ekstrakcji przekształcał pliki \texttt{.csv} zagnieżdżone w archiwach ZIP w tabelę, w której pojedynczy rekord odpowiada jednej sesji treningowej.
 
-Surowe dane wejściowe miały postać szeregów czasowych opisujących między innymi moc, tętno oraz kadencję. Skrypt ekstrakcji przekształcał pliki \texttt{.csv} zagnieżdżone w archiwach ZIP w tabelę, w której pojedynczy rekord odpowiada jednej sesji treningowej.
+Pojedyncza aktywność sportowa nie jest reprezentowana przez jedną wartość, lecz przez sekwencję rekordów telemetrycznych rejestrowanych w czasie (np. co sekundę). Każdy rekord może zawierać pomiary takie jak moc, tętno, kadencja, prędkość, wysokość czy dystans. W plikach aktywności mogą występować również informacje lokalizacyjne, jednak w niniejszej pracy nie były one wykorzystywane ze względu na anonimizację. Przykładowy zanonimizowany fragment zapisu telemetrycznego przedstawiono w tabeli~\ref{tab:fit_record_example}.
+
+\input{tables/fit_record_example.tex}
+
+Tabela~\ref{tab:fit_record_example} prezentuje jedynie 10 początkowych rekordów jednej aktywności, która w całości może obejmować od kilku do kilkunastu tysięcy pomiarów. Z takich sekwencji obliczane są następnie cechy zagregowane (m.in. średnie, percentyle, histogramy intensywności, parametry tętna oraz wartości MMP) stanowiące bezpośrednie wejście dla modeli regresyjnych. O skali przetwarzania danych świadczy fakt, że w eksperymencie bazowym wykorzystano 151\,399 sesji treningowych, a w dodatkowej próbie kontrolnej 979\,672 sesje.
+
+\FloatBarrier
 
 \subsection{Uzasadnienie przetwarzania batchowego}
 
@@ -101,6 +107,15 @@ Maksymalna średnia krocząca mocy z okna 20-minutowego nie musi pochodzić z fo
 Ryzyko etykietowania ma dwa wymiary. Pierwszy dotyczy trafności samego przelicznika $0{,}95$, który nie musi jednakowo dobrze opisywać każdego zawodnika. Drugi wynika z jakości pomiaru mocy i przebiegu konkretnej sesji. Wartość \texttt{ftp\_label} należy więc interpretować jako operacyjną etykietę historyczną wykorzystywaną do prototypowej oceny pipeline'u, a nie jako bezbłędny pomiar fizjologiczny.
 
 Ta definicja wyjaśnia rolę wariantu A. Jeżeli \texttt{mmp\_20min} pozostaje w zbiorze predyktorów, zadanie regresyjne staje się w znacznej części odtworzeniem wzoru etykietującego. Taki wariant jest potrzebny jako kontrola ujawniająca skalę wycieku, ale nie odpowiada celowi pasywnej estymacji na podstawie szerszego zestawu cech telemetrycznych.
+
+Przykładowe profile najlepszej mocy średniej (MMP) dla wybranych anonimowych kolarzy, ilustrujące różnice w przebiegu profilu mocy oraz różnice poziomu mocy w krótkich i dłuższych przedziałach czasu, przedstawiono na rysunku~\ref{fig:power_duration_profiles_examples}. Wykres ten obrazuje przykładowy charakter krzywych MMP (zależność średniej mocy maksymalnej od czasu trwania wysiłku) oraz to, w jaki sposób cecha \texttt{mmp\_20min} wyznacza wartość FTP operacyjnego.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/theory/power_duration_profiles_examples.png}
+    \caption[Przykładowe profile mocy względem czasu trwania wysiłku]{Przykładowe profile mocy względem czasu trwania wysiłku dla wybranych anonimowych zawodników. Wykres ilustruje różnice w kształcie krzywych MMP oraz ich związek z wartością FTP operacyjnego.\par Źródło: Opracowanie własne na podstawie danych GoldenCheetah OpenData \parencite{osf_goldencheetah_opendata}.}
+    \label{fig:power_duration_profiles_examples}
+\end{figure}
 
 \section{Inżynieria cech}
 

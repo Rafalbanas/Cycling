@@ -53,11 +53,11 @@ Heurystyczny charakter przelicznika jest istotny również dla dalszej części 
 
 Upowszechnienie mierników mocy stanowi jeden z kluczowych czynników umożliwiających rozwój ilościowej analizy treningu kolarskiego. W przeciwieństwie do prędkości, która jest silnie zależna od warunków zewnętrznych (takich jak siła i kierunek wiatru, nachylenie terenu czy opory toczenia), moc stanowi bezpośrednią i obiektywną miarę pracy mechanicznej wykonywanej przez zawodnika.
 
-Pomiar mocy w kolarstwie opiera się zazwyczaj na rejestracji siły lub momentu obrotowego w wybranym elemencie układu napędowego roweru. Najpopularniejsze rozwiązania techniczne umiejscawiają czujniki w pedałach, ramionach korby, pająku korby, osi suportu lub w piaście tylnego koła \parencite{luder2024cyclowatt}. Zasadniczym elementem pomiarowym są tensometry, czyli czujniki rezystancyjne, które wykrywają mikroskopijne odkształcenia materiału pod wpływem nacisku wywieranego przez kolarza. Zmiana rezystancji tensometru jest proporcjonalna do przyłożonej siły, co po wzmocnieniu sygnału pozwala na obliczenie momentu obrotowego. Następnie, poprzez integrację tej wartości z aktualną kadencją (prędkością obrotową korby) lub prędkością kątową piasty, układ elektroniczny wyznacza chwilową moc mechaniczną, najczęściej wyrażaną w watach.
+Pomiar mocy w kolarstwie opiera się zazwyczaj na rejestracji siły lub momentu obrotowego w wybranym elemencie układu napędowego roweru. Najpopularniejsze rozwiązania techniczne umiejscawiają czujniki w pedałach, ramionach korby, pająku korby, osi suportu lub w piaście tylnego koła \parencite{luder2024cyclowatt}. Zasadniczym elementem pomiarowym w tego typu urządzeniach są tensometry. Te rezystancyjne czujniki rejestrują mikroskopijne odkształcenia elementów konstrukcyjnych pod wpływem nacisku stóp kolarza, co pozwala wyznaczyć siłę reakcji i moment obrotowy \parencite{bouillod2022powerMeters}. Poprzez połączenie tych wartości z kadencją (częstością obrotów korby) wyznacza się chwilową moc mechaniczną wyrażoną w watach.
 
 Warto podkreślić, że miejsce instalacji czujnika wpływa na charakterystykę uzyskiwanych pomiarów. Mierniki zlokalizowane w pedałach lub ramionach korby mierzą moc bardzo blisko punktu przyłożenia siły, co minimalizuje wpływ strat mechanicznych w układzie napędowym (np.\ strat na łańcuchu czy łożyskach). Pozwala to również na niezależny pomiar mocy dla lewej i prawej nogi (tzw.\ pomiar obustronny), co umożliwia analizę asymetrii i techniki pedałowania. Z kolei mierniki umieszczone w piaście rejestrują użyteczną moc napędową przekazywaną bezpośrednio na koło, jednak ich wskazania są z natury pomniejszone o straty napędu.
 
-Rozwój technologii produkcji, miniaturyzacja układów scalonych oraz popularyzacja energooszczędnych protokołów transmisji bezprzewodowej (takich jak ANT+ czy Bluetooth Low Energy) spowodowały, że urządzenia te stały się znacznie tańsze, bardziej niezawodne i szerzej dostępne dla amatorów. Wczesne systemy pomiarowe były zarezerwowane głównie dla profesjonalistów i laboratoriów badawczych z uwagi na zaporowe ceny i skomplikowaną obsługę. Współczesne mierniki cechują się dokładnością rzędu $1-2\%$ oraz posiadają wbudowane algorytmy aktywnej kompensacji wpływu temperatury, co pozwala uniknąć tzw.\ dryfu zera.
+Rozwój technologii produkcji, miniaturyzacja układów scalonych oraz popularyzacja energooszczędnych protokołów transmisji bezprzewodowej (takich jak ANT+ czy Bluetooth Low Energy) spowodowały, że urządzenia te stały się znacznie tańsze, bardziej niezawodne i szerzej dostępne dla amatorów. Wczesne systemy pomiarowe były zarezerwowane głównie dla profesjonalistów i laboratóriów badawczych z uwagi na zaporowe ceny i skomplikowaną obsługę. Współczesne mierniki cechują się dokładnością deklarowaną przez producentów w granicach $1-2\%$ oraz posiadają wbudowane algorytmy aktywnej kompensacji wpływu temperatury w celu zapobiegania tzw.\ dryfowi zera \parencite{bouillod2022powerMeters}.
 
 Z punktu widzenia analizy danych i uczenia maszynowego kluczowy jest fakt, że mierniki mocy standardowo próbkują i przesyłają dane z częstotliwością $1\ \mathrm{Hz}$. Rejestrowany ciąg wartości tworzy gęsty szereg czasowy, który szczegółowo odwzorowuje strukturę wysiłku kolarza. Sygnał mocy charakteryzuje się jednak dużą zmiennością, występowaniem tzw.\ szumu, krótkotrwałymi pikami mocy oraz licznymi wartościami zerowymi wynikającymi z jazdy bez pedałowania (np.\ na zjazdach lub przed zakrętami). Ocena wiarygodności urządzenia powinna uwzględniać dokładność, czułość, powtarzalność, odtwarzalność i odporność na warunki pomiaru \parencite{bouillod2022powerMeters}. Dodatkowym źródłem błędu systematycznego mogą być mierniki jednostronne, które estymują moc całkowitą na podstawie pomiaru jednej kończyny i założenia symetrii pedałowania \parencite{valenzuela2022unilateral}. Popularyzacja mierników wygenerowała ogromną ilość rzeczywistych danych treningowych, które mogą być gromadzone w platformach sportowych i wykorzystywane w badaniach przekrojowych. Dostępność tych bogatych zbiorów ma bezpośrednie znaczenie dla badań wykorzystujących metody uczenia maszynowego do estymacji parametrów wydolnościowych, zapewniając odpowiednią wielkość próby do trenowania złożonych modeli predykcyjnych.
 
@@ -127,12 +127,12 @@ Interpretacja wskaźników fizjologicznych wymaga także rozróżnienia ich funk
 \subsection{Test 20-minutowy -- przebieg i ilustracja}
 
 Najpopularniejszy protokół używany w praktyce do wyznaczania $\mathrm{FTP}$ to test $20$-minutowy \parencite{allen2019power,sitko2023_ac20to60_update,phasescycling2023_ftp_variability}.
-W literaturze i poradnikach trenerskich spotyka się różne wersje, ale typowy schemat wygląda następująco:
+W praktyce treningowej standardowy protokół testowy, zaproponowany m.in. przez Allena i Coggana \parencite{allen2019power}, składa się z kilku następujących po sobie faz o ściśle określonym celu fizjologicznym:
 \begin{itemize}
-  \item \textbf{Rozgrzewka} (ok.\ $10$--$20$ minut): jazda o niskiej i umiarkowanej intensywności, często z krótkimi przyspieszeniami.
-  \item \textbf{Wysiłki przygotowujące}: krótki, kilku-minutowy wysiłek na wysokiej intensywności (np.\ $3$--$5$ minut powyżej $\mathrm{FTP}$), a następnie etap spokojnej jazdy.
-  \item \textbf{Odpoczynek / spokojna jazda} (kilka--kilkanaście minut): częściowa regeneracja przy utrzymaniu „rozgrzania”.
-  \item \textbf{Część główna}: $20$-minutowy wysiłek maksymalny; zawodnik stara się utrzymać możliwie najwyższą średnią moc przez pełne $20$ minut.
+  \item \textbf{Faza wprowadzenia (rozgrzewka)} -- obejmuje 10--20 minut jazdy o niskiej i umiarkowanej intensywności w celu pobudzenia układu krążeniowo-oddechowego.
+  \item \textbf{Faza adaptacji (wysiłek przygotowawczy)} -- polega na wykonaniu krótkiego (zwykle 3--5 minut) wysiłku o intensywności przewyższającej próg w celu wyczerpania komponentu beztlenowego przed próbą główną.
+  \item \textbf{Faza regeneracji bezpośredniej} -- kilkunastominutowy etap spokojnej jazdy ułatwiający utylizację mleczanu przed rozpoczęciem testu.
+  \item \textbf{Próba zasadnicza} -- 20-minutowy wysiłek maksymalny o stałej intensywności, podczas którego rejestrowana jest średnia moc stanowiąca bazę do wyznaczenia FTP.
 \end{itemize}
 
 Schemat przebiegu testu $20$-minutowego zaprezentowano na rysunku~\ref{fig:test_20min_schema}.
@@ -141,7 +141,7 @@ Schemat obejmuje rozgrzewkę, krótki wysiłek pobudzający, fragment spokojnej 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/theory/ftp_20min_protocol.png}
-  \caption[Schemat przebiegu testu 20-minutowego FTP]{Schemat przebiegu testu $20$-minutowego $\mathrm{FTP}$: rozgrzewka, wysiłek pobudzający, spokojna jazda, $20$-minutowy wysiłek testowy oraz rozjazd. Wynik z otrzymaną średnią należy przemnożyć przez $0{,}95$.\par Źródło: Opracowanie własne.}
+  \caption[Schemat przebiegu testu 20-minutowego FTP]{Schemat przebiegu testu $20$-minutowego $\mathrm{FTP}$: rozgrzewka, wysiłek pobudzający, spokojna jazda, $20$-minutowy wysiłek testowy oraz rozjazd. Wynik z otrzymaną średnią należy przemnożyć przez $0{,}95$.\par Źródło: Opracowanie własne na podstawie \parencite{allen2019power}.}
   \label{fig:test_20min_schema}
 \end{figure}
 
@@ -156,11 +156,11 @@ Choć w praktyce trenerskiej najczęściej stosuje się skrócone protokoły (np
 W ujęciu historycznym $\mathrm{FTP}$ definiowano jako moc, którą zawodnik jest w stanie utrzymać przez pełną godzinę jazdy ciągłej.
 Wymaga to jednak bardzo wysokiej dyspozycji, odpowiedniego przygotowania mentalnego oraz sprzyjających warunków, dlatego test stosuje się głównie w środowisku laboratoryjnym lub u doświadczonych kolarzy \parencite{allen2019power,sitko2023_ac20to60_update}.
 
-Typowy protokół $60$-minutowy można przedstawić następująco:
+Klasyczna procedura wyznaczania FTP, oparta na pełnym wysiłku godzinnym, jest metodologicznie zbliżona do prób czasowych na dystansie godzinnym \parencite{allen2019power}. Strukturę tego testu można scharakteryzować następująco:
 \begin{itemize}
-  \item \textbf{Rozgrzewka} ($15$--$20$ minut): jazda o niższej i umiarkowanej intensywności z kilkoma krótkimi przyspieszeniami.
-  \item \textbf{Przygotowanie / spokojna jazda} ($5$--$10$ minut): tętno nieco opada, zawodnik pozostaje przygotowany do części głównej.
-  \item \textbf{Część główna}: $60$-minutowy wysiłek submaksymalny o możliwie stałej mocy; średnia moc z tego odcinka jest bezpośrednio interpretowana jako $\mathrm{FTP}$ (bez przelicznika).
+  \item \textbf{Rozgrzewka i aktywacja} -- trwająca 15--20 minut jazda przygotowawcza o niskiej i średniej intensywności.
+  \item \textbf{Etap przejściowy} -- 5--10 minut jazdy o minimalnej intensywności, służącej stabilizacji tętna przed główną próbą.
+  \item \textbf{Próba zasadnicza} -- 60-minutowa ciągła jazda o maksymalnej możliwej do utrzymania mocy, gdzie średnia wartość mocy jest bezpośrednio przyjmowana jako FTP.
 \end{itemize}
 
 Przebieg pełnego testu $60$-minutowego przedstawiono na rysunku~\ref{fig:test_60min_schema}.
@@ -169,7 +169,7 @@ W przypadku pełnego testu 60-minutowego najważniejszym elementem jest godzinna
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/theory/ftp_60min_protocol.png}
-  \caption[Schemat przebiegu pełnego testu 60-minutowego FTP]{Schemat przebiegu pełnego testu $60$-minutowego $\mathrm{FTP}$: rozgrzewka, przygotowanie połączone ze spokojną jazdą, główny godzinny odcinek o możliwie stałej mocy oraz rozjazd. Średnia moc z $60$-minutowego segmentu stanowi bezpośredni wyznacznik $\mathrm{FTP}$.\par Źródło: Opracowanie własne.}
+  \caption[Schemat przebiegu pełnego testu 60-minutowego FTP]{Schemat przebiegu pełnego testu $60$-minutowego $\mathrm{FTP}$: rozgrzewka, przygotowanie połączone ze spokojną jazdą, główny godzinny odcinek o możliwie stałej mocy oraz rozjazd. Średnia moc z $60$-minutowego segmentu stanowi bezpośredni wyznacznik $\mathrm{FTP}$.\par Źródło: Opracowanie własne na podstawie \parencite{allen2019power}.}
   \label{fig:test_60min_schema}
 \end{figure}
 
