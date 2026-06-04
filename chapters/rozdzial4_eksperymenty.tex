@@ -1,4 +1,4 @@
-\chapter{Eksperymenty i wyniki (część badawcza)}
+\chapter{Eksperymenty i wyniki}
 
 W niniejszym rozdziale przedstawiono przebieg oraz wyniki eksperymentów przeprowadzonych w celu oceny zdolności modeli uczenia maszynowego do pasywnej estymacji funkcjonalnego progu mocy (FTP). Szczególną uwagę poświęcono identyfikacji wycieku danych wynikającego z bezpośredniego powiązania części cech wejściowych ze zmienną celu.
 
@@ -152,6 +152,8 @@ Porównanie wartości MAE na rysunku~\ref{fig:mae_comparison} pokazuje różnic�
 \label{fig:r2_comparison}
 \end{figure}
 
+Zestawienie to wizualnie podsumowuje metryki z tabeli 3.4. Pozwala ono na szybką ocenę wzajemnych relacji pomiędzy wariantami i algorytmami, uwypuklając utratę dokładności po eliminacji wszystkich cech z rodziny MMP w wariancie C.
+
 \FloatBarrier
 \section{Analiza rozkładu błędów}
 
@@ -231,6 +233,26 @@ W celu weryfikacji stabilności zachowania modeli w zależności od przyjętego 
 Po pierwsze, obliczenia SHAP wykonane dla modelu wariantu B na zbiorze bazowym potwierdziły dominację cechy \texttt{mmp\_10min} ze średnim bezwzględnym wpływem na poziomie $32{,}74$~W. Druga najważniejsza cecha w tym rankingu (\texttt{mean\_power}) wykazała wpływ wynoszący jedynie $3{,}69$~W. Wynik ten dowodzi, że po wykluczeniu \texttt{mmp\_20min} model wariantu B wciąż w przeważającym stopniu opiera swoje predykcje na sąsiadujących interwałach krzywej mocy maksymalnej, co czyni go modelem silnie uzależnionym od testów maksymalnych. Potwierdza to metodologiczną przewagę wariantu C, który dzięki odrzuceniu całej rodziny cech \texttt{mmp\_*} zmusza model do zbalansowanego i bardziej zróżnicowanego uwzględniania szerokiej telemetrii treningowej (np. relacji mocy i tętna).
 
 Po drugie, analogiczna analiza SHAP przeprowadzona dla modelu wariantu C na rozszerzonej próbie kontrolnej 5000 zawodników pozwoliła ocenić stabilność rankingów cech przy znaczącej zmianie liczebności próby. Otrzymane wyniki wykazały bardzo wysoką stabilność modelu: najważniejszymi predyktorami pod kątem średniego bezwzględnego wpływu pozostały cechy \texttt{power\_p75} ($22{,}08$~W na próbie kontrolnej wobec $20{,}80$~W na zbiorze bazowym) oraz \texttt{mean\_power} ($9{,}91$~W wobec $9{,}45$~W). W czołówce predyktorów utrzymały się również zmienne opisujące udział wysokich intensywności (\texttt{high\_intensity\_fraction}), odsprzężenie tętna i mocy (\texttt{power\_hr\_decoupling\_pct}) oraz statystyki tętna (\texttt{hr\_std}, \texttt{hr\_p90}). Zbieżność ta potwierdza, że model wariantu C identyfikuje spójne i stabilne zależności telemetryczne, które nie są artefaktem doboru konkretnej próby treningowej.
+
+Zestawienie pięciu najważniejszych cech pod kątem wartości SHAP dla obu prób przedstawiono w tabeli~\ref{tab:shap_comparison}. Wyniki te potwierdzają stabilność modelu. W obu analizach dominujący wpływ na decyzje modelu miały cechy \texttt{power\_p75} oraz \texttt{mean\_power}. Na kolejnych pozycjach utrzymały się zmienne opisujące udział wysokich intensywności, odsprzężenie tętna i mocy oraz parametry czasowo-dystansowe sesji. Zbieżność ta wzmacnia metodologiczną wiarygodność wariantu C, sugerując, że model opiera się na stabilnych zależnościach telemetrycznych, które nie wynikają jedynie ze specyfiki wybranego podzbioru.
+
+\begin{table}[htbp]
+\centering
+\caption{Porównanie najważniejszych cech według średnich bezwzględnych wartości SHAP dla modelu XGBoost w wariancie C na zbiorze bazowym oraz próbie kontrolnej 5000 zawodników}
+\label{tab:shap_comparison}
+\footnotesize
+\begin{tabular}{|c|l|c|l|c|}
+\hline
+\textbf{Poz.} & \textbf{Cecha (zbiór bazowy)} & \textbf{Śr. |SHAP| [W]} & \textbf{Cecha (próba 5000)} & \textbf{Śr. |SHAP| [W]} \\ \hline
+1 & \texttt{power\_p75} & $20{,}80$ & \texttt{power\_p75} & $22{,}08$ \\ \hline
+2 & \texttt{mean\_power} & $9{,}45$ & \texttt{mean\_power} & $9{,}91$ \\ \hline
+3 & \texttt{power\_hr\_decoupling\_pct} & $3{,}56$ & \texttt{high\_intensity\_fraction} & $5{,}16$ \\ \hline
+4 & \texttt{high\_intensity\_fraction} & $3{,}52$ & \texttt{power\_hr\_decoupling\_pct} & $3{,}94$ \\ \hline
+5 & \texttt{distance\_km} & $3{,}31$ & \texttt{duration\_sec} & $3{,}65$ \\ \hline
+\end{tabular}
+\par\smallskip
+\raggedright\footnotesize Źródło: Opracowanie własne na podstawie pomocniczej analizy SHAP.
+\end{table}
 
 Przedstawione analizy interpretowalności mają charakter pomocniczy i opisują wyłącznie strukturę decyzji podjętych przez algorytm XGBoost w zdefiniowanych wariantach eksperymentalnych. Choć wyniki SHAP dostarczają cennych informacji o zachowaniu modelu i potwierdzają stabilność jego cech na próbie kontrolnej, nie mogą być traktowane jako niezależny dowód na występowanie określonych mechanizmów fizjologicznych u badanych kolarzy, ani nie eliminują ograniczeń wynikających z heurystycznego charakteru etykiety FTP.
 

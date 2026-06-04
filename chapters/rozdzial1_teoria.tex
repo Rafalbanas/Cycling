@@ -1,7 +1,7 @@
 
 
 
-\chapter{Teoretyczne podstawy estymacji FTP i przegląd literatury (rozdział teoretyczno-literaturowy)}
+\chapter{Teoretyczne podstawy estymacji FTP i przegląd literatury}
 
 Wydolność tlenowa w kolarstwie jest jednym z kluczowych czynników determinujących wynik sportowy \parencite{borszcz2018ftp}.
 Jej ilościowy opis od lat stanowi przedmiot badań fizjologów wysiłku i trenerów.
@@ -113,7 +113,7 @@ Zjawisko dryfu tętna przy stałej mocy oraz opóźnienie reakcji tętna po zmia
 \end{figure}
 \FloatBarrier
 
-Z perspektywy modelu uczenia maszynowego oznacza to, że:
+Wykres ten pełni funkcję poglądową: ilustruje fizjologiczne ograniczenia jednoczesnego stosowania tętna i mocy jako bezpośrednich wskaźników intensywności bez uwzględnienia czynnika czasu. Pokazuje, że relacja ta zmienia się dynamicznie w trakcie wysiłku, co wpływa na trudność modelowania tej zależności za pomocą prostych modeli regresyjnych. Z perspektywy modelu uczenia maszynowego oznacza to, że:
 \begin{itemize}
   \item sygnał tętna zawiera informację o reakcji organizmu na obciążenie (moc),
   \item relacja moc--tętno jest nieliniowa i zmienia się w czasie (dryf, narastające zmęczenie),
@@ -145,7 +145,7 @@ Schemat obejmuje rozgrzewkę, krótki wysiłek pobudzający, fragment spokojnej 
   \label{fig:test_20min_schema}
 \end{figure}
 
-Zjawisko dryfu tętna ma znaczenie również przy interpretacji testów $20$-minutowych. Nawet przy względnie stabilnej mocy w części zasadniczej testu tętno może stopniowo wzrastać, co oznacza, że odpowiedź fizjologiczna organizmu nie jest stała w czasie. Z tego powodu cechy opisujące relację mocy i tętna powinny uwzględniać nie tylko wartości średnie, lecz także zmiany tej relacji w trakcie wysiłku.
+Przedstawiony schemat graficznie porządkuje sekwencyjny i sformalizowany charakter testu terenowego. Pokazuje, dlaczego regularna realizacja tak złożonego protokołu bywa kłopotliwa dla kolarzy-amatorów, co uzasadnia poszukiwanie metod pasywnej estymacji. Zjawisko dryfu tętna ma znaczenie również przy interpretacji testów $20$-minutowych. Nawet przy względnie stabilnej mocy w części zasadniczej testu tętno może stopniowo wzrastać, co oznacza, że odpowiedź fizjologiczna organizmu nie jest stała w czasie. Z tego powodu cechy opisujące relację mocy i tętna powinny uwzględniać nie tylko wartości średnie, lecz także zmiany tej relacji w trakcie wysiłku.
 
 Wynik próby zależy również od strategii tempa. Zbyt intensywny początek może doprowadzić do spadku mocy w końcowej części testu, natomiast nadmiernie zachowawcza jazda utrudnia wykorzystanie pełnego potencjału zawodnika. Porównywalność kolejnych pomiarów wymaga zbliżonych warunków, podobnego poziomu zmęczenia i właściwego przygotowania. Dla osoby trenującej rekreacyjnie spełnienie tych warunków przy regularnym powtarzaniu próby bywa trudne. Jest to jedna z przyczyn, dla których pasywna estymacja oparta na historii aktywności może stanowić wartościowe uzupełnienie formalnych testów.
 
@@ -164,7 +164,6 @@ Klasyczna procedura wyznaczania FTP, oparta na pełnym wysiłku godzinnym, jest 
 \end{itemize}
 
 Przebieg pełnego testu $60$-minutowego przedstawiono na rysunku~\ref{fig:test_60min_schema}.
-W przypadku pełnego testu 60-minutowego najważniejszym elementem jest godzinna część zasadnicza, w której zawodnik próbuje utrzymać możliwie stałą moc. Ze względu na długość i obciążenie test ten jest trudniejszy do częstego wykonywania niż protokół 20-minutowy.
 
 \begin{figure}[htbp]
   \centering
@@ -172,6 +171,8 @@ W przypadku pełnego testu 60-minutowego najważniejszym elementem jest godzinna
   \caption[Schemat przebiegu pełnego testu 60-minutowego FTP]{Schemat przebiegu pełnego testu $60$-minutowego $\mathrm{FTP}$: rozgrzewka, przygotowanie połączone ze spokojną jazdą, główny godzinny odcinek o możliwie stałej mocy oraz rozjazd. Średnia moc z $60$-minutowego segmentu stanowi bezpośredni wyznacznik $\mathrm{FTP}$.\par Źródło: Opracowanie własne na podstawie \parencite{allen2019power}.}
   \label{fig:test_60min_schema}
 \end{figure}
+
+Schemat ten pełni funkcję porównawczą względem uproszczonej próby 20-minutowej. Obrazuje ekstremalne wymagania fizjologiczne i psychiczne związane z godzinną jazdą na czas, co tłumaczy rzadkie stosowanie tego protokołu w praktyce.
 
 \FloatBarrier
 \subsection{Krzywa mocy i zależność FTP od czasu trwania wysiłku}
@@ -186,6 +187,8 @@ Krzywa mocy pokazuje, że maksymalna możliwa do utrzymania moc maleje wraz z wy
   \caption[Przykładowa krzywa mocy na podstawie koncepcji mocy krytycznej]{Przykładowa krzywa mocy przedstawiająca spadek maksymalnej możliwej do utrzymania mocy wraz z wydłużaniem czasu wysiłku.\par Źródło: Opracowanie własne na podstawie koncepcji mocy krytycznej.}
   \label{fig:power_duration_curve}
 \end{figure}
+
+Wykres ten pełni funkcję teoretyczną: ilustruje nieliniową zależność pomiędzy czasem trwania wysiłku a możliwą do utrzymania mocą. Pokazuje, że wraz z wydłużaniem czasu wysiłku maksymalna średnia moc maleje, a wartości dla dłuższych interwałów są wykorzystywane do praktycznej oceny progu wysiłkowego oraz profilu wydolnościowego zawodnika.
 
 \FloatBarrier
 W praktyce platformy treningowe i oprogramowanie analityczne wykorzystują takie krzywe do estymacji parametrów wydolnościowych, w tym $\mathrm{FTP}$, na podstawie danych z wielu treningów bez konieczności wykonywania osobnego testu \parencite{borszcz2018ftp,allen2019power,karsten2021cpftp,denham2020predictftp}.

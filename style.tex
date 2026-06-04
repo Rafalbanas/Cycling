@@ -34,6 +34,7 @@
 \usepackage[style=authoryear,citestyle=authoryear,backend=biber,sorting=nyt,maxcitenames=2,maxbibnames=99,uniquelist=false,uniquename=false]{biblatex}
 \DefineBibliographyStrings{polish}{andothers={i\addabbrvspace in\adddot}}
 \DeclareDelimFormat{nameyeardelim}{\addcomma\space}
+\DeclareFieldFormat{urldate}{\mkbibbrackets{dostęp\addcolon\space#1}}
 \newcounter{bibliographyitem}
 \defbibenvironment{numberedbibliography}
   {\list{\arabic{bibliographyitem}.}
@@ -51,15 +52,15 @@
 \usepackage{placeins}
 \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
 
-\titleformat{\chapter}[display]
+\titleformat{\chapter}[hang]
   {\normalfont\bfseries\fontsize{16}{19}\selectfont}
-  {Rozdział \thechapter}
-  {0.4em}
+  {Rozdział \thechapter.}
+  {0.5em}
   {}
 
 \titlespacing*{\chapter}
   {0pt}
-  {18pt}
+  {-15pt}
   {18pt}
 
 \titleformat{\section}
@@ -83,6 +84,17 @@
   {0pt}
   {6pt}
   {6pt}
+
+\usepackage[titles]{tocloft}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{0.3em}
+\setlength{\cftbeforesecskip}{0.1em}
+\setlength{\cftbeforesubsecskip}{0.1em}
+\renewcommand{\cftchapfont}{\normalfont\bfseries}
+\renewcommand{\cftchappagefont}{\normalfont\bfseries}
+\renewcommand{\cftchappresnum}{Rozdział }
+\renewcommand{\cftchapaftersnum}{.}
+\setlength{\cftchapnumwidth}{6.2em}
 
 \setlist{topsep=0.3\baselineskip,itemsep=0.15\baselineskip,parsep=0pt,partopsep=0pt}
 \setlength{\parindent}{1cm}

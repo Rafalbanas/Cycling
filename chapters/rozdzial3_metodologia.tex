@@ -1,4 +1,4 @@
-\chapter{Metodologia badań i projekt rozwiązania (rozdział metodyczny)}
+\chapter{Metodologia badań i projekt rozwiązania}
 
 Opracowane rozwiązanie ma charakter prototypowego systemu analitycznego. Jego zadaniem jest przekształcenie surowych danych telemetrycznych z treningów kolarskich w tabelaryczny zestaw cech, przygotowanie etykiet FTP oraz ocena modeli regresyjnych. System realizuje potok ETL (ang.\ \textit{Extract--Transform--Load}), obejmujący pozyskanie danych, ich filtrację, ekstrakcję cech oraz przygotowanie zbioru do eksperymentów uczenia maszynowego.
 
@@ -48,6 +48,8 @@ Całościowy przepływ danych od repozytorium źródłowego do interpretacji wyn
 \caption[Schemat architektury potoku analitycznego]{Schemat architektury potoku analitycznego wykorzystanego do predykcji FTP na podstawie danych telemetrycznych.\par Źródło: Opracowanie własne.}
 \label{fig:pipeline_architecture}
 \end{figure}
+
+Diagram ten pełni funkcję przewodnika po metodologii pracy: porządkuje kolejne kroki od surowej telemetrii do ewaluacji modeli. Pokazuje, że przygotowanie danych i separacja zawodników stanowią kluczowe etapy przed samym modelowaniem regresyjnym.
 
 \section{Charakterystyka źródeł danych}
 
@@ -117,6 +119,8 @@ Przykładowe profile najlepszej mocy średniej (MMP) dla wybranych anonimowych k
     \label{fig:power_duration_profiles_examples}
 \end{figure}
 
+Wykres ten pełni rolę empirycznego tła metodologicznego: pokazuje różnorodność i indywidualną charakterystykę profili wydolnościowych u różnych kolarzy. Ilustruje to potrzebę uwzględnienia różnic w profilach podczas trenowania modeli regresyjnych.
+
 \section{Inżynieria cech}
 
 Z szeregów czasowych wyznaczono zagregowane predyktory opisujące charakter sesji:
@@ -166,6 +170,8 @@ Rysunek~\ref{fig:leakage_subject_split} syntetycznie pokazuje różnicę pomięd
 \caption[Porównanie losowego podziału sesji i podziału osobniczego]{Porównanie losowego podziału sesji i podziału po identyfikatorze zawodnika w kontekście ryzyka wycieku informacji osobniczej.\par Źródło: Opracowanie własne.}
 \label{fig:leakage_subject_split}
 \end{figure}
+
+Schemat ten graficznie porządkuje proces podziału danych, ułatwiając zrozumienie, dlaczego podział osobniczy chroni przed fałszywym zawyżeniem wyników walidacji.
 
 Podział po \texttt{athlete\_id} stawia przed modelem trudniejsze i bardziej użyteczne zadanie. Każda predykcja testowa dotyczy sesji zawodnika, którego dane nie były wykorzystywane podczas uczenia. Nie eliminuje to wszystkich źródeł błędu ani nie zastępuje walidacji na zbiorze zewnętrznym, ale ogranicza jeden z najważniejszych rodzajów wycieku w danych wielosesyjnych.
 
