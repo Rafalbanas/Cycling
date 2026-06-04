@@ -130,7 +130,7 @@ Różnice pomiędzy modelami w wariancie B są niewielkie, ale spójne. Ridge Re
 
 W wariancie A bardzo niski błąd nie jest cechą pożądaną w sensie badawczym. Wynika z konstrukcji datasetu: predyktor \texttt{mmp\_20min} niemal bezpośrednio koduje wartość \texttt{ftp\_label}. Szczególnie widoczny jest wynik Ridge Regression równy MAE = 0{,}00 W i $R^2 = 1{,}0000$. Model nie odkrywa w tym przypadku ogólnej relacji pomiędzy telemetrią a FTP, lecz odtwarza wzór użyty podczas etykietowania. Wariant A stanowi praktyczną demonstrację, dlaczego audyt cech jest konieczny nawet wtedy, gdy metryki wyglądają bardzo korzystnie.
 
-W wariancie C usunięcie wszystkich cech \texttt{mmp\_*} zwiększyło błąd najlepszego modelu do MAE = 10{,}29 W oraz RMSE = 14{,}49 W. Rezultaty sugerują, że cechy MMP inne niż \texttt{mmp\_20min} zawierają istotną informację predykcyjną, ale również bardziej konserwatywny wariant pozwala uzyskać użyteczne przybliżenie etykiety FTP.
+W wariancie C usunięcie wszystkich cech \texttt{mmp\_*} zwiększyło błąd najlepszego modelu do MAE = 10{,}29 W oraz RMSE = 14{,}49 W. Rezultaty sugerują, że cechy MMP inne niż \texttt{mmp\_20min} zawierają istotną informację predykcyjną, ale również bardziej konserwatywny wariant pozwala uzyskać orientacyjne przybliżenie etykiety FTP.
 
 Spadek jakości pomiędzy wariantami B i C jest oczekiwany, ponieważ cechy MMP opisują fragment krzywej mocy zawodnika. Po ich usunięciu model musi opierać się na informacjach bardziej pośrednich: kwantylach mocy, rozkładzie intensywności, czasie trwania wysiłku oraz relacji mocy do tętna. Wzrost MAE z 6{,}55 W do 10{,}29 W nie oznacza, że wariant C jest nieudany. Pokazuje koszt przyjęcia bardziej rygorystycznej definicji pasywnej estymacji oraz skalę informacji zawartej w cechach \texttt{mmp\_*}.
 
@@ -177,7 +177,7 @@ Punkty na rysunku~\ref{fig:rzeczywiste_vs_przewidywane} skupiają się wokół l
 \end{figure}
 \FloatBarrier
 
-Rozkład błędów na rysunku~\ref{fig:rozklad_bledow} jest skupiony w pobliżu zera. Wartość MAE równa 6{,}55 W oznacza, że w historycznym zbiorze testowym typowa różnica pomiędzy etykietą i predykcją była niewielka z perspektywy planowania treningu. Nie oznacza to jednak, że każda pojedyncza prognoza jest obarczona błędem tej samej wielkości.
+Rozkład błędów na rysunku~\ref{fig:rozklad_bledow} jest skupiony w pobliżu zera. Wartość MAE równa 6{,}55 W oznacza, że w historycznym zbiorze testowym przeciętna różnica pomiędzy etykietą i predykcją była relatywnie mała, choć jej znaczenie praktyczne zależy od poziomu sportowego zawodnika. Nie oznacza to jednak, że każda pojedyncza prognoza jest obarczona błędem tej samej wielkości.
 
 Histogram błędów uzupełnia wykres predykcji względem etykiety. Pozwala zobaczyć, czy większość różnic koncentruje się blisko zera i czy występują ogony rozkładu związane z trudniejszymi przypadkami. Ponieważ przedstawiona analiza dotyczy wszystkich sesji testowych łącznie, nie wskazuje bezpośrednio, czy większe pomyłki są związane z konkretnym typem treningu, jakością sensora, zakresem FTP albo profilem zawodnika. Takie rozwarstwienie stanowi uzasadniony kierunek dalszej oceny.
 
