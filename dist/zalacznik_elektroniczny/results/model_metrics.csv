@@ -1,0 +1,7 @@
+Wariant,Model,MAE [W],RMSE [W],R2
+A (z mmp_20min – data leakage),Ridge Regression,0.005,0.0071,1.0
+A (z mmp_20min – data leakage),Random Forest,0.0223,0.1078,0.999997
+A (z mmp_20min – data leakage),XGBoost,0.6723,3.321,0.996822
+B (bez mmp_20min – rzetelny),Ridge Regression,17.7609,25.2998,0.815563
+B (bez mmp_20min – rzetelny),Random Forest,19.1141,26.6474,0.79539
+B (bez mmp_20min – rzetelny),XGBoost,18.9131,26.8832,0.791753

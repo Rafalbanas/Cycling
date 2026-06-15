@@ -1,5 +1,7 @@
 \chapter{Metodologia badań i projekt rozwiązania}
 
+Rozdział opisuje sposób przejścia od problemu sformułowanego we wstępie do powtarzalnego eksperymentu. Przedstawiono w nim źródło danych, kolejne etapy ich przygotowania, definicję operacyjnej etykiety FTP, warianty cech oraz zasady podziału i oceny modeli.
+
 Opracowane rozwiązanie ma charakter prototypowego systemu analitycznego. Jego zadaniem jest przekształcenie surowych danych telemetrycznych z treningów kolarskich w tabelaryczny zestaw cech, przygotowanie etykiet FTP oraz ocena modeli regresyjnych. System realizuje potok Extract--Transform--Load (ETL), obejmujący pozyskanie danych, ich filtrację, ekstrakcję cech oraz przygotowanie zbioru do eksperymentów uczenia maszynowego.
 
 \section{Architektura potoku przetwarzania}
@@ -45,8 +47,9 @@ Całościowy przepływ danych od repozytorium źródłowego do interpretacji wyn
 \draw[arrow] (split) -- (models);
 \draw[arrow] (models) -- (metrics);
 \end{tikzpicture}
-\caption[Schemat architektury potoku analitycznego]{Schemat architektury potoku analitycznego wykorzystanego do predykcji FTP na podstawie danych telemetrycznych.\par Źródło: Opracowanie własne.}
+\caption{Schemat architektury potoku analitycznego}
 \label{fig:pipeline_architecture}
+\figsource{Opracowanie własne.}
 \end{figure}
 
 Diagram ten pełni funkcję przewodnika po metodologii pracy: porządkuje kolejne kroki od surowej telemetrii do ewaluacji modeli. Pokazuje, że przygotowanie danych i separacja zawodników stanowią kluczowe etapy przed samym modelowaniem regresyjnym.
@@ -56,6 +59,8 @@ Diagram ten pełni funkcję przewodnika po metodologii pracy: porządkuje kolejn
 Podstawę materiałową badań stanowiły zanonimizowane dane treningowe ze zbioru GoldenCheetah OpenData udostępnionego w ramach projektu Open Science Framework (OSF) \parencite{osf_goldencheetah_opendata}. Zastosowanie otwartego repozytorium pozwoliło objąć analizą zawodników o zróżnicowanym poziomie wytrenowania oraz sesje rejestrowane w warunkach terenowych.
 
 Użytkownicy GoldenCheetah OpenData nie muszą być reprezentatywni dla całej populacji kolarzy: korzystają z określonego oprogramowania, rejestrują aktywności w określony sposób i zdecydowali się udostępnić dane w otwartym repozytorium. Ograniczenie to dotyczy możliwości uogólniania wyników na inne populacje, a nie użyteczności zbioru w ramach przeprowadzonego badania.
+
+Wykorzystany zbiór GoldenCheetah OpenData ma charakter wtórny i obejmuje dane treningowe udostępnione w postaci zanonimizowanych archiwów aktywności. Analiza nie obejmowała danych osobowych zawodników ani prób ich identyfikacji, a identyfikatory sportowców traktowano wyłącznie jako techniczne grupy potrzebne do kontroli podziału danych i ograniczenia ryzyka przecieku informacji osobniczej.
 
 Po kontrolowanym przetwarzaniu wykorzystano 781 archiwów ZIP zawierających dane użytkowników oprogramowania GoldenCheetah. Surowe dane wejściowe miały postać szeregów czasowych opisujących między innymi moc, tętno oraz kadencję. Skrypt ekstrakcji przekształcał pliki \texttt{.csv} zagnieżdżone w archiwach ZIP w tabelę, w której pojedynczy rekord odpowiada jednej sesji treningowej.
 
@@ -67,7 +72,8 @@ Tabela~\ref{tab:fit_record_example} prezentuje jedynie 10 początkowych rekordó
 
 \FloatBarrier
 
-\subsection{Uzasadnienie przetwarzania batchowego}
+\par\medskip
+\noindent\textit{Uzasadnienie przetwarzania batchowego.}
 
 Zastosowanie przetwarzania batchowego wynikało z rozmiaru i struktury materiału źródłowego. Archiwa obejmują wiele plików sesji, a ich jednoczesne rozpakowanie zwiększałoby zapotrzebowanie na wolne miejsce dyskowe i utrudniało kontrolę przebiegu procesu. Praca porcjami pozwala ograniczyć liczbę aktywnie przetwarzanych danych oraz zapisywać wyniki pośrednie po zakończeniu kolejnej partii.
 
@@ -83,7 +89,8 @@ Przetwarzanie sesji obejmuje rozpoznanie dostępności sygnałów, obliczenie cz
 
 Istotne jest także rozróżnienie zerowej mocy od brakującego pomiaru. Wartość równa zero może odpowiadać realnemu fragmentowi jazdy bez pedałowania, na przykład podczas zjazdu lub dojazdu do skrzyżowania. Brak odczytu oznacza natomiast, że informacja nie została zarejestrowana. Z perspektywy inżynierii cech sytuacje te mają odmienne znaczenie i nie powinny być automatycznie utożsamiane.
 
-\subsection{Filtracja wartości FTP}
+\par\medskip
+\noindent\textit{Filtracja wartości FTP.}
 
 Szczególną uwagę poświęcono wartości etykiety FTP. Zastosowano filtr jakościowy:
 \begin{equation}
@@ -102,21 +109,22 @@ W zadaniu uczenia nadzorowanego do każdej sesji przypisano referencyjną warto�
 \end{equation}
 gdzie $\mathrm{FTP}_{\mathrm{ref}}^{(i)}$ oznacza referencyjne FTP dla sesji $i$, a $\max(\overline{P}_{20\ \mathrm{min}}(t))$ jest najwyższą wartością 20-minutowej średniej kroczącej mocy zarejestrowaną w tej sesji. W zbiorze cecha ta występuje jako \texttt{mmp\_20min}.
 
-Tak zdefiniowana etykieta ma charakter heurystyczny. Jest przydatna w analizie dużego zbioru historycznego, lecz nie zastępuje wyniku kontrolowanego badania laboratoryjnego. Bezpośredni związek etykiety z cechą \texttt{mmp\_20min} wymaga również jawnej kontroli ryzyka data leakage \parencite{kaufman2012leakage,bernett2024leakage}.
+Tak zdefiniowana etykieta ma charakter heurystyczny i operacyjny: oznacza \texttt{FTP = 0{,}95 x MMP20} wyznaczone z profilu mocy w danych telemetrycznych, a nie laboratoryjnie zwalidowany próg fizjologiczny. Jest przydatna w analizie dużego zbioru historycznego, lecz nie zastępuje wyniku kontrolowanego badania laboratoryjnego. Bezpośredni związek etykiety z cechą \texttt{mmp\_20min} wymaga również jawnej kontroli ryzyka data leakage \parencite{kaufman2012leakage,bernett2024leakage}.
 
 Maksymalna średnia krocząca mocy z okna 20-minutowego nie musi pochodzić z formalnego testu FTP. Może zostać zarejestrowana podczas interwału, wyścigu, dłuższego podjazdu albo innego fragmentu treningu. Z jednej strony zwiększa to możliwość automatycznego etykietowania danych historycznych. Z drugiej strony oznacza, że warunki uzyskania etykiety nie są jednolite: różnią się przygotowaniem zawodnika, profilem trasy, strategią wysiłku i motywacją.
 
 Ryzyko etykietowania ma dwa wymiary. Pierwszy dotyczy trafności samego przelicznika $0{,}95$, który nie musi jednakowo dobrze opisywać każdego zawodnika. Drugi wynika z jakości pomiaru mocy i przebiegu konkretnej sesji. Wartość \texttt{ftp\_label} należy więc interpretować jako operacyjną etykietę historyczną wykorzystywaną do prototypowej oceny pipeline'u, a nie jako bezbłędny pomiar fizjologiczny.
 
-Ta definicja wyjaśnia rolę wariantu A. Jeżeli \texttt{mmp\_20min} pozostaje w zbiorze predyktorów, zadanie regresyjne staje się w znacznej części odtworzeniem wzoru etykietującego. Taki wariant jest potrzebny jako kontrola ujawniająca skalę wycieku, ale nie odpowiada celowi pasywnej estymacji na podstawie szerszego zestawu cech telemetrycznych.
+Ta definicja wyjaśnia rolę wariantu A. Jeżeli \texttt{mmp\_20min} pozostaje w zbiorze predyktorów, zadanie regresyjne staje się w znacznej części odtworzeniem wzoru etykietującego. Taki wariant jest potrzebny jako kontrola ujawniająca skalę wycieku, ale nie odpowiada celowi estymacji na podstawie szerszego zestawu cech telemetrycznych.
 
 Przykładowe profile najlepszej mocy średniej (MMP) dla wybranych anonimowych kolarzy, ilustrujące różnice w przebiegu profilu mocy oraz różnice poziomu mocy w krótkich i dłuższych przedziałach czasu, przedstawiono na rysunku~\ref{fig:power_duration_profiles_examples}. Wykres ten obrazuje przykładowy charakter krzywych MMP (zależność średniej mocy maksymalnej od czasu trwania wysiłku) oraz to, w jaki sposób cecha \texttt{mmp\_20min} wyznacza wartość FTP operacyjnego.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/theory/power_duration_profiles_examples.png}
-    \caption[Przykładowe profile mocy względem czasu trwania wysiłku]{Przykładowe profile mocy względem czasu trwania wysiłku dla wybranych anonimowych zawodników. Wykres ilustruje różnice w kształcie krzywych MMP oraz ich związek z wartością FTP operacyjnego.\par Źródło: Opracowanie własne na podstawie danych GoldenCheetah OpenData \parencite{osf_goldencheetah_opendata}.}
+    \caption{Przykładowe profile mocy względem czasu trwania wysiłku}
     \label{fig:power_duration_profiles_examples}
+    \figsource{Opracowanie własne na podstawie danych GoldenCheetah OpenData \parencite{osf_goldencheetah_opendata}.}
 \end{figure}
 
 Wykres ten pełni rolę empirycznego tła metodologicznego: pokazuje różnorodność i indywidualną charakterystykę profili wydolnościowych u różnych kolarzy. Ilustruje to potrzebę uwzględnienia różnic w profilach podczas trenowania modeli regresyjnych.
@@ -167,8 +175,9 @@ Rysunek~\ref{fig:leakage_subject_split} syntetycznie pokazuje różnicę pomięd
 \resizebox{\textwidth}{!}{%
 \input{figures/methodology/leakage_subject_split_diagram.tex}%
 }
-\caption[Porównanie losowego podziału sesji i podziału osobniczego]{Porównanie losowego podziału sesji i podziału po identyfikatorze zawodnika w kontekście ryzyka wycieku informacji osobniczej.\par Źródło: Opracowanie własne.}
+\caption{Porównanie losowego podziału sesji i podziału osobniczego}
 \label{fig:leakage_subject_split}
+\figsource{Opracowanie własne.}
 \end{figure}
 
 Schemat ten graficznie porządkuje proces podziału danych, ułatwiając zrozumienie, dlaczego podział osobniczy chroni przed fałszywym zawyżeniem wyników walidacji.

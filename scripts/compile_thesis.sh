@@ -1,2 +1,2 @@
 #!/bin/bash
-latexmk -pdf -interaction=nonstopmode main.tex
+latexmk -xelatex -interaction=nonstopmode main.tex

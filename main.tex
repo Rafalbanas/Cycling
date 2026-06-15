@@ -20,24 +20,6 @@
 
 \newpage
 \phantomsection
-\addcontentsline{toc}{chapter}{\listfigurename}
-\listoffigures
-
-\newpage
-\phantomsection
-\addcontentsline{toc}{chapter}{\listtablename}
-\listoftables
-
-\newpage
-\phantomsection
-\chapter*{Spis załączników}
-\addcontentsline{toc}{chapter}{Spis załączników}
-\begin{enumerate}
-  \item Załącznik A -- Załącznik elektroniczny (nośnik / archiwum ZIP)
-\end{enumerate}
-
-\newpage
-\phantomsection
 \chapter*{Bibliografia}
 \addcontentsline{toc}{chapter}{Bibliografia}
 \setcounter{bibliographyitem}{0}
@@ -59,20 +41,14 @@
 \printbibliography[type=online,heading=none,env=numberedbibliography]
 \printbibliography[type=dataset,heading=none,env=numberedbibliography]
 
-\appendix
 \newpage
 \phantomsection
-\chapter{Załącznik elektroniczny}
-\label{app:zalacznik_elektroniczny}
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
 
-\noindent Załącznik elektroniczny (dostarczany na nośniku lub jako archiwum ZIP) obejmuje kompletne materiały umożliwiające odtworzenie procesu badawczego opisanego w niniejszej pracy:
-\begin{enumerate}
-  \item \textbf{Struktura katalogów projektu} -- pełna hierarchia folderów (\texttt{scripts/}, \texttt{data/}, \texttt{results/}, \texttt{figures/}, \texttt{chapters/}, \texttt{config/}, \texttt{notebooks/}) wraz z opisem przeznaczenia poszczególnych katalogów.
-  \item \textbf{Skrypty źródłowe potoku ETL} (katalog \texttt{scripts/}) -- skrypty w języku Python realizujące kolejne etapy przetwarzania: pobieranie i rozpakowanie archiwów, parsowanie plików \texttt{.csv}, agregację cech na poziomie sesji, heurystyczne etykietowanie FTP, filtrację jakościową oraz przygotowanie wariantów eksperymentalnych A, B i C.
-  \item \textbf{Skrypt uruchamiający potok} (\texttt{run\_thesis\_pipeline.sh}) -- skrypt powłoki umożliwiający sekwencyjne wykonanie wszystkich etapów przetwarzania i modelowania.
-  \item \textbf{Konfiguracja eksperymentów} -- parametry podziału danych (\texttt{test\_size}, \texttt{random\_state}), hiperparametry modeli oraz definicje wariantów cech zapisane w plikach konfiguracyjnych lub bezpośrednio w skryptach treningowych.
-  \item \textbf{Pliki wynikowe} -- tabela metryk modeli (\texttt{results/model\_metrics.csv}), wykresy porównawcze (katalog \texttt{figures/}), raporty pośrednie oraz logi przebiegu eksperymentów.
-  \item \textbf{Dokumentacja odtworzenia procesu badawczego} -- raporty z katalogu \texttt{reports/}, przykładowa konfiguracja ścieżek \texttt{config/local\_paths.example.json} oraz opis kolejności uruchamiania skryptów umożliwiający ponowne wykonanie etapów przetwarzania i ewaluacji.
-\end{enumerate}
+\newpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
 
 \end{document}

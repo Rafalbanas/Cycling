@@ -1,6 +1,8 @@
 \chapter{Eksperymenty i wyniki}
 
-W niniejszym rozdziale przedstawiono przebieg oraz wyniki eksperymentów przeprowadzonych w celu oceny zdolności modeli uczenia maszynowego do pasywnej estymacji Functional Threshold Power (FTP). Szczególną uwagę poświęcono identyfikacji ryzyka data leakage wynikającego z bezpośredniego powiązania części cech wejściowych ze zmienną celu.
+Rozdział przedstawia przebieg i wyniki eksperymentów, które weryfikują hipotezę badawczą oraz odpowiadają na pytania sformułowane we wstępie. Najpierw scharakteryzowano zbiór i konfigurację badania, a następnie porównano modele, warianty cech, rozkład błędów i ważność predyktorów.
+
+Ocenie poddano zdolność modeli uczenia maszynowego do estymacji operacyjnej etykiety Functional Threshold Power (FTP) na podstawie danych telemetrycznych. Szczególną uwagę poświęcono ryzyku data leakage wynikającemu z bezpośredniego powiązania części cech wejściowych ze zmienną celu.
 
 \section{Charakterystyka przygotowanego zbioru danych}
 
@@ -41,7 +43,7 @@ Podział wykonano z parametrami \texttt{test\_size=0.2} oraz \texttt{random\_sta
 
 Stała wartość \texttt{random\_state} umożliwia odtworzenie przyjętego podziału. Finalna ocena dotyczy pojedynczego zbioru treningowego i testowego, a nie walidacji krzyżowej. Wyniki należy zatem interpretować jako rezultat konkretnej, jawnie zdefiniowanej ewaluacji historycznej. Podział po zawodniku ogranicza ryzyko zawyżenia metryk przez obecność sesji tej samej osoby po obu stronach eksperymentu.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Podział danych na zbiór treningowy i testowy}
 \label{tab:podzial_danych}
@@ -52,6 +54,8 @@ Stała wartość \texttt{random\_state} umożliwia odtworzenie przyjętego podzi
 Metoda podziału & \texttt{GroupShuffleSplit} (grupowanie po \texttt{athlete\_id}) \\ \hline
 Liczba rekordów (Train) & 117\,903 \\ \hline
 Liczba rekordów (Test) & 33\,496 \\ \hline
+Liczba zawodników (Train) & 580 \\ \hline
+Liczba zawodników (Test) & 146 \\ \hline
 Proporcja (Test Size) & 0,2 (20\%) \\ \hline
 \end{tabular}
 \par\smallskip
@@ -132,7 +136,7 @@ W wariancie A bardzo niski błąd nie jest cechą pożądaną w sensie badawczym
 
 W wariancie C usunięcie wszystkich cech \texttt{mmp\_*} zwiększyło błąd najlepszego modelu do MAE = 10{,}29 W oraz RMSE = 14{,}49 W. Rezultaty sugerują, że cechy MMP inne niż \texttt{mmp\_20min} zawierają istotną informację predykcyjną, ale również bardziej konserwatywny wariant pozwala uzyskać orientacyjne przybliżenie etykiety FTP.
 
-Spadek jakości pomiędzy wariantami B i C jest oczekiwany, ponieważ cechy MMP opisują fragment krzywej mocy zawodnika. Po ich usunięciu model musi opierać się na informacjach bardziej pośrednich: kwantylach mocy, rozkładzie intensywności, czasie trwania wysiłku oraz relacji mocy do tętna. Wzrost MAE z 6{,}55 W do 10{,}29 W nie oznacza, że wariant C jest nieudany. Pokazuje koszt przyjęcia bardziej rygorystycznej definicji pasywnej estymacji oraz skalę informacji zawartej w cechach \texttt{mmp\_*}.
+Spadek jakości pomiędzy wariantami B i C jest oczekiwany, ponieważ cechy MMP opisują fragment krzywej mocy zawodnika. Po ich usunięciu model musi opierać się na informacjach bardziej pośrednich: kwantylach mocy, rozkładzie intensywności, czasie trwania wysiłku oraz relacji mocy do tętna. Wzrost MAE z 6{,}55 W do 10{,}29 W nie oznacza, że wariant C jest nieudany. Pokazuje koszt przyjęcia bardziej rygorystycznej definicji estymacji opartej na telemetrii rutynowych sesji oraz skalę informacji zawartej w cechach \texttt{mmp\_*}.
 
 W praktycznej interpretacji MAE = 6{,}55 W oznacza, że dla sesji zawodników testowych bezwzględna różnica pomiędzy predykcją wariantu B a historyczną etykietą wynosiła średnio około siedmiu watów. Dla wariantu C analogiczna wartość wyniosła 10{,}29 W. Są to błędy względem etykiety heurystycznej, a nie względem pomiaru laboratoryjnego. Nie należy ich również traktować jako gwarantowanej granicy błędu pojedynczej prognozy: część obserwacji ma pomyłki większe, co sygnalizują wartości RMSE.
 
@@ -141,18 +145,20 @@ Porównanie wartości MAE na rysunku~\ref{fig:mae_comparison} pokazuje różnic�
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/experiments_partial/mae_comparison.png}
-\caption[Porównanie wartości MAE między wariantami i modelami]{Porównanie wartości MAE między wariantami A, B i C oraz modelami Ridge Regression, Random Forest i XGBoost.\par Źródło: Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\caption{Porównanie wartości MAE między wariantami i modelami}
 \label{fig:mae_comparison}
+\figsource{Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/experiments_partial/r2_comparison.png}
-\caption[Porównanie współczynnika R2 między wariantami i modelami]{Porównanie współczynnika determinacji ($R^2$) między wariantami A, B i C oraz modelami Ridge Regression, Random Forest i XGBoost.\par Źródło: Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\caption{Porównanie współczynnika determinacji między wariantami i modelami}
 \label{fig:r2_comparison}
+\figsource{Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
 \end{figure}
 
-Zestawienie to wizualnie podsumowuje metryki z tabeli 3.4. Pozwala ono na szybką ocenę wzajemnych relacji pomiędzy wariantami i algorytmami, uwypuklając utratę dokładności po eliminacji wszystkich cech z rodziny MMP w wariancie C.
+Zestawienie to wizualnie podsumowuje metryki z tabeli~\ref{tab:wyniki_modele_wszystkie}. Pozwala ono na szybką ocenę wzajemnych relacji pomiędzy wariantami i algorytmami, uwypuklając utratę dokładności po eliminacji wszystkich cech z rodziny MMP w wariancie C.
 
 \FloatBarrier
 \section{Analiza rozkładu błędów}
@@ -162,24 +168,43 @@ Dla modelu XGBoost w wariancie B przeanalizowano relację pomiędzy wartościami
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/experiments_partial/pred_vs_actual_best_var_B.png}
-\caption[Rzeczywiste i przewidywane wartości FTP dla najlepszego modelu wariantu B]{Zestawienie referencyjnych i przewidywanych wartości FTP dla modelu XGBoost w wariancie B. Linia przerywana oznacza idealne dopasowanie.\par Źródło: Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\caption{Rzeczywiste i przewidywane wartości FTP dla modelu XGBoost}
 \label{fig:rzeczywiste_vs_przewidywane}
+\figsource{Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
 \end{figure}
-\FloatBarrier
-
 Punkty na rysunku~\ref{fig:rzeczywiste_vs_przewidywane} skupiają się wokół linii idealnej predykcji, co jest zgodne z wartościami MAE i $R^2$. Wykres nie zastępuje jednak osobnej analizy błędów dla poszczególnych grup zawodników.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/experiments_partial/error_distribution_best_var_B.png}
-\caption[Rozkład błędów najlepszego modelu wariantu B]{Rozkład błędów obliczonych jako wartość referencyjna minus wartość przewidywana dla modelu XGBoost w wariancie B.\par Źródło: Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\caption{Rozkład błędów modelu XGBoost w wariancie B}
 \label{fig:rozklad_bledow}
+\figsource{Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
 \end{figure}
-\FloatBarrier
-
 Rozkład błędów na rysunku~\ref{fig:rozklad_bledow} jest skupiony w pobliżu zera. Wartość MAE równa 6{,}55 W oznacza, że w historycznym zbiorze testowym przeciętna różnica pomiędzy etykietą i predykcją była relatywnie mała, choć jej znaczenie praktyczne zależy od poziomu sportowego zawodnika. Nie oznacza to jednak, że każda pojedyncza prognoza jest obarczona błędem tej samej wielkości.
 
-Histogram błędów uzupełnia wykres predykcji względem etykiety. Pozwala zobaczyć, czy większość różnic koncentruje się blisko zera i czy występują ogony rozkładu związane z trudniejszymi przypadkami. Ponieważ przedstawiona analiza dotyczy wszystkich sesji testowych łącznie, nie wskazuje bezpośrednio, czy większe pomyłki są związane z konkretnym typem treningu, jakością sensora, zakresem FTP albo profilem zawodnika. Takie rozwarstwienie stanowi uzasadniony kierunek dalszej oceny.
+Histogram błędów uzupełnia wykres predykcji względem etykiety. Pozwala zobaczyć, czy większość różnic koncentruje się blisko zera i czy występują ogony rozkładu związane z trudniejszymi przypadkami. Ponieważ przedstawiona analiza dotyczy wszystkich sesji testowych łącznie, wymaga uzupełnienia o rozwarstwienie według poziomu etykiety FTP.
+
+Uzupełniające zestawienie błędów według zakresów referencyjnej etykiety FTP przedstawiono w tabeli~\ref{tab:error_by_ftp_bins}. Analiza dotyczy najlepszego modelu wariantu B, czyli XGBoost, i wykorzystuje te same obserwacje testowe co główna ewaluacja.
+
+\begin{table}[htbp]
+\centering
+\caption{Błędy predykcji modelu XGBoost w wariancie B według zakresów referencyjnej etykiety FTP}
+\label{tab:error_by_ftp_bins}
+\small
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+\textbf{Zakres FTP} & \textbf{Liczba sesji} & \textbf{Liczba zawodników} & \textbf{MAE [W]} & \textbf{MAPE [\%]} \\ \hline
+$<150$ W & 5\,971 & 123 & 4{,}41 & 3{,}73 \\ \hline
+$150$--$250$ W & 22\,856 & 142 & 6{,}31 & 3{,}18 \\ \hline
+$250$--$350$ W & 4\,615 & 84 & 10{,}34 & 3{,}69 \\ \hline
+$\geq 350$ W & 54 & 9 & 19{,}37 & 5{,}23 \\ \hline
+\end{tabular}
+\par\smallskip
+\raggedright\footnotesize Źródło: Opracowanie własne na podstawie pliku predykcji testowych \texttt{baseline\_predictions\_variant\_b.csv}.
+\end{table}
+
+Wartości bezwzględne błędu rosną wraz z poziomem FTP, co jest spodziewane przy większej skali mocy. Po przeliczeniu na błąd względny większość zakresów pozostaje na poziomie około 3--4\%, natomiast najwyższy przedział ma zarówno największy MAE, jak i największy MAPE. Ostatni zakres obejmuje jednak tylko 54 sesje od 9 zawodników, dlatego należy traktować go jako sygnał wymagający dalszej weryfikacji, a nie jako stabilną charakterystykę całej populacji silniejszych kolarzy.
 
 \section{Znaczenie i ważność cech predykcyjnych}
 
@@ -189,26 +214,27 @@ Ważność cech należy traktować jako narzędzie diagnostyczne modelu, a nie r
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/experiments_partial/feature_importance_best_var_B.png}
-\caption[Ważność cech dla modelu XGBoost w wariancie B]{Dwadzieścia najważniejszych predyktorów dla modelu XGBoost w wariancie B.\par Źródło: Opracowanie własne.}
+\includegraphics[width=0.72\textwidth]{figures/experiments_partial/feature_importance_best_var_B.png}
+\caption{Ważność cech modelu XGBoost w wariancie B}
 \label{fig:waznosc_cech_B}
+\figsource{Opracowanie własne.}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/experiments_partial/feature_importance_best_var_C.png}
-\caption[Ważność cech dla modelu XGBoost w wariancie C]{Dwadzieścia najważniejszych predyktorów dla modelu XGBoost w konserwatywnym wariancie C po usunięciu cech z prefiksem \texttt{mmp\_}.\par Źródło: Opracowanie własne.}
+\includegraphics[width=0.72\textwidth]{figures/experiments_partial/feature_importance_best_var_C.png}
+\caption{Ważność cech modelu XGBoost w wariancie C}
 \label{fig:waznosc_cech_C}
+\figsource{Opracowanie własne.}
 \end{figure}
-\FloatBarrier
-
 W wariancie B dominowała cecha \texttt{mmp\_10min}, co jest spójne z bliskim powiązaniem maksymalnej mocy z 10 minut z mocą z 20 minut, która służy do wyznaczania operacyjnej etykiety FTP. Znaczenie miały również ogólne statystyki mocy oraz cechy opisujące rozkład intensywności sesji. Dominacja cech typu MMP w wariancie B wskazuje, że samo usunięcie cechy \texttt{mmp\_20min} eliminuje bezpośredni data leakage, lecz nie zapobiega korzystaniu przez model z cech bezpośrednio sąsiadujących na krzywej profilu mocy. W rezultacie wariant B należy interpretować jako model, który wciąż pośrednio opiera się na informacjach o profilu maksymalnych możliwości kolarza, a nie wyłącznie na szerszej charakterystyce treningowej.
 
 Po usunięciu całej rodziny cech \texttt{mmp\_*} w wariancie C model opierał się w większym stopniu na kwantylach mocy (takich jak \texttt{power\_p75}), udziale czasu w strefach intensywności oraz relacji tętna do mocy. Zestawienie to wskazuje, że model potrafi efektywnie wykorzystać sygnał rozproszony w pozostałych predyktorach telemetrycznych. Wariant C stanowi więc bardziej konserwatywną metodologicznie próbę oceny potencjału predykcyjnego parametrów sesji treningowych, uniezależnioną od bezpośrednich wskaźników maksymalnych możliwości wysiłkowych zawodnika.
 
 Zmiana rankingu pomiędzy wariantami B i C jest istotna metodologicznie. Sugeruje ona, że dataset zawiera informacje zdatne do predykcji rozproszone w kilku grupach cech, a wykluczenie cech o charakterze bezpośredniego wycieku skłania model do korzystania z alternatywnych korelacji (np. relacji mocy i tętna). Jednocześnie sam ranking ważności cech nie pozwala jednoznacznie rozstrzygnąć o stabilności tych zależności w innych zbiorach danych, co motywuje przeprowadzenie dodatkowej weryfikacji.
 
-\subsection{Pomocnicza analiza interpretowalności SHAP dla wariantu C}
+\par\medskip
+\noindent\textit{Pomocnicza analiza interpretowalności SHAP dla wariantu C.}
 
 W celu dokładniejszego opisania zachowania modeli i kierunku wpływu poszczególnych zmiennych na predykcje przeprowadzono pomocniczą analizę interpretowalności SHAP (\textit{SHapley Additive exPlanations}) \parencite{lundberg2017shap}. Analizę tę zrealizowano jako uzupełnienie eksploracyjne dla modeli XGBoost trenowanych w ramach najbardziej konserwatywnego wariantu C (w którym całkowicie wykluczono rodzinę cech \texttt{mmp\_*}). Ze względów wydajnościowych obliczenia wartości SHAP wykonano na losowej próbie $1500$ obserwacji pobranych ze zbioru testowego, zachowując ten sam osobniczy podział danych po identyfikatorze \texttt{athlete\_id}.
 
@@ -216,23 +242,24 @@ Wykres typu \textit{beeswarm} (podsumowanie wartości SHAP) przedstawiono na rys
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.88\textwidth]{figures/experiments_partial/shap_summary_variant_c.png}
-\caption[Wykres beeswarm SHAP dla modelu XGBoost w wariancie C]{Wykres beeswarm SHAP dla modelu XGBoost w wariancie C. Wartości SHAP wskazują wpływ poszczególnych cech na predykcję FTP, a kolor punktów odpowiada względnej wartości danej cechy. Analizę wykonano na losowej próbie 1500 obserwacji ze zbioru testowego. \par Źródło: Opracowanie własne na podstawie przeprowadzonej analizy interpretowalności modelu.}
+\includegraphics[width=0.72\textwidth]{figures/experiments_partial/shap_summary_variant_c.png}
+\caption{Wykres beeswarm SHAP dla modelu XGBoost w wariancie C}
 \label{fig:shap_summary_variant_c}
+\figsource{Opracowanie własne na podstawie analizy SHAP.}
 \end{figure}
 
-Wizualizacja SHAP pozwala zaobserwować, w jaki sposób model decyduje o wartości FTP na poziomie pojedynczych treningów. Wyniki te sugerują następujące zależności:
+Wizualizacja SHAP pozwala opisać, które zmienne współkształtują predykcję FTP na poziomie pojedynczych treningów. Wyniki te sugerują następujące zależności:
 \begin{itemize}
   \item Cechy opisujące typowy i wyższy poziom generowanej mocy, czyli \texttt{power\_p75} (75.\ percentyl mocy) oraz \texttt{mean\_power} (średnia moc), posiadają dominujący, dodatni wpływ na predykcję. Wysokie wartości tych cech (punkty czerwone) przesuwają predykcję w kierunku wyższych watów, co jest spójne z operacyjną definicją etykiety FTP.
-  \item Cecha opisująca odsprzężenie tętna i mocy (\texttt{power\_hr\_decoupling\_pct}) wykazuje również zauważalny wpływ. Model przypisuje wyższy wpływ (punkty czerwone) sesjom o wyższym odsprzężeniu, co w zebranym materiale empirycznym charakteryzuje długie, tlenowe jednostki treningowe realizowane przez lepiej wytrenowanych zawodników.
-  \item Bardzo wyraźną ujemną zależność można zaobserwować dla cechy \texttt{median\_hr} (mediana tętna). Przy tych samych poziomach wygenerowanej mocy, wysokie tętno medianowe (punkty czerwone) obniża predykcję FTP, natomiast niskie tętno medianowe (punkty niebieskie) ją podwyższa. Zależność ta może pośrednio odzwierciedlać odpowiedź krążeniową organizmu: lepiej zaadaptowany aerobowo kolarz generuje daną moc przy niższej częstości skurczów serca.
+  \item Cecha opisująca odsprzężenie tętna i mocy (\texttt{power\_hr\_decoupling\_pct}) wykazuje również zauważalny wpływ. Model przypisuje wyższy wpływ (punkty czerwone) sesjom o wyższym odsprzężeniu, co może oznaczać, że w tym zbiorze takie sesje współwystępowały z wyższymi wartościami operacyjnej etykiety FTP.
+  \item Bardzo wyraźną ujemną zależność można zaobserwować dla cechy \texttt{median\_hr} (mediana tętna). Przy tych samych poziomach wygenerowanej mocy, wysokie tętno medianowe (punkty czerwone) obniża predykcję FTP, natomiast niskie tętno medianowe (punkty niebieskie) ją podwyższa. Zależność ta może być zgodna z interpretacją dotyczącą odpowiedzi krążeniowej organizmu, ale wymaga niezależnej walidacji i nie powinna być traktowana jako dowód mechanizmu fizjologicznego.
 \end{itemize}
 
 W celu weryfikacji stabilności zachowania modeli w zależności od przyjętego wariantu cech oraz skali danych, przeprowadzono dwie dodatkowe, pomocnicze analizy SHAP o charakterze kontrolnym.
 
 Po pierwsze, obliczenia SHAP wykonane dla modelu wariantu B na zbiorze bazowym wskazały dominację cechy \texttt{mmp\_10min} ze średnim bezwzględnym wpływem na poziomie $32{,}74$~W. Druga najważniejsza cecha w tym rankingu (\texttt{mean\_power}) wykazała wpływ wynoszący $3{,}69$~W. Wynik ten sugeruje, że po wykluczeniu \texttt{mmp\_20min} model wariantu B wciąż w dużym stopniu opiera swoje predykcje na sąsiadujących interwałach krzywej mocy maksymalnej, co czyni go zależnym od informacji o maksymalnych wysiłkach. Z tego powodu wariant C stanowi potrzebny punkt odniesienia: po odrzuceniu całej rodziny cech \texttt{mmp\_*} model musi korzystać z bardziej zróżnicowanej telemetrii treningowej, np. relacji mocy i tętna.
 
-Po drugie, analogiczną analizę SHAP wykonano dla modelu wariantu C na rozszerzonej próbie kontrolnej 5000 zawodników. Ponieważ dotyczy ona bezpośrednio eksperymentu skalowalności, jej tabelaryczne zestawienie i osobny ranking cech przedstawiono w sekcji~\ref{sec:control_5000_scalability}.
+Po drugie, analogiczną analizę SHAP wykonano dla modelu wariantu C na rozszerzonej próbie kontrolnej 5000 archiwów ZIP. Ponieważ dotyczy ona bezpośrednio eksperymentu skalowalności, jej tabelaryczne zestawienie i osobny ranking cech przedstawiono w sekcji~\ref{sec:control_5000_scalability}.
 
 Przedstawione analizy interpretowalności mają charakter pomocniczy i opisują wyłącznie strukturę decyzji podjętych przez algorytm XGBoost w zdefiniowanych wariantach eksperymentalnych. Wyniki SHAP dostarczają informacji o zachowaniu modelu, ale nie mogą być traktowane jako niezależny dowód na występowanie określonych mechanizmów fizjologicznych u badanych kolarzy ani nie eliminują ograniczeń wynikających z heurystycznego charakteru etykiety FTP.
 
@@ -269,13 +296,14 @@ W wariancie A ponownie uzyskano niemal idealne metryki. Powtórzenie tego zjawis
 
 Najważniejszym praktycznie wariantem pozostaje wariant B, w którym usunięto bezpośrednie źródło wycieku, czyli cechę \texttt{mmp\_20min}. W próbie kontrolnej najlepszy wynik wariantu B uzyskał model Random Forest: MAE = 6{,}01 W oraz $R^2 = 0{,}9679$. Jest to wynik zbliżony do jakości uzyskanej w eksperymencie bazowym i wskazuje, że procedura uczenia oraz oceny zachowuje stabilność przy większej liczbie archiwów. Wariant C, po usunięciu całej grupy cech \texttt{mmp\_*}, osiągnął niższą jakość, ale nadal zachował wysoką zdolność odtwarzania operacyjnej etykiety FTP. Oznacza to, że w pozostałych cechach telemetrycznych nadal występuje sygnał predykcyjny, choć usunięcie informacji o maksymalnych mocach pogarsza dokładność.
 
-Dodatkowo dla wariantu C na rozszerzonej próbie kontrolnej 5000 zawodników przeprowadzono pomocniczą analizę interpretowalności SHAP. Jej celem było sprawdzenie, czy ranking najważniejszych cech pozostaje zbliżony do wyników uzyskanych na zbiorze bazowym mimo istotnego zwiększenia liczby zawodników i sesji treningowych. Zestawienie pięciu najważniejszych cech według średnich bezwzględnych wartości SHAP przedstawiono w tabeli~\ref{tab:shap_comparison}, a pełniejszy ranking dla próby kontrolnej zilustrowano na rysunku~\ref{fig:shap_bar_variant_c_control_5000}.
+Dodatkowo dla wariantu C na rozszerzonej próbie kontrolnej 5000 archiwów ZIP przeprowadzono pomocniczą analizę interpretowalności SHAP. Jej celem było sprawdzenie, czy ranking najważniejszych cech pozostaje zbliżony do wyników uzyskanych na zbiorze bazowym mimo istotnego zwiększenia liczby zawodników i sesji treningowych. Zestawienie pięciu najważniejszych cech według średnich bezwzględnych wartości SHAP przedstawiono w tabeli~\ref{tab:shap_comparison}, a pełniejszy ranking dla próby kontrolnej zilustrowano na rysunku~\ref{fig:shap_bar_variant_c_control_5000}.
 
 \begin{table}[htbp]
 \centering
-\caption{Porównanie najważniejszych cech według średnich bezwzględnych wartości SHAP dla modelu XGBoost w wariancie C na zbiorze bazowym oraz próbie kontrolnej 5000 zawodników}
+\caption{Porównanie najważniejszych cech według średnich bezwzględnych wartości SHAP dla modelu XGBoost w wariancie C na zbiorze bazowym oraz próbie kontrolnej 5000 archiwów ZIP}
 \label{tab:shap_comparison}
 \footnotesize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{|c|l|c|l|c|}
 \hline
 \textbf{Poz.} & \textbf{Cecha (zbiór bazowy)} & \textbf{Śr. |SHAP| [W]} & \textbf{Cecha (próba 5000)} & \textbf{Śr. |SHAP| [W]} \\ \hline
@@ -289,47 +317,45 @@ Dodatkowo dla wariantu C na rozszerzonej próbie kontrolnej 5000 zawodników prz
 \raggedright\footnotesize Źródło: Opracowanie własne na podstawie pomocniczej analizy SHAP.
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.88\textwidth]{figures/control_5000/shap_bar_variant_c_control_5000.png}
-\caption[Ranking cech SHAP wariantu C na próbie kontrolnej 5000 zawodników]{Ranking najważniejszych cech według średnich bezwzględnych wartości SHAP dla modelu XGBoost w wariancie C na próbie kontrolnej 5000 zawodników. Wykres przedstawia pomocniczą analizę interpretowalności modelu po usunięciu całej rodziny cech MMP.\par Źródło: Opracowanie własne na podstawie przeprowadzonej analizy SHAP.}
+\includegraphics[width=0.72\textwidth]{figures/control_5000/shap_bar_variant_c_control_5000.png}
+\caption{Ranking cech SHAP wariantu C w próbie kontrolnej}
 \label{fig:shap_bar_variant_c_control_5000}
+\figsource{Opracowanie własne na podstawie analizy SHAP.}
 \end{figure}
 
 Wyniki wskazują, że również w większej próbie najwyższą rangę zachowały cechy opisujące rozkład mocy w sesji, w szczególności \texttt{power\_p75} oraz \texttt{mean\_power}. Zbieżność z rankingiem uzyskanym na zbiorze bazowym wspiera interpretację wariantu C jako bardziej konserwatywnego i stabilnego względem zmian liczebności próby. Jednocześnie analiza SHAP opisuje zachowanie modelu predykcyjnego, a nie stanowi bezpośredniej walidacji fizjologicznej.
 
 Rysunek~\ref{fig:baseline_vs_control_5000_metrics} porównuje metryki MAE i $R^2$ dla wariantów B i C w eksperymencie bazowym oraz w próbie kontrolnej. Wariant A pominięto na wykresie, ponieważ jego bardzo niskie błędy wynikają z bezpośredniego data leakage z cechy \texttt{mmp\_20min}.
 
-\begin{center}
-\captionsetup{type=figure,hypcap=false}
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/control_5000/baseline_vs_control_5000_metrics.png}
-\caption[Porównanie eksperymentu bazowego i próby kontrolnej 5000 archiwów]{Porównanie wartości MAE i $R^2$ dla wariantów B i C w eksperymencie bazowym oraz w próbie kontrolnej obejmującej 5000 archiwów GoldenCheetah.\par Źródło: Opracowanie własne na podstawie zapisanych wyników eksperymentów.}
+\includegraphics[width=0.76\textwidth]{figures/control_5000/baseline_vs_control_5000_metrics.png}
+\caption{Porównanie eksperymentu bazowego i próby kontrolnej}
 \label{fig:baseline_vs_control_5000_metrics}
-\end{center}
-
-\FloatBarrier
+\figsource{Opracowanie własne na podstawie zapisanych wyników eksperymentów.}
+\end{figure}
 
 Dodatkową ocenę zachowania najlepszego sensownego wariantu przedstawiono na rysunkach~\ref{fig:predicted_vs_actual_baseline_control} i~\ref{fig:residuals_baseline_control}. Wykres wartości przewidywanych względem referencyjnych pokazuje, że obserwacje koncentrują się w pobliżu linii idealnej zgodności, zarówno w eksperymencie bazowym, jak i w próbie kontrolnej. Nie oznacza to jednak niezależnego potwierdzenia fizjologicznej trafności etykiety FTP, lecz wskazuje na powtarzalne zachowanie modelu względem przyjętej etykiety operacyjnej.
 
-\vspace*{-2.2cm}
-\begin{center}
-\captionsetup{type=figure,hypcap=false}
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/control_5000/predicted_vs_actual_baseline_control.png}
-\caption[Porównanie wartości rzeczywistych i przewidywanych FTP w próbie kontrolnej]{Porównanie wartości rzeczywistych i przewidywanych FTP w eksperymencie bazowym oraz w próbie kontrolnej 5000 archiwów. Linia przerywana oznacza idealną zgodność predykcji z wartością referencyjną.\par Źródło: Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\includegraphics[width=0.72\textwidth]{figures/control_5000/predicted_vs_actual_baseline_control.png}
+\caption{Wartości rzeczywiste i przewidywane FTP w próbie kontrolnej}
 \label{fig:predicted_vs_actual_baseline_control}
-\end{center}
+\figsource{Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\end{figure}
 
 Wykres reszt pozwala ocenić, czy błędy predykcji mają charakter systematyczny względem poziomu FTP. Rozrzut błędów wokół linii zerowej jest zgodny z interpretacją metryk zagregowanych: próba kontrolna nie zastępuje eksperymentu bazowego, ale wskazuje na stabilność zachowania modelu przy większej skali danych.
 
-\begin{center}
-\captionsetup{type=figure,hypcap=false}
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/control_5000/residuals_baseline_control.png}
-\caption[Rozkład błędów predykcji FTP w próbie kontrolnej]{Rozkład błędów predykcji FTP względem wartości rzeczywistej w eksperymencie bazowym i próbie kontrolnej. Wartość dodatnia oznacza przeszacowanie, a ujemna niedoszacowanie FTP.\par Źródło: Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\includegraphics[width=0.72\textwidth]{figures/control_5000/residuals_baseline_control.png}
+\caption{Rozkład błędów predykcji FTP w próbie kontrolnej}
 \label{fig:residuals_baseline_control}
-\end{center}
+\figsource{Opracowanie własne na podstawie przeprowadzonych eksperymentów.}
+\end{figure}
 
 \FloatBarrier
 
@@ -338,7 +364,7 @@ Wyniki próby kontrolnej są zgodne z główną interpretacją pracy: usunięcie
 \FloatBarrier
 \section{Podsumowanie uzyskanych rezultatów}
 
-Celem eksperymentu była ocena jakości pasywnej estymacji FTP oraz identyfikacja ryzyka data leakage. Wariant A pokazał, że włączenie \texttt{mmp\_20min} prowadzi do sztucznie zawyżonych wyników i nie może stanowić podstawy oceny rozwiązania. W głównym wariancie B najlepszy był XGBoost z MAE = 6{,}55 W i $R^2 = 0{,}9630$. Wariant C, po usunięciu wszystkich cech \texttt{mmp\_*}, uzyskał wyższy błąd, ale nadal pozwalał odtworzyć znaczną część wariancji etykiety FTP.
+Celem eksperymentu była ocena jakości estymacji operacyjnej etykiety FTP oraz identyfikacja ryzyka data leakage. Wariant A pokazał, że włączenie \texttt{mmp\_20min} prowadzi do sztucznie zawyżonych wyników i nie może stanowić podstawy oceny rozwiązania. W głównym wariancie B najlepszy był XGBoost z MAE = 6{,}55 W i $R^2 = 0{,}9630$. Wariant C, po usunięciu wszystkich cech \texttt{mmp\_*}, uzyskał wyższy błąd, ale nadal pozwalał odtworzyć znaczną część wariancji etykiety FTP.
 
 Podział osobniczy sprawił, że wszystkie modele oceniano na sesjach zawodników nieobecnych w zbiorze treningowym. Ogranicza to ryzyko, że algorytm odtwarza charakterystyczny profil konkretnej osoby zamiast uczyć się relacji możliwych do uogólnienia. Zbliżone rezultaty XGBoost i Random Forest w wariancie B wskazują również, że wysoka jakość predykcji nie zależy wyłącznie od jednego algorytmu.
 
