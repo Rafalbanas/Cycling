@@ -1,0 +1,99 @@
+\chapter{Ocena rozwiązania, zastosowanie praktyczne i dyskusja}
+
+Rozdział łączy wyniki eksperymentów z celem praktycznym pracy. Omówiono w nim, co uzyskane metryki oznaczają dla monitorowania formy kolarskiej, czego na ich podstawie nie można rozstrzygnąć oraz w jakich warunkach rozwiązanie mogłoby wspierać zawodnika, trenera lub platformę analityczną.
+
+Interpretacja uwzględnia ograniczenia danych historycznych i heurystyczny sposób wyznaczania etykiety FTP. W dalszej części przedstawiono także ryzyka wdrożenia oraz zasady komunikowania niepewności.
+
+\section{Interpretacja uzyskanych wyników}
+
+Analiza wyników przedstawionych w rozdziale trzecim wskazuje, że zestaw 46 zagregowanych cech telemetrycznych wariantu B zawiera informację pozwalającą szacować operacyjną etykietę FTP bez wykorzystania cechy \texttt{mmp\_20min}. Najlepszy wynik uzyskał XGBoost: $R^2 = 0{,}9630$ oraz MAE = 6{,}55 W. Random Forest osiągnął zbliżoną jakość, natomiast Ridge Regression stanowił konkurencyjny liniowy punkt odniesienia. Dla porównania \textcite{vos2025cycling_ml} uzyskali $R^2 \approx 0{,}875$ przy predykcji czasu przejazdu 4\,km na podstawie danych fizjologicznych i obciążenia treningowego z zastosowaniem GLM i Random Forest na próbie 27 zawodników. Wyższy współczynnik determinacji w~niniejszej pracy może wynikać z większej próby (726~zawodników) oraz bezpośredniego związku cech MMP z~etykietą FTP, co wymaga ostrożności przy porównywaniu obu podejść.
+
+Wariant C miał charakter konserwatywny. Po usunięciu wszystkich cech \texttt{mmp\_*} jakość predykcji spadła, lecz XGBoost nadal uzyskał $R^2 = 0{,}9170$ oraz MAE = 10{,}29 W. Wynik ten sugeruje, że informacja o FTP jest częściowo zawarta również w innych grupach cech, takich jak rozkład intensywności, statystyki mocy, tętna i kadencji.
+
+Różnica pomiędzy wariantami B i C pokazuje kompromis pomiędzy jakością predykcji a rygorystycznym ograniczeniem informacji wejściowej. Usunięcie predyktora \texttt{mmp\_20min} w wariancie B eliminuje bezpośrednie ryzyko data leakage, jednak pozostałe cechy MMP z sąsiednich okien czasowych (np. \texttt{mmp\_10min} czy \texttt{mmp\_30min}) nadal skutecznie opisują ogólny kształt krzywej mocy zawodnika. Z tego powodu wariant B należy interpretować jako praktyczny wariant pozbawiony bezpośredniej składowej etykiety, lecz wciąż częściowo zależny od skorelowanego profilu mocy. Z kolei wariant C stanowi bardziej konserwatywną ocenę zdolności predykcyjnej modelu po całkowitym usunięciu rodziny cech MMP, co skłania algorytm do opierania się na bardziej rozproszonej telemetrii.
+
+Wynik wariantu A nie może być interpretowany jako dowód jakości modelu. Niemal idealne dopasowanie jest skutkiem obecności \texttt{mmp\_20min}, czyli predyktora bezpośrednio związanego ze sposobem wyznaczania etykiety. Wariant A pełni wyłącznie funkcję kontrolną.
+
+\section{Ocena rozwiązania w kontekście postawionych celów}
+
+Opracowane rozwiązanie należy oceniać w odniesieniu do celów sformułowanych we wstępie. W zakresie celu poznawczego usystematyzowano informacje dotyczące FTP, mocy krytycznej, progów metabolicznych oraz metod uczenia maszynowego stosowanych w analizie telemetrii sportowej.
+
+W zakresie celu metodologicznego przygotowano potok przetwarzania danych obejmujący ekstrakcję, filtrację i inżynierię cech. Eksperyment przeprowadzono na 151\,399 sesjach 726 zawodników z zastosowaniem podziału osobniczego, ograniczającego ryzyko przenikania sesji tej samej osoby pomiędzy zbiorem treningowym i testowym.
+
+W zakresie celu utylitarnego wyniki sugerują, że system może pełnić funkcję pomocniczą w monitorowaniu formy. Nie powinien być traktowany jako zamiennik diagnostyki laboratoryjnej ani jako samodzielne narzędzie podejmujące decyzje treningowe.
+
+\section{Znaczenie uczenia maszynowego w estymacji FTP}
+
+Klasyczne testy FTP są wartościowe, ale wymagają zaplanowanego wysiłku o wysokiej intensywności. Dane telemetryczne z rutynowych treningów pozwalają analizować dyspozycję zawodnika częściej i bez wprowadzania dodatkowej jednostki testowej. Modele uczenia maszynowego mogą agregować wiele sygnałów jednocześnie, uwzględniając zależności nieliniowe trudne do opisania prostym wzorem.
+
+Praktyczne znaczenie takiej estymacji polega przede wszystkim na wspomaganiu obserwacji trendu. Pojedyncza prognoza powinna być interpretowana łącznie z historią treningów, samopoczuciem zawodnika oraz jakością danych z czujników.
+
+Podejście oparte na danych ma szczególną wartość wtedy, gdy uzupełnia, a nie eliminuje inne źródła informacji. Okresowy test terenowy lub laboratoryjny może pełnić rolę punktu kontrolnego, natomiast estymacja pasywna pozwala obserwować okres pomiędzy takimi pomiarami. Jeżeli trend modelu i subiektywna ocena zawodnika zaczynają się wyraźnie rozchodzić, sytuacja ta powinna prowadzić do weryfikacji danych albo wykonania testu referencyjnego, a nie do automatycznej aktualizacji planu.
+
+\section{Ograniczenia przeprowadzonego badania}
+
+Pierwsze ograniczenie wiąże się z definicją wartości referencyjnej. Etykieta FTP ma charakter heurystyczny i bazuje na 95\% maksymalnej średniej mocy 20-minutowej, przez co nie została potwierdzona jednolitym protokołem laboratoryjnym. Ograniczenie to jest zgodne z literaturą wskazującą, że proste przeliczenie wyniku 20-minutowego wysiłku na FTP z użyciem stałego współczynnika może być obarczone błędem i zależy silnie od indywidualnego profilu wydolności oraz poziomu zmęczenia zawodnika \parencite{inglis2020ftp_mlss,jeffries2021ftp_lt}. Co więcej, etykieta ta może pochodzić z fragmentu jazdy niebędącego formalnym testem, co oznacza różny kontekst jej zarejestrowania (np. wyścig, podjazd). Prace dotyczące relacji między FTP, maksymalnym stanem równowagi mleczanowej (MLSS) oraz mocą krytyczną (CP) pokazują, że wielkości te zależą od przyjętej metodologii badania i nie powinny być utożsamiane \parencite{caen2024cp_mlss}. Ograniczenie to dotyczy zarówno zbioru treningowego, jak i testowego, gdyż modele były ewaluowane względem tej samej operacyjnej definicji.
+
+Drugie ograniczenie dotyczy data leakage. Wariant A pokazał, że uwzględnienie \texttt{mmp\_20min} prowadzi do odtworzenia zależności arytmetycznej. W wariancie B cechę tę usunięto, ale pozostałe cechy MMP nadal wymagają ostrożnej interpretacji. Z tego względu dodatkowo przygotowano wariant C.
+
+Trzecia grupa ograniczeń wynika z terenowego charakteru danych, które pochodzą z różnorodnych urządzeń pomiarowych. Różnice w jakości sensorów, błędy kalibracji, przerwy w transmisji czy zmienne warunki środowiskowe wpływają na stabilność cech wejściowych. Zgodnie z literaturą metrologiczną ocena mierników mocy powinna uwzględniać nie tylko ich nominalną dokładność, lecz przede wszystkim powtarzalność i odporność na czynniki zewnętrzne \parencite{bouillod2022powerMeters}, co jest szczególnie istotne przy stosowaniu urządzeń jednostronnych opierających się na założeniu pełnej symetrii pracy kończyn \parencite{valenzuela2022unilateral}.
+
+Nie każdy brak lub nietypowa wartość ma to samo znaczenie. Zerowa moc może odpowiadać zjazdowi, toczeniu roweru lub chwilowemu brakowi aktywnego pedałowania. Brak tętna może wynikać z niezałożenia czujnika albo utraty sygnału. Zmiana wysokości i prędkości może być zaburzona przez jakość GPS. Agregacja cech ogranicza wpływ części zakłóceń, ale nie usuwa wszystkich problemów. W systemie wdrożeniowym potrzebny byłby dodatkowy mechanizm oceny jakości konkretnej sesji i możliwość pominięcia predykcji, jeżeli dane są niewystarczające.
+
+Historyczny charakter repozytorium ogranicza również wiedzę o kontekście aktywności. Dane nie muszą zawierać pełnej informacji o stanie zdrowia, zmęczeniu, warunkach pogodowych, sprzęcie ani celu treningu. Model może wykorzystywać regularności występujące w zgromadzonym zbiorze, ale nie wszystkie z nich muszą utrzymać się po zmianie populacji użytkowników lub sposobu rejestracji. Jest to typowe ryzyko przenoszenia modelu z danych historycznych do bieżącego zastosowania.
+
+Czwarte ograniczenie dotyczy walidacji opartej wyłącznie na historycznym zbiorze GoldenCheetah z osobniczym podziałem na dane treningowe i testowe. Oznacza to, że wyniki nie zostały zweryfikowane w sposób prospektywny ani na zewnętrznym zbiorze danych, co wyklucza bezpośrednie przeniesienie rozwiązania do zastosowań produkcyjnych. Choć podział osobniczy (subject-wise split) chroni przed wyciekiem informacji tożsamościowej kolarzy, nie eliminuje on wpływu niestacjonarności danych oraz zależności czasowych.
+
+Ewaluacja zdolności modelu do generalizacji na nieznanych wcześniej sportowców różni się od walidacji czasowej. W praktycznym systemie treningowym kluczowe byłoby prognozowanie przyszłych wartości FTP na podstawie przeszłych aktywności danej osoby, co wymagałoby wdrożenia schematu walidacji krokowej (\textit{walk-forward validation}). Jak wskazuje literatura dotycząca szeregów czasowych, niestacjonarność oraz autokorelacja w danych telemetrycznych wymuszają ostrożny dobór procedury podziału prób w celu uniknięcia optymistycznego obciążenia metryk \parencite{bergmeir2018timeSeriesCv}. Analiza ta stanowi naturalne rozszerzenie przedstawionego potoku badawczego.
+
+Ograniczeniem pozostaje brak pogłębionej analizy błędów z rozbiciem według zawodnika, liczby dostępnych sesji, kompletności sensorów oraz profilu zawodnika. W rozdziale eksperymentalnym uzupełniono podstawowe rozwarstwienie według zakresu referencyjnej etykiety FTP, ale jest to dopiero pierwszy krok audytu: najwyższy przedział obejmuje niewielką liczbę sesji i zawodników, a analiza nie wyjaśnia przyczyn błędów na poziomie konkretnych przypadków. Metryki zagregowane opisują ogólny poziom jakości, ale nie pozwalają jednoznacznie wskazać wszystkich grup, dla których model działa najsłabiej. Przed wdrożeniem należałoby przeprowadzić audyt takich grup i określić warunki, w których system powinien wstrzymać estymację. Dodatkowo, ocena dokładności za pomocą Mean Absolute Error (MAE) wyrażonego w watach ma charakter wyłącznie bezwzględny, przez co jej praktyczne znaczenie jest silnie zdeterminowane poziomem wydolności danego zawodnika.
+
+\section{Praktyczne możliwości zastosowania}
+
+Opracowany system może stanowić podstawę modułu analitycznego wspierającego trening. Potencjalne scenariusze obejmują:
+\begin{itemize}
+    \item prezentowanie trendu estymowanego FTP w aplikacji treningowej;
+    \item sygnalizowanie potrzeby aktualizacji stref mocy;
+    \item wspomaganie trenera w analizie historii treningów zawodnika;
+    \item porównywanie estymacji pasywnej z wynikiem okresowo wykonywanego testu referencyjnego.
+\end{itemize}
+
+Każdy z tych scenariuszy wymaga dodatkowej walidacji oraz jasnego komunikowania niepewności predykcji. Szczególnie istotne jest unikanie automatycznych rekomendacji opartych wyłącznie na pojedynczym wyniku modelu.
+
+\subsection{Koncepcja modułu wspierającego platformę treningową}
+
+W zastosowaniu produkcyjnym model mógłby działać jako wydzielony moduł analityczny zintegrowany z platformą treningową lub aplikacją mobilną. Moduł taki przetwarzałby dane sesji po jej zakończeniu i synchronizacji z urządzeniem rejestrującym. Na podstawie zagregowanych cech telemetrycznych generowałby sugerowaną wartość FTP, prezentowaną użytkownikowi jako orientacyjny wskaźnik dyspozycji wytrzymałościowej, a nie jako oficjalny wynik testu.
+
+Od strony technicznej moduł predykcyjny mógłby zostać udostępniony przez interfejs API backendu aplikacji. Nowe aktywności byłyby cyklicznie kierowane do potoku ekstrakcji cech, a wynik estymacji zapisywany wraz z informacją o wersji modelu i jakości danych wejściowych. Eksploatacja rozwiązania wymagałaby monitorowania błędów względem okresowych testów referencyjnych, obserwacji dryfu rozkładu cech oraz rekalibracji modelu po zgromadzeniu nowszych danych.
+
+Kluczowym elementem interfejsu powinna być informacja o niepewności wyniku. Moduł powinien komunikować, z jakim przybliżeniem operuje estymacja --- na przykład poprzez podanie zakresu wartości lub poziomu ufności. Uwzględniając uzyskane wyniki eksperymentalne (gdzie średni błąd MAE wynosił ok.\ 6,55~W dla wariantu B oraz ok.\ 10,29~W dla wariantu C), przedział ten powinien odzwierciedlać realny margines niepewności modelu. Jeżeli dane wejściowe są niekompletne (brak sygnału tętna, nietypowo krótka sesja, duża liczba zerowych wartości mocy), moduł powinien obniżyć ocenę wiarygodności predykcji albo wstrzymać się od jej prezentacji. Tego rodzaju mechanizm oceny jakości danych na poziomie pojedynczej sesji jest niezbędny, aby użytkownik nie traktował każdego wyniku jako jednakowo pewnego.
+
+Moduł nie powinien automatycznie zastępować testów kontrolnych ani samodzielnie aktualizować stref treningowych. W docelowym scenariuszu estymacja pasywna pełni rolę uzupełniającą: sygnalizuje potencjalne zmiany formy, wskazuje moment, w którym warto rozważyć test referencyjny, oraz umożliwia obserwację trendu pomiędzy formalnymi pomiarami. Automatyczne modyfikowanie stref na podstawie pojedynczej predykcji wiązałoby się z ryzykiem błędnego dostosowania obciążeń treningowych, co mogłoby prowadzić zarówno do przeciążenia (przy zawyżonej estymacji), jak i do ograniczenia bodźca treningowego (przy zaniżonej).
+
+Wdrożenie powinno przebiegać etapami. W fazie pilotażowej moduł mógłby działać w trybie wyłącznie informacyjnym, prezentując sugerowane FTP obok wyniku ostatniego testu referencyjnego. Dopiero po zebraniu danych porównawczych z wielu użytkowników i okresów treningowych uzasadnione byłoby rozszerzenie funkcjonalności o rekomendacje dotyczące aktualizacji stref. Na każdym etapie użytkownik powinien mieć możliwość odrzucenia lub zignorowania sugestii modelu.
+
+\subsection{Perspektywa zawodnika}
+
+Dla zawodnika najważniejsza jest użyteczność informacji w codziennym treningu. Estymacja może pokazywać trend FTP i sygnalizować, że strefy mocy wymagają sprawdzenia. Jeżeli wartość rośnie stopniowo w kilku kolejnych obserwacjach, może to uzasadniać zaplanowanie testu kontrolnego. Analogicznie spadek może skłonić do analizy regeneracji, obciążeń lub jakości danych. Model nie powinien jednak automatycznie zmieniać stref na podstawie pojedynczej sesji, ponieważ na wynik mogą wpływać warunki trasy i chwilowa dyspozycja.
+
+Prezentacja dla użytkownika powinna być prosta, ale nie pozbawiona kontekstu. Obok estymowanej wartości potrzebna jest informacja, z jakiego okresu i ilu aktywności skorzystano, czy dane z czujników były kompletne oraz jak stabilny jest ostatni trend. Użytkownik powinien wiedzieć, że wynik jest przybliżeniem wspierającym decyzję, a nie odpowiednikiem laboratoryjnego pomiaru.
+
+\subsection{Perspektywa trenera}
+
+Trener może traktować estymację jako dodatkowy sygnał uzupełniający historię obciążeń, samopoczucie zawodnika i wyniki formalnych testów. W pracy z większą liczbą podopiecznych szczególnie wartościowe może być wskazywanie przypadków wymagających uwagi: wyraźnej zmiany trendu, rozbieżności pomiędzy estymacją a ostatnim testem albo pogorszenia jakości danych. Takie zastosowanie nie zastępuje interpretacji eksperckiej, lecz pomaga kierować uwagę na sesje i zawodników, których warto przeanalizować dokładniej.
+
+Trener powinien również rozróżniać warianty modelu. Wariant B daje niższy błąd, a konserwatywny wariant C może pełnić rolę dodatkowego punktu odniesienia. Rozbieżność obu estymacji sygnalizowałaby potrzebę ostrożniejszej interpretacji.
+
+\subsection{Perspektywa platformy analitycznej}
+
+Platforma analityczna może łączyć model z kontrolą jakości i historią użytkownika. Powinna wyliczać predykcję dla sesji spełniających minimalne warunki kompletności, wygładzać krótkookresowe wahania oraz obserwować zmiany rozkładu danych, które mogą wpływać na jakość modelu.
+
+\section{Ryzyka wdrożenia i komunikowanie niepewności}
+
+Automatyczna estymacja FTP wiąże się z ryzykiem nadmiernego zaufania do pojedynczej liczby. Zawyżona predykcja może prowadzić do ustawienia zbyt intensywnych stref i zwiększenia obciążenia treningowego. Zaniżona może ograniczać bodziec treningowy albo maskować rzeczywistą poprawę formy. Ryzyko jest większe, gdy użytkownik nie widzi informacji o jakości danych i traktuje model jako bezbłędny pomiar.
+
+Interfejs powinien uzupełniać wartość FTP zakresem orientacyjnym, oceną kompletności sygnałów oraz informacją o stabilności estymacji. W przypadku braku tętna, małej liczby aktywności albo nietypowego przebiegu danych system może oznaczyć wynik jako mniej wiarygodny lub wstrzymać rekomendację.
+
+Niepewność dotyczy również samej etykiety. Model może bardzo dobrze odtwarzać historyczne \texttt{ftp\_label}, ale wartość ta pozostaje heurystycznym przybliżeniem FTP. Dlatego w zastosowaniu praktycznym potrzebny jest cykl kontroli: pasywna estymacja wspiera obserwację trendu, okresowy test weryfikuje punkt odniesienia, a rozbieżności prowadzą do analizy danych zamiast automatycznego rozstrzygnięcia.
+
+Zasadne byłoby wdrażanie rozwiązania etapami. W pierwszej kolejności model mógłby działać w trybie informacyjnym, bez automatycznej zmiany stref treningowych. Dopiero porównanie estymacji z okresowymi testami referencyjnymi pozwoliłoby ocenić, w jakich warunkach rekomendacja jest wystarczająco stabilna.

@@ -1,0 +1,68 @@
+\section{Przegląd badań naukowych i istniejących rozwiązań}
+
+\subsection{Badania nad FTP i mocą krytyczną}
+
+Rozwój nauk o sporcie na przełomie XX i XXI wieku wiązał się z dążeniem do ilościowego opisu wydolności fizycznej. W dyscyplinach wytrzymałościowych istotnym zagadnieniem stała się identyfikacja progów metabolicznych, które wyznaczają granicę pomiędzy wysiłkiem możliwym do dłuższego utrzymania a intensywnością prowadzącą do szybkiego narastania zmęczenia.
+
+W praktyce treningowej znaczącą rolę odegrała koncepcja Functional Threshold Power opisana przez Allena i Coggana \parencite{allen2019power}. FTP stanowi praktyczny wskaźnik funkcjonalny powiązany z wysiłkiem możliwym do utrzymania przez około godzinę. Nie jest jednak bezpośrednim odpowiednikiem pojedynczego progu fizjologicznego. Borszcz i współpracownicy \parencite{borszcz2018ftp} wykazali, że pomiędzy FTP a parametrami laboratoryjnymi mogą występować indywidualne różnice w~odpowiedzi fizjologicznej. Jednocześnie w~innym badaniu \parencite{borszcz2019ftp_mlss} zaobserwowano silną korelację FTP z~MLSS, choć ze znaczną indywidualną zmiennością, co stawia pod znakiem zapytania ich pełną zamienność. Oznacza to, że FTP jest użytecznym wskaźnikiem treningowym, lecz jego interpretacja wymaga ostrożności.
+
+Blisko spokrewnioną koncepcją jest Critical Power (CP). W klasycznym modelu Monoda i Scherrera zależność pomiędzy wykonaną pracą a czasem wysiłku opisuje równanie:
+\begin{equation}
+\label{eq:critical_power}
+W = \mathrm{CP} \cdot t + W',
+\end{equation}
+gdzie $W$ oznacza całkowitą wykonaną pracę, $\mathrm{CP}$ jest mocą krytyczną, $t$ oznacza czas trwania wysiłku, natomiast $W'$ reprezentuje skończony zasób pracy możliwej do wykonania powyżej progu CP. Z równania wynika, że przy dłuższych wysiłkach znaczenie zasobu $W'$ maleje, a średnia moc zbliża się do poziomu CP.
+
+Karsten i współpracownicy \parencite{karsten2021cpftp} oraz McGrath i współpracownicy \parencite{mcgrath2021cpftp} analizowali relację pomiędzy FTP a CP. Wyniki tych prac wskazują, że oba parametry są pojęciowo bliskie, lecz nie są w pełni tożsame. Z kolei Sitko i współpracownicy \parencite{sitko2023_ac20to60_update} zwrócili uwagę na zmienność relacji pomiędzy mocą z testu 20-minutowego a wynikiem próby 60-minutowej. Ogranicza to możliwość bezwarunkowego stosowania jednego przelicznika dla wszystkich zawodników.
+
+Z perspektywy niniejszej pracy wniosek ten ma podwójne znaczenie. Po pierwsze, uzasadnia ostrożne traktowanie etykiety FTP obliczonej z próby 20-minutowej. Jest ona przydatna do przygotowania dużego zbioru historycznego, ponieważ można ją wyznaczyć automatycznie dla wielu sesji, ale pozostaje przybliżeniem. Po drugie, wskazuje, że model nie powinien być oceniany wyłącznie przez zdolność do odtworzenia przelicznika $0{,}95$. Ważniejsze jest sprawdzenie, czy po usunięciu bezpośredniego predyktora nadal wykorzystuje szerszy kontekst treningu.
+
+Badania nad czasem utrzymania wysiłku na poziomie estymowanego FTP również pokazują, że funkcjonalna interpretacja progu wymaga uwzględnienia różnic międzyosobniczych \parencite{sitko2022tte}. U dwóch zawodników ta sama procedura może prowadzić do wartości o odmiennym znaczeniu praktycznym, jeżeli różnią się profilem wytrzymałości i tolerancją wysiłku. Nie podważa to użyteczności FTP w planowaniu treningu, lecz przemawia za prezentowaniem estymacji jako wskaźnika obarczonego niepewnością.
+
+Warto również odróżnić cel pomiaru laboratoryjnego od celu pasywnego monitorowania. Diagnostyka laboratoryjna umożliwia szczegółowy opis reakcji fizjologicznej przy kontrolowanym obciążeniu. Rozwiązanie analityczne oparte na telemetrii ma inny charakter: wykorzystuje dane dostępne częściej, ale mniej jednorodne. Jego przewagą nie jest zastąpienie laboratorium większą precyzją, lecz dostarczanie dodatkowej informacji pomiędzy formalnymi testami.
+
+\subsection{Uczenie maszynowe w analizie telemetrii sportowej}
+
+Metody uczenia maszynowego umożliwiają odejście od analizy pojedynczego testu na rzecz wykorzystania historii treningów. Modele mogą uwzględniać jednocześnie statystyki mocy, tętna, kadencji, czasu trwania wysiłku oraz rozkładu intensywności, a następnie szacować FTP jako zmienną ciągłą.
+
+Stockwell i Corradini \parencite{stockwell2023mlftp} zaproponowali wieloetapowy potok estymacji FTP oparty na danych kolarskich. Porównanie modeli liniowych oraz algorytmów drzewiastych wskazało przydatność metod zdolnych do odwzorowania zależności nieliniowych. Karetnikov i współpracownicy \parencite{karetnikov2021cyclingPrediction} zastosowali zagregowane dane treningowe i wyścigowe do predykcji profilu MMP zawodowych kolarzy. Denham i współpracownicy \parencite{denham2020predictftp} analizowali możliwość przewidywania parametrów wydolnościowych na podstawie krótszych prób wysiłkowych. Przegląd systematyczny \textcite{stessens2024cyclingReview} wskazuje, że modele terenowe i technologie ubieralne mogą ułatwiać regularne monitorowanie, ale nie zastępują diagnostyki laboratoryjnej. Użyteczność algorytmów ML w~estymacji kluczowych progów fizjologicznych została szerzej zbadana na przykładzie m.in.\ pułapu tlenowego (VO\textsubscript{2}max), dla którego modele, szczególnie sztuczne sieci neuronowe, wykazują dużą skuteczność predykcyjną \parencite{ashfaq2022vo2max_ml_review}. Wyniki tych badań uzasadniają stosowanie modeli regresyjnych, ale również pokazują, że nietypowy profil fizjologiczny zawodnika może ograniczać trafność prostych zależności liniowych.
+
+Literatura metodologiczna dotycząca zastosowań ML w sporcie podkreśla, że jakość modelu zależy nie tylko od wyboru algorytmu, lecz także od konstrukcji zbioru danych, separacji próby testowej i interpretacji ograniczeń wdrożeniowych. W szczególności dane tego samego zawodnika nie powinny jednocześnie trafiać do zbioru treningowego i testowego, ponieważ prowadziłoby to do zawyżenia oceny generalizacji \parencite{richter2021sportsMl,rossi2022sportsMl,fuller2022physicalActivityMl}.
+
+Istotnym zagrożeniem metodologicznym jest data leakage, czyli sytuacja, w której model korzysta z informacji niedostępnej w realistycznym scenariuszu predykcji. Jeżeli etykieta FTP została obliczona na podstawie 20-minutowej mocy maksymalnej, wykorzystanie cechy \texttt{mmp\_20min} jako predyktora prowadzi do odtworzenia zależności arytmetycznej zamiast rzeczywistej estymacji na podstawie telemetrii \parencite{kaufman2012leakage,bernett2024leakage,dong2022sportsWearableLeakage}. Z tego względu w części empirycznej wariant A pełni wyłącznie funkcję kontrolną, wariant B jest głównym wariantem badawczym, a wariant C stanowi wariant konserwatywny.
+
+Z punktu widzenia projektu rozwiązania istotne jest przejście od pojedynczego sygnału do zestawu cech opisujących różne aspekty aktywności. Moc maksymalna w wybranym oknie czasowym informuje o zdolności do wykonania intensywnego wysiłku, ale nie opisuje całego treningu. Statystyki tętna, czas aktywnego pedałowania, rozkład intensywności oraz miary odsprzężenia uzupełniają obraz o reakcję organizmu i charakter jednostki. Modele drzewiaste są użyteczne w takim zadaniu, ponieważ mogą odwzorowywać zależności nieliniowe oraz interakcje pomiędzy predyktorami, których prosta regresja liniowa nie ujmuje bez dodatkowej transformacji cech \parencite{hastie2009esl,james2021isl}.
+
+Drugim źródłem nadmiernie optymistycznej oceny może być nieprawidłowy podział obserwacji. W danych treningowych jedna osoba dostarcza zwykle wiele sesji, a jej aktywności mają powtarzalne cechy: typowy zakres mocy, charakterystyczną relację mocy do tętna i podobny sposób realizacji treningów. Jeżeli rekordy tego samego zawodnika znajdą się jednocześnie w części treningowej i testowej, model może korzystać z pośredniej identyfikacji osoby. Zjawisko to jest określane jako konfundowanie tożsamości (ang.\ \textit{identity confounding}). Dlatego wiarygodna ocena wymaga testu na zawodnikach nieobecnych podczas uczenia \parencite{saeb2017useCase,chaibubNeto2019identity,tougui2021crossValidation,rosenblatt2024leakage}.
+
+Znaczenie literatury dotyczącej uczenia maszynowego nie ogranicza się zatem do wskazania potencjalnie skutecznego algorytmu. Dla niniejszej pracy równie ważne są zasady konstrukcji eksperymentu: jawne pochodzenie etykiety, kontrola listy cech, osobniczy podział danych i interpretacja kilku metryk regresyjnych. Dopiero łączne zastosowanie tych elementów pozwala oddzielić jakość modelu od artefaktu przygotowania zbioru.
+
+\subsection{Istniejące systemy analityczne}
+
+Rozwiązania służące do analizy treningu kolarskiego można podzielić na platformy komercyjne oraz oprogramowanie otwarte. Platformy TrainingPeaks i WKO wykorzystują modele krzywej mocy w czasie do wyznaczania parametrów treningowych. Ekosystemy urządzeń sportowych, takie jak Garmin Connect i Wahoo SYSTM, oferują funkcje szacowania FTP na podstawie danych zarejestrowanych podczas aktywności.
+
+W środowisku otwartego oprogramowania istotną rolę odgrywa GoldenCheetah. Program udostępnia narzędzia analizy telemetrii i modele wydolnościowe, a inicjatywa GoldenCheetah OpenData umożliwia prowadzenie badań na zanonimizowanych danych treningowych udostępnionych w ramach projektu Open Science Framework (OSF) \parencite{osf_goldencheetah_opendata}. Dane z tego repozytorium wykorzystano w części empirycznej niniejszej pracy.
+
+Systemy analityczne potwierdzają praktyczne zapotrzebowanie na automatyczną interpretację historii aktywności. Ich wyniki należy jednak czytać w kontekście zastosowanego modelu, dostępnych sygnałów oraz jakości rejestracji. Użytkownik końcowy widzi zwykle pojedynczą wartość lub trend, podczas gdy za wynikiem stoją decyzje dotyczące filtracji, doboru okna czasowego i sposobu wyznaczenia wartości referencyjnej. W projekcie badawczym decyzje te powinny być opisane jawnie, aby możliwe było odtworzenie eksperymentu i ocena ograniczeń.
+
+Otwarte repozytorium GoldenCheetah ma w tym kontekście szczególną wartość. Pozwala analizować sesje zarejestrowane poza laboratorium i sprawdzić zachowanie pipeline'u na zróżnicowanych historiach treningowych. Taki zbiór nie zapewnia pełnej kontroli jakości każdego czujnika ani jednolitego protokołu FTP, ale lepiej reprezentuje heterogeniczność danych spotykanych w zastosowaniu terenowym. Stanowi więc właściwy materiał do prototypowej oceny metody pasywnej, o ile wnioski pozostają proporcjonalne do jakości etykiet i zakresu walidacji.
+
+\subsection{Wykorzystane technologie i narzędzia}
+
+Implementację potoku przetwarzania danych oraz eksperymentów uczenia maszynowego zrealizowano w języku Python, który jest szeroko stosowany w analizie danych i uczeniu maszynowym ze względu na rozbudowany ekosystem bibliotek naukowych oraz czytelną składnię.
+
+Do przetwarzania i transformacji danych tabelarycznych wykorzystano bibliotekę \texttt{pandas}, umożliwiającą wydajne operacje na ramkach danych, agregację, filtrację oraz łączenie zbiorów. Operacje numeryczne, w tym obliczenia na tablicach wielowymiarowych, realizowano za pomocą biblioteki \texttt{NumPy}.
+
+Modele regresyjne Ridge Regression oraz Random Forest przygotowano z wykorzystaniem biblioteki \texttt{scikit-learn}, która dostarcza ujednolicony interfejs do treningu, predykcji i ewaluacji modeli, a także narzędzia do podziału danych (\texttt{GroupShuffleSplit}) i obliczania metryk jakości \parencite{pedregosa2011scikitLearn}. Model XGBoost zaimplementowano z użyciem dedykowanej biblioteki \texttt{xgboost}, stanowiącej wydajną implementację algorytmu Gradient Boosting.
+
+Wizualizację wyników, w tym wykresy porównawcze metryk, wykresy predykcji względem wartości rzeczywistych, rozkłady reszt oraz rankingi ważności cech, przygotowano z użyciem biblioteki \texttt{matplotlib}.
+
+Cały proces badawczy zorganizowano w postaci skryptowego potoku ETL (\textit{Extract--Transform--Load}). Poszczególne etapy --- od pobrania i rozpakowania archiwów, przez ekstrakcję cech, po trening modeli i generowanie raportów --- są realizowane przez osobne skrypty wywoływane sekwencyjnie. Takie podejście umożliwia selektywne powtórzenie wybranego etapu bez konieczności uruchamiania całego procesu od początku.
+
+Powtarzalność eksperymentów zapewniono przez ustalenie ziarna generatora liczb losowych (\texttt{random\_state=42}), jawne definiowanie ścieżek wejściowych i wyjściowych, wersjonowanie kodu źródłowego w systemie Git oraz archiwizację plików wynikowych. Dzięki temu możliwe jest odtworzenie wyników na podstawie udostępnionych skryptów i danych wejściowych.
+
+\section{Podsumowanie części teoretycznej}
+
+FTP jest praktycznym, ale uproszczonym wskaźnikiem wydolności kolarskiej. Tradycyjne testy i diagnostyka laboratoryjna dostarczają wartościowych informacji, lecz są obciążające i trudne do częstego wykonywania. Rejestrowana podczas codziennych treningów telemetria tworzy podstawę do pasywnego szacowania FTP z wykorzystaniem modeli regresyjnych. Warunkiem wiarygodnej oceny takich modeli jest rozdzielenie danych zawodników pomiędzy zbiory treningowy i testowy oraz kontrola cech mogących prowadzić do wycieku informacji.
+
+Przegląd literatury wskazuje, że istotą problemu nie jest znalezienie jednego wzoru zastępującego każdy test, lecz połączenie kilku źródeł informacji w powtarzalnym procesie analitycznym. Moc, tętno, kadencja i charakter treningu opisują różne aspekty wysiłku. Ich wykorzystanie wymaga filtracji danych terenowych, przemyślanej inżynierii cech i ostrożnego doboru etykiety. W części empirycznej przyjęto właśnie takie podejście: wariant kontrolny ujawnia skutki data leakage, wariant główny ocenia predykcję bez bezpośredniej cechy etykietującej, a wariant konserwatywny sprawdza zachowanie modeli po usunięciu całej grupy cech MMP.

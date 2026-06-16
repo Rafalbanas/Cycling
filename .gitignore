@@ -8,6 +8,14 @@ venv/
 .DS_Store
 __pycache__/
 *.zip
+config/local_paths.json
+
+# Control experiment: keep large artifacts and transient state outside Git.
+experiments/control_5000/cache/
+experiments/control_5000/checkpoints/
+experiments/control_5000/logs/
+experiments/control_5000/outputs/
+experiments/control_5000/**/*.part
 
 # LaTeX
 *.aux

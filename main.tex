@@ -10,27 +10,45 @@
 % *************** Front matter ***************
 \input{front.tex}
 
-\input{chapters/chapter2.tex}
-\input{chapters/introduction.tex}
-\input{chapters/chapter1.tex}
-\input{chapters/chapter3.tex}
-\input{chapters/chapter4.tex}
-\input{chapters/chapter5.tex}
-%\input{chapters/ending.tex}
-
-\printbibliography[title={Źródła internetowe},notkeyword={external},heading=bibintoc]
+\input{chapters/wstep.tex}
+\input{chapters/rozdzial1_teoria.tex}
+\input{chapters/rozdzial2_literatura.tex}
+\input{chapters/rozdzial3_metodologia.tex}
+\input{chapters/rozdzial4_eksperymenty.tex}
+\input{chapters/rozdzial5_dyskusja.tex}
+\input{chapters/zakonczenie.tex}
 
 \newpage
+\phantomsection
+\chapter*{Bibliografia}
+\addcontentsline{toc}{chapter}{Bibliografia}
+\setcounter{bibliographyitem}{0}
+
+\subsection*{Pozycje zwarte}
+\printbibliography[type=book,heading=none,env=numberedbibliography]
+
+\subsection*{Artykuły naukowe i materiały konferencyjne}
+\printbibliography[type=article,heading=none,env=numberedbibliography]
+\printbibliography[type=inproceedings,heading=none,env=numberedbibliography]
+
+
+\newpage
+\phantomsection
+\chapter*{Netografia}
+\addcontentsline{toc}{chapter}{Netografia}
+\setcounter{bibliographyitem}{0}
+
+\printbibliography[type=online,heading=none,env=numberedbibliography]
+\printbibliography[type=dataset,heading=none,env=numberedbibliography]
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listfigurename}
 \listoffigures
 
 \newpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listtablename}
 \listoftables
-
-\clearpage
-
-\lstlistoflistings
-
-\newpage
-\printbibliography[title={Bibliografia},keyword={external},heading=bibintoc]
 
 \end{document}

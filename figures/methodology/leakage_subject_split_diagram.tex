@@ -1,0 +1,25 @@
+\begin{tikzpicture}[
+  node distance=0.42cm,
+  box/.style={draw, rounded corners, align=center, minimum height=0.86cm, text width=5.9cm, fill=gray!8},
+  warn/.style={draw, rounded corners, align=center, minimum height=0.86cm, text width=5.9cm, fill=red!8},
+  ok/.style={draw, rounded corners, align=center, minimum height=0.86cm, text width=5.9cm, fill=green!8},
+  arrow/.style={-{Stealth[length=2.4mm]}, thick}
+]
+\node[box] (sessions) {Wiele sesji tego samego zawodnika};
+
+\node[warn, below left=0.8cm and 0.3cm of sessions] (randomsplit) {Losowy podział sesji};
+\node[warn, below=of randomsplit] (sameathlete) {Ten sam \texttt{athlete\_id} może trafić do train i test};
+\node[warn, below=of sameathlete] (optimistic) {Ryzyko leakage: model rozpoznaje profil znanego zawodnika};
+
+\node[ok, below right=0.8cm and 0.3cm of sessions] (groupsplit) {Podział po zawodnikach};
+\node[ok, below=of groupsplit] (separate) {Każdy \texttt{athlete\_id} występuje tylko w train albo tylko w test};
+\node[ok, below=of separate] (generalization) {Ocena generalizacji na nieznanych zawodników};
+
+\draw[arrow] (sessions) -- (randomsplit);
+\draw[arrow] (randomsplit) -- (sameathlete);
+\draw[arrow] (sameathlete) -- (optimistic);
+
+\draw[arrow] (sessions) -- (groupsplit);
+\draw[arrow] (groupsplit) -- (separate);
+\draw[arrow] (separate) -- (generalization);
+\end{tikzpicture}

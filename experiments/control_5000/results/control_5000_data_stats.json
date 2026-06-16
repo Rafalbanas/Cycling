@@ -1,0 +1,43 @@
+{
+  "available_archives": 5000,
+  "processed_archives": 5000,
+  "rejected_athletes": 355,
+  "sessions_input_csv": 1906188,
+  "sessions_before_ftp_filter": 985263,
+  "sessions_after_ftp_filter": 979672,
+  "athletes_after_ftp_filter": 4645,
+  "sessions_with_power": 979672,
+  "sessions_with_hr": 840946,
+  "sessions_with_mmp": 979672,
+  "sessions_per_athlete": {
+    "minimum": 1,
+    "mean": 210.90893433799783,
+    "median": 94.0,
+    "maximum": 4722
+  },
+  "ftp_label": {
+    "count": 979672.0,
+    "mean": 195.8572901943646,
+    "std": 50.043418863651404,
+    "min": 50.012415125,
+    "25%": 162.10799999999998,
+    "50%": 195.48545833333333,
+    "75%": 228.66044791666667,
+    "max": 499.132375
+  },
+  "missing_key_features": {
+    "mean_power": 0,
+    "mean_hr": 138726,
+    "mean_cadence": 37032,
+    "mmp_30s": 0,
+    "mmp_5min": 0,
+    "mmp_10min": 0,
+    "mmp_20min": 0,
+    "ftp_label": 0
+  },
+  "session_errors": {
+    "Brak danych o mocy (power)": 631214,
+    "Zbyt krótka sesja (< 30 min)": 282697,
+    "Nie można obliczyć FTP (brak pełnego okna MMP20)": 7014
+  }
+}
