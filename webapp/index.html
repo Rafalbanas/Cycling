@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cycling — interaktywna prezentacja badań nad estymacją FTP z telemetrii kolarskiej.">
+  <meta name="theme-color" content="#08130f">
+  <title>Cycling — FTP z danych treningowych</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Przejdź do treści</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Cycling — strona główna">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+      <span>CYCLING<span class="brand-dot">.</span></span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Główna nawigacja">
+      <a href="#estymator">Estymator</a>
+      <a href="#wyniki">Wyniki</a>
+      <a href="#metoda">Metoda</a>
+      <a class="nav-cta" href="#dane">Dane</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid">
+        <div class="hero-copy reveal">
+          <p class="eyebrow"><span></span> Telemetria × uczenie maszynowe</p>
+          <h1>Forma zapisana<br>w <em>danych.</em></h1>
+          <p class="hero-lead">Zobacz, jak 151 tysięcy rzeczywistych treningów zamienia się w powtarzalny eksperyment estymacji operacyjnej etykiety FTP.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#estymator">Oblicz FTP <span aria-hidden="true">↗</span></a>
+            <a class="button ghost" href="#wyniki">Zobacz wyniki</a>
+          </div>
+        </div>
+        <div class="hero-visual reveal delay-1" aria-label="Abstrakcyjna wizualizacja profilu trasy i mocy">
+          <div class="visual-label"><span>Profil aktywności</span><strong>LIVE DATA</strong></div>
+          <svg class="route-chart" viewBox="0 0 660 410" role="img" aria-label="Profil przykładowej aktywności">
+            <defs>
+              <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#b8ff3d" stop-opacity=".42"/>
+                <stop offset="1" stop-color="#b8ff3d" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <g class="grid-lines"><path d="M0 80H660M0 160H660M0 240H660M0 320H660"/><path d="M110 0V410M220 0V410M330 0V410M440 0V410M550 0V410"/></g>
+            <path class="area" d="M0 342 C45 326 56 301 92 304 S143 342 179 300 S238 184 276 208 S320 294 359 250 S408 119 453 142 S501 266 539 216 S589 70 660 92 V410 H0Z"/>
+            <path class="route" d="M0 342 C45 326 56 301 92 304 S143 342 179 300 S238 184 276 208 S320 294 359 250 S408 119 453 142 S501 266 539 216 S589 70 660 92"/>
+            <circle class="route-point" cx="453" cy="142" r="7"/>
+          </svg>
+          <div class="power-chip"><span>MMP 20 min</span><strong>286 <small>W</small></strong></div>
+          <div class="data-strip"><span><b>01:42</b> czas</span><span><b>41,8 km</b> dystans</span><span><b>164 bpm</b> tętno</span></div>
+        </div>
+      </div>
+      <div class="hero-stats reveal delay-2" id="dane">
+        <div><strong data-stat="sessions">151 399</strong><span>sesji treningowych</span></div>
+        <div><strong data-stat="athletes">726</strong><span>anonimowych zawodników</span></div>
+        <div><strong>6,55 <small>W</small></strong><span>najlepsze MAE wariantu B</span></div>
+        <div><strong>0,9630</strong><span>najlepsze R² wariantu B</span></div>
+      </div>
+    </section>
+
+    <section class="estimator section" id="estymator">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow dark"><span></span> Narzędzie</p>
+          <h2>Estymator testu<br><em>20-minutowego.</em></h2>
+        </div>
+        <p>Ta funkcja odtwarza definicję etykiety użytej w projekcie. Nie jest predykcją modelu ML — repozytorium zawiera wyniki ewaluacji, lecz nie zawiera zapisanego modelu gotowego do inferencji.</p>
+      </div>
+
+      <div class="estimator-card reveal">
+        <form id="ftp-form" novalidate>
+          <div class="form-intro">
+            <span class="step-number">01</span>
+            <div><h3>Podaj wynik próby</h3><p>Najlepsza średnia moc utrzymana przez pełne 20 minut.</p></div>
+          </div>
+          <label for="mmp20">Moc 20-minutowa</label>
+          <div class="power-input">
+            <input id="mmp20" name="mmp20" type="number" min="50" max="800" step="1" value="286" inputmode="decimal" required>
+            <span>W</span>
+          </div>
+          <input class="range" id="mmp20-range" type="range" min="100" max="500" step="1" value="286" aria-label="Moc 20-minutowa w watach">
+          <label for="weight">Masa ciała <small>opcjonalnie</small></label>
+          <div class="weight-input">
+            <input id="weight" name="weight" type="number" min="30" max="250" step="0.1" value="74" inputmode="decimal">
+            <span>kg</span>
+          </div>
+          <p class="form-error" id="form-error" role="alert" aria-live="polite"></p>
+          <button class="button primary full" type="submit">Oblicz etykietę FTP <span aria-hidden="true">→</span></button>
+        </form>
+
+        <div class="estimator-result" id="estimator-result" aria-live="polite">
+          <div class="result-top"><span>Wynik operacyjny</span><span class="status-pill"><i></i> formuła projektu</span></div>
+          <div class="ftp-value"><strong id="ftp-result">271,7</strong><span>W</span></div>
+          <div class="result-meta">
+            <div><span>Względem masy</span><strong id="wkg-result">3,67 W/kg</strong></div>
+            <div><span>Metoda</span><strong>95% MMP20</strong></div>
+          </div>
+          <div class="formula"><span>286 W</span><b>× 0,95</b><span>= 271,7 W</span></div>
+          <p><strong>Ważne:</strong> to heurystyczna etykieta użyta w badaniu, nie laboratoryjny pomiar progu fizjologicznego ani automatyczna rekomendacja zmiany stref.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="results section" id="wyniki">
+      <div class="section-heading inverse reveal">
+        <div>
+          <p class="eyebrow"><span></span> Walidacja</p>
+          <h2>Wyniki bez<br><em>skrótów.</em></h2>
+        </div>
+        <p>Podział testowy wykonano po zawodnikach, nie po pojedynczych sesjach. Dzięki temu osoby ze zbioru testowego nie występowały w treningu.</p>
+      </div>
+
+      <div class="variant-switcher reveal" role="group" aria-label="Wybierz wariant modelu">
+        <button class="active" type="button" data-variant="Variant_B"><span>Wariant B</span>bez MMP20</button>
+        <button type="button" data-variant="Variant_C"><span>Wariant C</span>bez wszystkich MMP</button>
+      </div>
+
+      <div class="results-grid">
+        <article class="metric-panel reveal">
+          <div class="panel-head"><div><span>Porównanie modeli</span><strong id="variant-title">Wariant B</strong></div><span class="panel-index">01</span></div>
+          <div id="model-bars" class="model-bars" aria-label="Wykres błędu MAE modeli"></div>
+          <div class="chart-axis"><span>0 W</span><span>MAE — mniej znaczy lepiej</span><span>15 W</span></div>
+        </article>
+        <article class="scatter-panel reveal delay-1">
+          <div class="panel-head"><div><span>Próba testowa</span><strong>Rzeczywiste vs estymowane</strong></div><span class="panel-index">02</span></div>
+          <svg id="scatter-chart" viewBox="0 0 560 350" role="img" aria-label="Wykres punktowy wartości rzeczywistych i estymowanych">
+            <g class="scatter-grid"></g><line class="ideal-line"/><g class="scatter-points"></g>
+            <text class="axis-label x" x="280" y="340">wartość etykiety FTP [W]</text>
+          </svg>
+          <div class="scatter-legend"><span><i></i> próbki testowe</span><span><i></i> linia idealna</span></div>
+        </article>
+      </div>
+
+      <div class="insights-grid">
+        <article class="insight-card lime reveal">
+          <span class="card-kicker">Najważniejsza cecha</span>
+          <strong id="top-feature">mmp_10min</strong>
+          <p id="top-feature-copy">W wariancie B dominującą rolę zachowuje sąsiednia statystyka MMP. To powód, dla którego pokazujemy również bardziej konserwatywny wariant C.</p>
+        </article>
+        <article class="insight-card reveal delay-1">
+          <span class="card-kicker">Błąd a poziom FTP</span>
+          <div id="error-ranges" class="error-ranges"></div>
+        </article>
+        <article class="insight-card outline reveal delay-2">
+          <span class="card-kicker">Kontrola skali</span>
+          <strong>979 672</strong>
+          <p>sesje w dodatkowej próbie na 4 645 zawodnikach. Wynik kontrolny potwierdził skalowalność pipeline'u, ale nie zastępuje bazowego eksperymentu.</p>
+        </article>
+      </div>
+
+      <div class="leakage-note reveal">
+        <span class="warning-icon">!</span>
+        <div><strong>Wariant A nie jest sukcesem modelu.</strong><p>Po pozostawieniu <code>mmp_20min</code> model praktycznie odtwarza równanie etykiety. To kontrola wycieku danych, dlatego aplikacja nie prezentuje go jako użytecznej predykcji.</p></div>
+      </div>
+    </section>
+
+    <section class="method section" id="metoda">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow dark"><span></span> Pipeline badawczy</p>
+          <h2>Od pliku treningu<br>do <em>wniosku.</em></h2>
+        </div>
+        <p>Każdy etap pozostawia ślad w repozytorium: kod przetwarzania, raporty jakości, metryki i zanonimizowane wyniki testowe.</p>
+      </div>
+      <ol class="pipeline">
+        <li class="reveal"><span>01</span><div class="pipeline-icon">↧</div><h3>Pozyskanie</h3><p>Anonimowe aktywności GoldenCheetah OpenData.</p></li>
+        <li class="reveal delay-1"><span>02</span><div class="pipeline-icon">⌁</div><h3>Kontrola jakości</h3><p>Zakresy sensorów, braki, minimum 30 minut.</p></li>
+        <li class="reveal delay-2"><span>03</span><div class="pipeline-icon">∿</div><h3>Ekstrakcja cech</h3><p>Moc, tętno, kadencja, MMP i rozkład intensywności.</p></li>
+        <li class="reveal delay-3"><span>04</span><div class="pipeline-icon">◎</div><h3>Ewaluacja</h3><p>Ridge, Random Forest i XGBoost; podział osobniczy.</p></li>
+      </ol>
+
+      <div class="method-details">
+        <div class="quote-card reveal"><span>„</span><blockquote>Model estymuje operacyjną etykietę FTP, a nie laboratoryjnie zmierzony próg fizjologiczny.</blockquote><p>Najważniejsze zastrzeżenie interpretacyjne pracy</p></div>
+        <div class="feature-card reveal delay-1">
+          <div class="panel-head light"><div><span>Wpływ cech</span><strong id="feature-title">Wariant B · SHAP</strong></div></div>
+          <div id="feature-bars" class="feature-bars"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="limitations section">
+      <div class="limitations-copy reveal">
+        <p class="eyebrow"><span></span> Uczciwa interpretacja</p>
+        <h2>Jedna liczba<br>nie opowiada <em>całej historii.</em></h2>
+      </div>
+      <div class="limitations-list">
+        <article class="reveal"><span>01</span><div><h3>Etykieta jest heurystyką</h3><p>Współczynnik 0,95 nie uwzględnia indywidualnego profilu fizjologicznego.</p></div></article>
+        <article class="reveal delay-1"><span>02</span><div><h3>Walidacja jest historyczna</h3><p>Wyniki pochodzą z jednego repozytorium i nie zastępują walidacji prospektywnej.</p></div></article>
+        <article class="reveal delay-2"><span>03</span><div><h3>Jakość sensorów ma znaczenie</h3><p>Braki tętna, GPS i nietypowe sesje mogą obniżać wiarygodność estymacji.</p></div></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#top"><span class="brand-mark"><i></i><i></i></span><span>CYCLING<span class="brand-dot">.</span></span></a>
+    <p>Interaktywna prezentacja projektu magisterskiego.<br>Dane: GoldenCheetah OpenData.</p>
+    <a class="back-top" href="#top">Do góry ↑</a>
+  </footer>
+
+  <noscript><div class="noscript">Do interaktywnych wykresów i estymatora potrzebna jest obsługa JavaScript.</div></noscript>
+</body>
+</html>

@@ -1,0 +1,31 @@
+[Unit]
+Description=Cycling thesis web application
+After=network.target
+
+[Service]
+Type=simple
+User=cycling-web
+Group=cycling-web
+WorkingDirectory=/opt/cycling-web
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=CYCLING_HOST=127.0.0.1
+Environment=CYCLING_PORT=20144
+ExecStart=/usr/bin/python3 /opt/cycling-web/webapp/server.py
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/opt/cycling-web
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+
+[Install]
+WantedBy=multi-user.target
