@@ -11,10 +11,14 @@ Publiczny adres: [https://cycling.banas.dev](https://cycling.banas.dev)
 Funkcje:
 
 - responsywna prezentacja zbioru i metodologii;
+- pełny interfejs w języku polskim i angielskim z zapamiętywaniem wyboru;
 - porównanie rzeczywistych wyników wariantów B i C oraz modeli regresyjnych;
+- widok porównawczy B/C, wybór metryki oraz dostępne z klawiatury podpowiedzi wykresów;
 - zanonimizowany wykres wartości testowych rzeczywistych i estymowanych;
 - analiza MAE według zakresu FTP i znaczenia cech SHAP;
 - kalkulator operacyjnej etykiety FTP z wyniku próby 20-minutowej;
+- aktualizowany na żywo kalkulator połączony z suwakiem i polem liczbowym;
+- osadzony podgląd aktualnej polskiej wersji pracy magisterskiej, tryb pełnoekranowy i pobieranie PDF;
 - jawna informacja o ograniczeniach, wycieku danych w wariancie A i braku zapisanego artefaktu modelu do inferencji;
 - endpointy diagnostyczne i API, które nie ujawniają identyfikatorów zawodników ani surowych danych.
 
@@ -63,6 +67,9 @@ Przygotowanie zbioru i eksperymenty opisuje [INSTRUKCJA_DANE.md](INSTRUKCJA_DANE
 | `GET /api/summary` | zagregowane metryki, dane SHAP i kontrola skali |
 | `GET /api/predictions?variant=Variant_B&limit=120` | zanonimizowana próbka punktów testowych B lub C |
 | `POST /api/estimate` | etykieta `0,95 × MMP20`; JSON: `{"mmp20": 286, "weight": 74}` |
+| `GET /thesis/INF.MN-152863-6350.pdf` | najnowsza praca magisterska; parametr `download=1` wymusza pobranie |
+
+API obsługuje polskie i angielskie komunikaty na podstawie `Accept-Language` lub pola `lang` w żądaniu kalkulatora. PDF jest dostępny wyłącznie w języku polskim; angielski interfejs nie sugeruje istnienia osobnego angielskiego dokumentu.
 
 ## Wdrożenie
 

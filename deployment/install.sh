@@ -22,6 +22,7 @@ install -o root -g "$SERVICE_USER" -m 0640 \
     "$PROJECT_ROOT/webapp/static/styles.css" \
     "$PROJECT_ROOT/webapp/static/app.js" \
     "$PROJECT_ROOT/webapp/static/favicon.svg" \
+    "$PROJECT_ROOT/webapp/static/master-thesis-pl.pdf" \
     "$DEPLOY_ROOT/webapp/static/"
 
 install -o root -g "$SERVICE_USER" -m 0640 \
@@ -45,5 +46,15 @@ fi
 
 systemctl daemon-reload
 systemctl enable --now cycling-web.service
+systemctl restart cycling-web.service
+attempt=0
+until curl --fail --silent http://127.0.0.1:20144/healthz >/dev/null; do
+    attempt=$((attempt + 1))
+    if [ "$attempt" -ge 20 ]; then
+        echo "cycling-web.service nie osiągnęła gotowości" >&2
+        exit 1
+    fi
+    sleep 1
+done
 nginx -t
 systemctl reload nginx

@@ -55,6 +55,13 @@ class CyclingWebTest(unittest.TestCase):
         self.assertFalse(body["methodology"]["saved_model_available"])
         self.assertNotIn("athlete_id", json.dumps(body))
 
+    def test_interface_has_bilingual_controls_and_comparison_view(self):
+        with urlopen(self.base + "/static/app.js", timeout=3) as response:
+            javascript = response.read().decode()
+        self.assertIn('localStorage.getItem("cycling-language")', javascript)
+        self.assertIn('view: "Variant_B"', javascript)
+        self.assertIn("Master's<br><em>thesis.</em>", javascript)
+
     def test_estimate(self):
         status, body, _ = self.json_request(
             "/api/estimate",
@@ -74,6 +81,18 @@ class CyclingWebTest(unittest.TestCase):
             )
         self.assertEqual(context.exception.code, 422)
 
+    def test_estimate_errors_can_be_returned_in_english(self):
+        request = Request(
+            self.base + "/api/estimate",
+            data=json.dumps({"mmp20": 9999, "lang": "en"}).encode(),
+            headers={"Content-Type": "application/json", "Accept-Language": "en"},
+        )
+        with self.assertRaises(HTTPError) as context:
+            urlopen(request, timeout=3)
+        body = json.loads(context.exception.read())
+        self.assertEqual(context.exception.code, 422)
+        self.assertIn("must be between", body["error"])
+
     def test_predictions_are_anonymized(self):
         _, body, _ = self.json_request("/api/predictions?variant=Variant_B&limit=25")
         self.assertEqual(len(body["points"]), 25)
@@ -83,6 +102,23 @@ class CyclingWebTest(unittest.TestCase):
         with self.assertRaises(HTTPError) as context:
             self.json_request("/api/predictions?variant=Variant_A")
         self.assertEqual(context.exception.code, 400)
+
+    def test_thesis_pdf_supports_preview_download_and_ranges(self):
+        with urlopen(self.base + "/thesis/INF.MN-152863-6350.pdf", timeout=3) as response:
+            self.assertEqual(response.status, 200)
+            self.assertEqual(response.headers["Content-Type"], "application/pdf")
+            self.assertIn("inline", response.headers["Content-Disposition"])
+            self.assertGreater(int(response.headers["Content-Length"]), 3_000_000)
+            self.assertEqual(response.read(4), b"%PDF")
+
+        request = Request(self.base + "/thesis/INF.MN-152863-6350.pdf", headers={"Range": "bytes=0-99"})
+        with urlopen(request, timeout=3) as response:
+            self.assertEqual(response.status, 206)
+            self.assertEqual(len(response.read()), 100)
+            self.assertTrue(response.headers["Content-Range"].startswith("bytes 0-99/"))
+
+        with urlopen(self.base + "/thesis/INF.MN-152863-6350.pdf?download=1", timeout=3) as response:
+            self.assertIn("attachment", response.headers["Content-Disposition"])
 
 
 if __name__ == "__main__":

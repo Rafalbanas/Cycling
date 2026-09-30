@@ -34,6 +34,7 @@ experiments/control_5000/**/*.part
 *.synctex.gz
 *.lol
 *.loa
+!webapp/static/master-thesis-pl.pdf
 *.lof
 *.lot
 *.toc
