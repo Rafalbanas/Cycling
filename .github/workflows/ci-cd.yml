@@ -17,7 +17,7 @@ jobs:
       - name: Check Python and SSH wrapper syntax
         run: |
           python -m compileall -q webapp deployment
-          bash -n deployment/ssh-command.sh
+          for script in deployment/*.sh; do bash -n "$script"; done
       - name: Test web app and deployment receiver
         run: |
           python -m unittest discover -s webapp/tests -v
