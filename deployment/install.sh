@@ -22,8 +22,12 @@ install -o root -g "$SERVICE_USER" -m 0640 \
     "$PROJECT_ROOT/webapp/static/styles.css" \
     "$PROJECT_ROOT/webapp/static/app.js" \
     "$PROJECT_ROOT/webapp/static/favicon.svg" \
-    "$PROJECT_ROOT/webapp/static/master-thesis-pl.pdf" \
     "$DEPLOY_ROOT/webapp/static/"
+
+# The original thesis is private. The reader consumes pre-rendered pages
+# prepared outside both Git and the public application directory.
+test -r /var/lib/cycling-web/thesis-pages/page-01.jpg
+rm -f "$DEPLOY_ROOT/webapp/static/master-thesis-pl.pdf"
 
 install -o root -g "$SERVICE_USER" -m 0640 \
     "$PROJECT_ROOT/results/model_comparison_partial.csv" \
