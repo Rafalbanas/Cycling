@@ -5,9 +5,12 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import logging
 import os
 import re
+import secrets
+import statistics
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -19,9 +22,20 @@ WEB_ROOT = Path(__file__).resolve().parent
 STATIC_ROOT = WEB_ROOT / "static"
 RESULTS_ROOT = ROOT / "results"
 CONTROL_ROOT = ROOT / "experiments" / "control_5000" / "results"
+THESIS_PAGES_ROOT = Path(os.environ.get("CYCLING_THESIS_PAGES", "/var/lib/cycling-web/thesis-pages"))
+THESIS_ACCESS_TOKEN = secrets.token_urlsafe(24)
 
 HOST = os.environ.get("CYCLING_HOST", "127.0.0.1")
 PORT = int(os.environ.get("CYCLING_PORT", "20144"))
+
+def read_revision() -> str:
+    path = ROOT / "revision.txt"
+    try:
+        return path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return "unknown"
+
+REVISION = read_revision()
 
 STATIC_FILES = {
     "/": (WEB_ROOT / "index.html", "text/html; charset=utf-8"),
@@ -72,6 +86,10 @@ MESSAGES = {
         "power_range": "Moc 20-minutowa musi mieścić się w zakresie 50–800 W.",
         "weight_range": "Masa ciała musi mieścić się w zakresie 30–250 kg.",
         "range": "Nieprawidłowy zakres bajtów.",
+        "ftp_bound_number": "Parametry ftp_min/ftp_max muszą być liczbami.",
+        "ftp_bound_range": "Parametry ftp_min/ftp_max muszą być nieujemne i spełniać ftp_min <= ftp_max.",
+        "document_unavailable": "Oryginalny dokument PDF nie jest udostępniany publicznie.",
+        "reader_unavailable": "Czytnik pracy jest tymczasowo niedostępny.",
         "kind": "operacyjna etykieta FTP",
         "notice": "Wynik heurystyczny; nie zastępuje testu fizjologicznego ani porady trenera.",
     },
@@ -89,6 +107,10 @@ MESSAGES = {
         "power_range": "20-minute power must be between 50 and 800 W.",
         "weight_range": "Body mass must be between 30 and 250 kg.",
         "range": "Invalid byte range.",
+        "ftp_bound_number": "The ftp_min and ftp_max parameters must be numbers.",
+        "ftp_bound_range": "The ftp_min and ftp_max parameters must be non-negative with ftp_min <= ftp_max.",
+        "document_unavailable": "The original PDF document is not publicly available.",
+        "reader_unavailable": "The thesis reader is temporarily unavailable.",
         "kind": "operational FTP label",
         "notice": "This is a heuristic result; it does not replace physiological testing or coaching advice.",
     },
@@ -176,6 +198,64 @@ def prediction_points(variant: str, limit: int) -> list[dict[str, float]]:
     ]
 
 
+def analysis(variant: str, ftp_min: float, ftp_max: float | None) -> dict[str, object]:
+    suffix = "b" if variant == "Variant_B" else "c"
+    rows = read_csv(RESULTS_ROOT / f"baseline_predictions_variant_{suffix}.csv")
+    values: list[tuple[float, float]] = []
+    for row in rows:
+        try:
+            actual, predicted = float(row["y_true"]), float(row["y_pred"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not math.isfinite(actual) or not math.isfinite(predicted):
+            continue
+        if ftp_min <= actual and (ftp_max is None or actual <= ftp_max):
+            values.append((actual, predicted))
+    total = len(values)
+    if total > 120:
+        selected = [values[i * (total - 1) // (120 - 1)] for i in range(120)]
+    else:
+        selected = values
+    points = [
+        {"actual": round(actual, 2), "predicted": round(predicted, 2)}
+        for actual, predicted in selected
+    ]
+    metadata = {
+        "variant": variant,
+        "ftp_min": ftp_min,
+        "ftp_max": ftp_max,
+        "model": "XGBoost",
+        "scope": "baseline_prediction_files",
+    }
+    if not values:
+        return {
+            "metadata": metadata,
+            "stats": None,
+            "count": 0,
+            "total_count": len(rows),
+            "points": points,
+        }
+    residuals = [predicted - actual for actual, predicted in values]
+    absolute = [abs(error) for error in residuals]
+    return {
+        "metadata": metadata,
+        "stats": {
+            "count": total,
+            "total_count": len(rows),
+            "mae": round(sum(absolute) / total, 3),
+            "rmse": round(math.sqrt(sum(error * error for error in residuals) / total), 3),
+            "median_ae": round(statistics.median(absolute), 3),
+            "bias": round(sum(residuals) / total, 3),
+            "within_5": round(100.0 * sum(count <= 5.0 for count in absolute) / total, 1),
+            "within_10": round(100.0 * sum(count <= 10.0 for count in absolute) / total, 1),
+            "within_20": round(100.0 * sum(count <= 20.0 for count in absolute) / total, 1),
+        },
+        "count": total,
+        "total_count": len(rows),
+        "points": points,
+    }
+
+
 SUMMARY = {
     "dataset": DATASET,
     "models": model_results(),
@@ -208,17 +288,14 @@ class CyclingHandler(BaseHTTPRequestHandler):
         content_type: str,
         length: int,
         extra_headers: dict[str, str] | None = None,
-        allow_same_origin_frame: bool = False,
+        cache_control: str | None = None,
     ) -> None:
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(length))
-        self.send_header("Cache-Control", "no-store" if content_type.startswith("application/json") else "public, max-age=300")
-        headers = dict(SECURITY_HEADERS)
-        if allow_same_origin_frame:
-            headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'self'"
-            headers["X-Frame-Options"] = "SAMEORIGIN"
-        for key, value in headers.items():
+        default_cache = "no-store" if content_type.startswith("application/json") else "public, max-age=300"
+        self.send_header("Cache-Control", cache_control or default_cache)
+        for key, value in SECURITY_HEADERS.items():
             self.send_header(key, value)
         for key, value in (extra_headers or {}).items():
             self.send_header(key, value)
@@ -230,9 +307,9 @@ class CyclingHandler(BaseHTTPRequestHandler):
         content_type: str,
         status: HTTPStatus = HTTPStatus.OK,
         extra_headers: dict[str, str] | None = None,
-        allow_same_origin_frame: bool = False,
+        cache_control: str | None = None,
     ) -> None:
-        self._headers(status, content_type, len(body), extra_headers, allow_same_origin_frame)
+        self._headers(status, content_type, len(body), extra_headers, cache_control)
         if self.command != "HEAD":
             try:
                 self.wfile.write(body)
@@ -253,43 +330,39 @@ class CyclingHandler(BaseHTTPRequestHandler):
         lang = language or self.language()
         self.send_json({"error": MESSAGES[lang][message_key], "status": status.value}, status)
 
-    def send_thesis_pdf(self, parsed) -> None:
-        path = STATIC_ROOT / "master-thesis-pl.pdf"
-        if not path.exists():
+    @staticmethod
+    def thesis_pages() -> list[Path]:
+        def page_number(path: Path) -> int:
+            match = re.search(r"(\d+)$", path.stem)
+            return int(match.group(1)) if match else 0
+
+        return sorted(THESIS_PAGES_ROOT.glob("page-*.jpg"), key=page_number)
+
+    def send_thesis_page(self, parsed) -> None:
+        token = parse_qs(parsed.query).get("t", [""])[0]
+        if not secrets.compare_digest(token, THESIS_ACCESS_TOKEN):
             self.send_error_json(HTTPStatus.NOT_FOUND, "missing_resource")
             return
-        content = path.read_bytes()
-        total = len(content)
-        disposition = "attachment" if parse_qs(parsed.query).get("download") == ["1"] else "inline"
-        headers = {
-            "Accept-Ranges": "bytes",
-            "Content-Disposition": f'{disposition}; filename="INF.MN-152863-6350.pdf"',
-        }
-        range_header = self.headers.get("Range")
-        if range_header:
-            match = re.fullmatch(r"bytes=(\d*)-(\d*)", range_header.strip())
-            if not match:
-                self.send_error_json(HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE, "range")
-                return
-            start_raw, end_raw = match.groups()
-            if not start_raw and not end_raw:
-                self.send_error_json(HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE, "range")
-                return
-            if start_raw:
-                start = int(start_raw)
-                end = min(int(end_raw), total - 1) if end_raw else total - 1
-            else:
-                suffix = int(end_raw)
-                start = max(0, total - suffix)
-                end = total - 1
-            if start >= total or end < start:
-                self.send_error_json(HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE, "range")
-                return
-            body = content[start : end + 1]
-            headers["Content-Range"] = f"bytes {start}-{end}/{total}"
-            self.send_bytes(body, "application/pdf", HTTPStatus.PARTIAL_CONTENT, headers, True)
+        match = re.fullmatch(r"/thesis/pages/(\d{1,3})\.jpg", parsed.path)
+        pages = self.thesis_pages()
+        page_number = int(match.group(1)) if match else 0
+        if not 1 <= page_number <= len(pages):
+            self.send_error_json(HTTPStatus.NOT_FOUND, "missing_resource")
             return
-        self.send_bytes(content, "application/pdf", HTTPStatus.OK, headers, True)
+        try:
+            body = pages[page_number - 1].read_bytes()
+        except OSError:
+            self.send_error_json(HTTPStatus.SERVICE_UNAVAILABLE, "reader_unavailable")
+            return
+        self.send_bytes(
+            body,
+            "image/jpeg",
+            extra_headers={
+                "Content-Disposition": f'inline; filename="thesis-page-{page_number}.jpg"',
+                "X-Robots-Tag": "noindex, noarchive, noimageindex",
+            },
+            cache_control="private, no-store, max-age=0",
+        )
 
     def do_HEAD(self) -> None:  # noqa: N802
         self.do_GET()
@@ -303,14 +376,30 @@ class CyclingHandler(BaseHTTPRequestHandler):
             except FileNotFoundError:
                 self.send_error_json(HTTPStatus.NOT_FOUND, "missing_resource")
             return
-        if parsed.path in {"/thesis/INF.MN-152863-6350.pdf", "/thesis/master-thesis-pl.pdf"}:
-            self.send_thesis_pdf(parsed)
+        if parsed.path.lower().endswith(".pdf"):
+            self.send_error_json(HTTPStatus.GONE, "document_unavailable")
             return
         if parsed.path == "/healthz":
-            self.send_json({"status": "ok", "service": "cycling-web"})
+            self.send_json({"status": "ok", "service": "cycling-web", "revision": REVISION})
             return
         if parsed.path == "/api/summary":
             self.send_json(SUMMARY)
+            return
+        if parsed.path == "/api/thesis/manifest":
+            page_count = len(self.thesis_pages())
+            if not page_count:
+                self.send_error_json(HTTPStatus.SERVICE_UNAVAILABLE, "reader_unavailable")
+                return
+            self.send_json(
+                {
+                    "pages": page_count,
+                    "page_url": "/thesis/pages/{page}.jpg",
+                    "token": THESIS_ACCESS_TOKEN,
+                }
+            )
+            return
+        if parsed.path.startswith("/thesis/pages/"):
+            self.send_thesis_page(parsed)
             return
         if parsed.path == "/api/predictions":
             query = parse_qs(parsed.query)
@@ -327,6 +416,31 @@ class CyclingHandler(BaseHTTPRequestHandler):
                 self.send_error_json(HTTPStatus.BAD_REQUEST, "limit_range")
                 return
             self.send_json({"variant": variant, "points": prediction_points(variant, limit)})
+            return
+        if parsed.path == "/api/analysis":
+            query = parse_qs(parsed.query)
+            variant = query.get("variant", ["Variant_B"])[0]
+            if variant not in {"Variant_B", "Variant_C"}:
+                self.send_error_json(HTTPStatus.BAD_REQUEST, "variants")
+                return
+            bounds: dict[str, float] = {}
+            for name in ("ftp_min", "ftp_max"):
+                if name not in query:
+                    continue
+                try:
+                    bounds[name] = float(query[name][0])
+                except ValueError:
+                    self.send_error_json(HTTPStatus.BAD_REQUEST, "ftp_bound_number")
+                    return
+                if not math.isfinite(bounds[name]) or bounds[name] < 0:
+                    self.send_error_json(HTTPStatus.BAD_REQUEST, "ftp_bound_range")
+                    return
+            if "ftp_min" in bounds and "ftp_max" in bounds and bounds["ftp_min"] > bounds["ftp_max"]:
+                self.send_error_json(HTTPStatus.BAD_REQUEST, "ftp_bound_range")
+                return
+            self.send_json(
+                analysis(variant, bounds.get("ftp_min", 0.0), bounds.get("ftp_max"))
+            )
             return
         self.send_error_json(HTTPStatus.NOT_FOUND, "missing_page")
 

@@ -11,6 +11,7 @@ Environment=PYTHONUNBUFFERED=1
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=CYCLING_HOST=127.0.0.1
 Environment=CYCLING_PORT=20144
+Environment=CYCLING_THESIS_PAGES=/var/lib/cycling-web/thesis-pages
 ExecStart=/usr/bin/python3 /opt/cycling-web/webapp/server.py
 Restart=on-failure
 RestartSec=3
@@ -20,6 +21,7 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
 ReadOnlyPaths=/opt/cycling-web
+ReadOnlyPaths=/var/lib/cycling-web/thesis-pages
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true

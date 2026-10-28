@@ -20,10 +20,11 @@ const translations = {
     leakageTitle: "Wariant A nie jest sukcesem modelu.", leakageCopy: "Po pozostawieniu <code>mmp_20min</code> model praktycznie odtwarza równanie etykiety. To kontrola wycieku danych, dlatego aplikacja nie prezentuje go jako użytecznej predykcji.",
     researchPipeline: "Pipeline badawczy", methodTitle: "Od pliku treningu<br>do <em>wniosku.</em>", methodIntro: "Każdy etap pozostawia ślad w repozytorium: kod przetwarzania, raporty jakości, metryki i zanonimizowane wyniki testowe.", acquisition: "Pozyskanie", acquisitionCopy: "Anonimowe aktywności GoldenCheetah OpenData.", quality: "Kontrola jakości", qualityCopy: "Zakresy sensorów, braki, minimum 30 minut.", features: "Ekstrakcja cech", featuresCopy: "Moc, tętno, kadencja, MMP i rozkład intensywności.", evaluation: "Ewaluacja", evaluationCopy: "Ridge, Random Forest i XGBoost; podział osobniczy.",
     methodQuote: "Model estymuje operacyjną etykietę FTP, a nie laboratoryjnie zmierzony próg fizjologiczny.", keyCaveat: "Najważniejsze zastrzeżenie interpretacyjne pracy", featureImpact: "Wpływ cech", shapQuestion: "Czym jest SHAP?", shapAnswer: "SHAP przypisuje cechom udział w wyniku modelu. Pokazane wartości są średnią bezwzględną siłą wpływu w zbiorze testowym — mówią o znaczeniu cechy, ale nie dowodzą związku przyczynowego.", labelQuestion: "Co dokładnie przewiduje model?", labelAnswer: "Model odtwarza historyczną etykietę obliczoną jako 95% najlepszej średniej mocy z 20 minut. Nie przewiduje bezpośrednio progu mleczanowego, MLSS ani mocy krytycznej.",
-    sourceDocument: "Dokument źródłowy", thesisTitle: "Praca<br><em>magisterska.</em>", thesisIntro: "Pełny dokument opisujący podstawy teoretyczne, metodologię, eksperymenty i ograniczenia rozwiązania.", thesisLanguage: "Dokument jest dostępny wyłącznie w języku polskim.", thesisName: "Model predykcji formy kolarskiej", pages: "stron", fullscreen: "Pełny ekran", openPdf: "Otwórz PDF", download: "Pobierz", pdfPreview: "Podgląd pracy magisterskiej w języku polskim",
+    sourceDocument: "Dokument źródłowy", thesisTitle: "Praca<br><em>magisterska.</em>", thesisIntro: "Pełny dokument opisujący podstawy teoretyczne, metodologię, eksperymenty i ograniczenia rozwiązania.", thesisLanguage: "Dokument jest dostępny wyłącznie w języku polskim.", thesisName: "Model predykcji formy kolarskiej", fullscreen: "Pełny ekran", readerFormat: "Czytnik obrazów · 87 stron", readerControls: "Sterowanie czytnikiem", previousPage: "Poprzednia strona", nextPage: "Następna strona", page: "Strona", zoomOut: "Pomniejsz", zoomIn: "Powiększ", fitPage: "Dopasuj", thesisReader: "Czytnik pracy magisterskiej", readerLoading: "Ładowanie czytnika…", readerLoadError: "Nie udało się wczytać strony pracy.", thesisPageAlt: "Strona {page} pracy magisterskiej", readerNotice: "Czytnik ogranicza wygodne pobranie całego dokumentu, ale nie stanowi pełnego zabezpieczenia przed kopiowaniem treści.",
     honestInterpretation: "Uczciwa interpretacja", limitationsTitle: "Jedna liczba<br>nie opowiada <em>całej historii.</em>", heuristicTitle: "Etykieta jest heurystyką", heuristicCopy: "Współczynnik 0,95 nie uwzględnia indywidualnego profilu fizjologicznego.", historyTitle: "Walidacja jest historyczna", historyCopy: "Wyniki pochodzą z jednego repozytorium i nie zastępują walidacji prospektywnej.", sensorTitle: "Jakość sensorów ma znaczenie", sensorCopy: "Braki tętna, GPS i nietypowe sesje mogą obniżać wiarygodność estymacji.",
     footerCopy: "Interaktywna prezentacja projektu magisterskiego.<br>Dane: GoldenCheetah OpenData.", backTop: "Do góry ↑", loadError: "Nie udało się wczytać danych. Odśwież stronę.", actual: "Rzeczywista", predicted: "Estymowana", error: "Błąd", value: "Wartość",
-    metricMae: "MAE — mniej znaczy lepiej", metricRmse: "RMSE — mniej znaczy lepiej", metricR2: "R² — więcej znaczy lepiej", metricMedian: "MedAE — mniej znaczy lepiej"
+    metricMae: "MAE — mniej znaczy lepiej", metricRmse: "RMSE — mniej znaczy lepiej", metricR2: "R² — więcej znaczy lepiej", metricMedian: "MedAE — mniej znaczy lepiej",
+    analysisKicker: "Analiza XGBoost", analysisNote: "Statystyki liczone na całym pliku CSV wariantu (model XGBoost); wykres pokazuje co najwyżej 120 równomiernie pobranych punktów. Filtrowanie FTP działa tylko w tym panelu i nie zmienia pozostałych wyników na stronie.", ftpMinLabel: "FTP min [W]", filterHint: "filtruje tylko ten panel", ftpMaxLabel: "FTP max [W]", analysisApply: "Zastosuj", analysisReset: "Wyczyść", analysisLoading: "Ładowanie statystyk i wykresu…", analysisEmpty: "Brak próbek w wybranym zakresie FTP.", analysisError: "Nie udało się wczytać danych analitycznych.", analysisInvalidValue: "Podaj poprawną nieujemną wartość FTP.", analysisInvalidRange: "Zakres FTP jest niepoprawny — min jest większe niż max.", analysisCount: "próbki w zakresie", analysisTotal: "wszystkich próbek", analysisMedian: "MedAE", analysisBias: "Bias — przeciętny residual", residualChart: "Wykres residuali — estymacja minus rzeczywistość", residualY: "residual [W]"
   },
   en: {
     pageTitle: "Cycling — FTP from training data", pageDescription: "Cycling — an interactive presentation of research on FTP estimation from cycling telemetry.",
@@ -44,16 +45,22 @@ const translations = {
     leakageTitle: "Variant A is not a modelling success.", leakageCopy: "With <code>mmp_20min</code> retained, the model essentially reconstructs the label equation. This is a data-leakage control, so the application does not present it as a useful prediction.",
     researchPipeline: "Research pipeline", methodTitle: "From a training file<br>to a <em>conclusion.</em>", methodIntro: "Every stage leaves an audit trail in the project: processing code, quality reports, metrics and anonymised test results.", acquisition: "Acquisition", acquisitionCopy: "Anonymous GoldenCheetah OpenData activities.", quality: "Quality control", qualityCopy: "Sensor ranges, missing values and a 30-minute minimum.", features: "Feature extraction", featuresCopy: "Power, heart rate, cadence, MMP and intensity distribution.", evaluation: "Evaluation", evaluationCopy: "Ridge, Random Forest and XGBoost; subject-wise split.",
     methodQuote: "The model estimates an operational FTP label, not a laboratory-measured physiological threshold.", keyCaveat: "The thesis's key interpretive caveat", featureImpact: "Feature impact", shapQuestion: "What is SHAP?", shapAnswer: "SHAP assigns features a contribution to model output. The values shown are mean absolute impact in the test set: they describe feature importance, but do not prove causality.", labelQuestion: "What exactly does the model predict?", labelAnswer: "The model reproduces a historical label calculated as 95% of the highest 20-minute mean power. It does not directly predict lactate threshold, MLSS or critical power.",
-    sourceDocument: "Source document", thesisTitle: "Master's<br><em>thesis.</em>", thesisIntro: "The complete document covering the theoretical background, methodology, experiments and limitations of the solution.", thesisLanguage: "The document is available in Polish only.", thesisName: "Cycling performance prediction model", pages: "pages", fullscreen: "Full screen", openPdf: "Open PDF", download: "Download", pdfPreview: "Preview of the master's thesis in Polish",
+    sourceDocument: "Source document", thesisTitle: "Master's<br><em>thesis.</em>", thesisIntro: "The complete document covering the theoretical background, methodology, experiments and limitations of the solution.", thesisLanguage: "The document is available in Polish only.", thesisName: "Cycling performance prediction model", fullscreen: "Full screen", readerFormat: "Image reader · 87 pages", readerControls: "Reader controls", previousPage: "Previous page", nextPage: "Next page", page: "Page", zoomOut: "Zoom out", zoomIn: "Zoom in", fitPage: "Fit", thesisReader: "Master's thesis reader", readerLoading: "Loading reader…", readerLoadError: "The thesis page could not be loaded.", thesisPageAlt: "Page {page} of the master's thesis", readerNotice: "The reader discourages convenient whole-document downloads, but it is not complete protection against copying content.",
     honestInterpretation: "Honest interpretation", limitationsTitle: "One number does not<br>tell the <em>whole story.</em>", heuristicTitle: "The label is heuristic", heuristicCopy: "The 0.95 coefficient does not account for an individual's physiological profile.", historyTitle: "Validation is historical", historyCopy: "Results come from a single repository and do not replace prospective validation.", sensorTitle: "Sensor quality matters", sensorCopy: "Missing heart-rate or GPS data and unusual sessions can reduce estimate reliability.",
     footerCopy: "Interactive presentation of a master's thesis project.<br>Data: GoldenCheetah OpenData.", backTop: "Back to top ↑", loadError: "Data could not be loaded. Refresh the page.", actual: "Actual", predicted: "Estimated", error: "Error", value: "Value",
-    metricMae: "MAE — lower is better", metricRmse: "RMSE — lower is better", metricR2: "R² — higher is better", metricMedian: "MedAE — lower is better"
+    metricMae: "MAE — lower is better", metricRmse: "RMSE — lower is better", metricR2: "R² — higher is better", metricMedian: "MedAE — lower is better",
+    analysisKicker: "XGBoost analysis", analysisNote: "Statistics are computed on the variant's whole-CSV file (XGBoost model); the chart shows at most 120 evenly sampled points. FTP filtering applies only inside this panel and does not change the other results on the page.", ftpMinLabel: "FTP min [W]", filterHint: "filters only this panel", ftpMaxLabel: "FTP max [W]", analysisApply: "Apply", analysisReset: "Reset", analysisLoading: "Loading statistics and chart…", analysisEmpty: "No samples in the selected FTP range.", analysisError: "Could not load the analysis data.", analysisInvalidValue: "Enter a valid non-negative FTP value.", analysisInvalidRange: "Invalid FTP range — min is greater than max.", analysisCount: "samples in range", analysisTotal: "of all samples", analysisMedian: "MedAE", analysisBias: "Bias — mean residual", residualChart: "Residual chart — estimate minus actual", residualY: "residual [W]"
   }
 };
 
 const storedLanguage = localStorage.getItem("cycling-language");
 const initialLanguage = storedLanguage || (navigator.language.toLowerCase().startsWith("en") ? "en" : "pl");
-const state = { summary: null, view: "Variant_B", metric: "mae", language: initialLanguage, estimateTimer: null, estimateController: null };
+const state = {
+  summary: null, view: "Variant_B", metric: "mae", language: initialLanguage,
+  estimateTimer: null, estimateController: null,
+  reader: { page: 1, pages: 0, zoom: 1, token: "", pageUrl: "", error: false },
+  analysisRequestId: 0, analysisController: null
+};
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 const t = (key) => translations[state.language][key] || translations.pl[key] || key;
@@ -67,6 +74,7 @@ function applyTranslations() {
   $$('[data-i18n-html]').forEach((node) => { node.innerHTML = t(node.dataset.i18nHtml); });
   $$('[data-i18n-aria]').forEach((node) => { node.setAttribute("aria-label", t(node.dataset.i18nAria)); });
   $$('[data-i18n-title]').forEach((node) => { node.setAttribute("title", t(node.dataset.i18nTitle)); });
+  $$('[data-i18n-alt]').forEach((node) => { node.setAttribute("alt", t(node.dataset.i18nAlt).replace("{page}", state.reader.page)); });
   $$('[data-language]').forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.language === state.language)));
 }
 
@@ -199,11 +207,96 @@ function bindTooltips(container, output) {
   container.addEventListener("pointerleave", () => { output.textContent = ""; });
 }
 
+function analysisBounds() {
+  const minEl = $("#ftp-min"); const maxEl = $("#ftp-max");
+  const minVal = minEl.value === "" ? null : Number(minEl.value);
+  const maxVal = maxEl.value === "" ? null : Number(maxEl.value);
+  if ((minVal !== null && (!Number.isFinite(minVal) || minVal < 0)) || (maxVal !== null && (!Number.isFinite(maxVal) || maxVal < 0))) return { error: "analysisInvalidValue" };
+  if (minVal !== null && maxVal !== null && minVal > maxVal) return { error: "analysisInvalidRange" };
+  return { min: minVal, max: maxVal };
+}
+
+function analysisCard(variant, stats) {
+  const label = t(variant === "Variant_B" ? "variantB" : "variantC");
+  const metrics = [
+    ["MAE", stats.mae, " W", 2], ["RMSE", stats.rmse, " W", 2],
+    [t("analysisMedian"), stats.median_ae, " W", 2],
+    [t("analysisBias"), stats.bias, " W", 2],
+    ["≤ 5 W", stats.within_5, " %", 1],
+    ["≤ 10 W", stats.within_10, " %", 1],
+    ["≤ 20 W", stats.within_20, " %", 1],
+  ];
+  const tooltip = `${label}: MAE ${number(stats.mae, 2)} W · RMSE ${number(stats.rmse, 2)} W · MedAE ${number(stats.median_ae, 2)} W · Bias ${number(stats.bias, 2)} W · ≤5 ${number(stats.within_5, 1)}% · ≤10 ${number(stats.within_10, 1)}% · ≤20 ${number(stats.within_20, 1)}%`;
+  const rows = metrics.map(([name, value, unit, digits]) => `<div class="analysis-metric"><span>${name}</span><b>${number(value, digits)}${unit}</b></div>`).join("");
+  return `<div class="analysis-card variant-${variantShort(variant).toLowerCase()}" tabindex="0" data-tooltip="${tooltip}"><div class="analysis-card-head"><span>${label}</span><b>${number(stats.count, 0)} ${t("analysisCount")} / ${number(stats.total_count, 0)} ${t("analysisTotal")}</b></div>${rows}</div>`;
+}
+
+function residualCircle(point, variant, x, y) {
+  const error = point.predicted - point.actual; const fill = variant === "Variant_B" ? "#b8ff3d" : "#65cfe4";
+  const text = `${t(variant === "Variant_B" ? "variantB" : "variantC")}: ${t("actual")} ${number(point.actual, 1)} W · ${t("predicted")} ${number(point.predicted, 1)} W · ${t("error")} ${error >= 0 ? "+" : ""}${number(error, 1)} W`;
+  return `<circle class="point variant-${variantShort(variant).toLowerCase()}" tabindex="0" role="img" aria-label="${text}" data-tooltip="${text}" fill="${fill}" opacity="0.42" cx="${x(point.actual)}" cy="${y(error)}" r="3.5"><title>${text}</title></circle>`;
+}
+
+async function renderAnalysis() {
+  const status = $("#analysis-status");
+  if (state.analysisController) state.analysisController.abort();
+  state.analysisController = new AbortController();
+  state.analysisRequestId += 1;
+  const request = state.analysisRequestId;
+  const bounds = analysisBounds();
+  if (bounds.error) { status.textContent = t(bounds.error); $("#analysis-cards").innerHTML = ""; $(".residual-points").innerHTML = ""; return; }
+  const signal = state.analysisController.signal;
+  status.textContent = t("analysisLoading");
+  try {
+    const params = {};
+    if (bounds.min !== null) params.ftp_min = bounds.min;
+    if (bounds.max !== null) params.ftp_max = bounds.max;
+    const query = new URLSearchParams(params).toString();
+    const variants = variantsForView();
+    const payloads = await Promise.all(variants.map((variant) => fetchJson(`/api/analysis?variant=${variant}${query ? "&" + query : ""}`, { signal })));
+    if (request !== state.analysisRequestId) return;
+    const datasets = payloads.map((payload, index) => ({ variant: variants[index], stats: payload.stats, count: payload.count, points: payload.points }));
+    const hasData = datasets.some((dataset) => dataset.count > 0);
+    if (!hasData) { status.textContent = t("analysisEmpty"); $("#analysis-cards").innerHTML = ""; $(".residual-points").innerHTML = ""; return; }
+    $("#analysis-cards").innerHTML = datasets.filter((dataset) => dataset.stats).map((dataset) => analysisCard(dataset.variant, dataset.stats)).join("");
+    status.textContent = "";
+    const points = datasets.flatMap((dataset) => dataset.points.map((point) => ({ ...point, variant: dataset.variant })));
+    const axials = points.map((point) => point.actual);
+    const residuais = points.map((point) => point.predicted - point.actual);
+    const axLow = Math.floor(Math.min(...axials) / 50) * 50;
+    const axHigh = Math.max(Math.ceil(Math.max(...axials) / 50) * 50, axLow + 50);
+    const rMax = Math.max(10, Math.ceil(Math.max(...residuais.map((value) => Math.abs(value))) / 10) * 10);
+    const rLow = -rMax; const rHigh = rMax;
+    const x = (value) => 42 + ((value - axLow) / (axHigh - axLow)) * 490; const y = (value) => 305 - ((value - rLow) / (rHigh - rLow)) * 270;
+    const chart = $("#residual-chart"); const grid = $(".residual-grid", chart); grid.innerHTML = "";
+    for (let index = 0; index <= 4; index += 1) {
+      const gx = 42 + index * 122.5; const gy = 35 + index * 67.5;
+      const xVal = axLow + (axHigh - axLow) * index / 4; const yVal = rLow + (rHigh - rLow) * index / 4;
+      grid.insertAdjacentHTML("beforeend", `<line x1="${gx}" y1="35" x2="${gx}" y2="305"/><line x1="42" y1="${gy}" x2="532" y2="${gy}"/><text class="axis-label" x="${gx}" y="320">${number(xVal, 0)}</text><text class="axis-label" x="30" y="${gy + 10}">${number(yVal, 0)}</text>`);
+    }
+    const zero = $(".residual-zero", chart); zero.setAttribute("x1", x(axLow)); zero.setAttribute("y1", y(0)); zero.setAttribute("x2", x(axHigh)); zero.setAttribute("y2", y(0));
+    $(".residual-points", chart).innerHTML = points.map((point) => residualCircle(point, point.variant, x, y)).join("");
+    bindTooltips($(".residual-points", chart), $("#residual-tooltip"));
+    const existing = $(".scatter-legend", chart.parentElement);
+    if (existing) existing.remove();
+    const showB = variants.includes("Variant_B"); const showC = variants.includes("Variant_C");
+    const legend = document.createElement("div");
+    legend.className = "scatter-legend";
+    legend.innerHTML = `${showB ? `<span class="legend-b"><i></i><b>${t("variantBShort")}</b></span>` : ""}${showC ? `<span class="legend-c"><i></i><b>${t("variantCShort")}</b></span>` : ""}`;
+    chart.insertAdjacentElement("afterend", legend);
+  } catch (exception) {
+    if (request !== state.analysisRequestId) return;
+    status.textContent = t("analysisError");
+    $("#analysis-cards").innerHTML = ""; $(".residual-points").innerHTML = "";
+  }
+}
+
 async function setView(view) {
   state.view = view;
   $$("[data-view]").forEach((button) => { const active = button.dataset.view === view; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active)); });
   $("#plain-result-copy").textContent = t(view === "Variant_B" ? "plainB" : view === "Variant_C" ? "plainC" : "plainCompare");
   renderModels(); renderFeatures();
+  renderAnalysis();
   try { await renderScatter(); } catch (_) { $(".scatter-points").innerHTML = ""; }
 }
 
@@ -214,13 +307,68 @@ function initResultControls() {
   $("#metric-select").addEventListener("change", (event) => { state.metric = event.target.value; renderModels(); });
 }
 
+function initAnalysis() {
+  $("#analysis-apply").addEventListener("click", () => { renderAnalysis(); });
+  $("#analysis-reset").addEventListener("click", () => { $("#ftp-min").value = ""; $("#ftp-max").value = ""; $("#analysis-status").textContent = ""; renderAnalysis(); });
+}
+
 function initThesis() {
-  $("#fullscreen-pdf").addEventListener("click", async () => {
-    const viewer = $("#thesis-viewer");
+  const viewer = $("#thesis-viewer"); const viewport = $("#reader-viewport");
+  const image = $("#reader-page-image"); const frame = $("#reader-page-frame"); const status = $("#reader-status");
+  const fullscreen = $("#fullscreen-reader");
+
+  const updateZoom = () => {
+    frame.style.width = state.reader.zoom === 1 ? "min(100%, 1000px)" : `${state.reader.zoom * 100}%`;
+    $("#reader-zoom-value").textContent = `${Math.round(state.reader.zoom * 100)}%`;
+    $("#reader-zoom-out").disabled = state.reader.zoom <= 0.5;
+    $("#reader-zoom-in").disabled = state.reader.zoom >= 2.5;
+  };
+  const setZoom = (zoom) => { state.reader.zoom = Math.min(2.5, Math.max(0.5, zoom)); updateZoom(); };
+  const sourceFor = (page) => `${state.reader.pageUrl.replace("{page}", page)}?t=${encodeURIComponent(state.reader.token)}`;
+  const updatePageControls = () => {
+    $("#reader-page").value = state.reader.page;
+    $("#reader-total").textContent = state.reader.pages || "—";
+    $("#reader-prev").disabled = state.reader.page <= 1;
+    $("#reader-next").disabled = state.reader.page >= state.reader.pages;
+    image.alt = t("thesisPageAlt").replace("{page}", state.reader.page);
+  };
+  const loadPage = (requestedPage) => {
+    if (!state.reader.pages) return;
+    state.reader.page = Math.min(state.reader.pages, Math.max(1, Number(requestedPage) || 1));
+    state.reader.error = false; status.textContent = t("readerLoading"); status.hidden = false;
+    frame.hidden = true; updatePageControls();
+    image.onload = () => {
+      status.hidden = true; frame.hidden = false; viewport.scrollTo({ top: 0, left: 0 });
+      [state.reader.page - 1, state.reader.page + 1].filter((page) => page >= 1 && page <= state.reader.pages).forEach((page) => { const preload = new Image(); preload.src = sourceFor(page); });
+    };
+    image.onerror = () => { state.reader.error = true; frame.hidden = true; status.textContent = t("readerLoadError"); status.hidden = false; };
+    image.src = sourceFor(state.reader.page);
+  };
+
+  $("#reader-prev").addEventListener("click", () => loadPage(state.reader.page - 1));
+  $("#reader-next").addEventListener("click", () => loadPage(state.reader.page + 1));
+  $("#reader-page").addEventListener("change", (event) => loadPage(event.target.value));
+  $("#reader-zoom-out").addEventListener("click", () => setZoom(state.reader.zoom - 0.25));
+  $("#reader-zoom-in").addEventListener("click", () => setZoom(state.reader.zoom + 0.25));
+  $("#reader-zoom-reset").addEventListener("click", () => setZoom(1));
+  viewport.addEventListener("keydown", (event) => {
+    if (event.target.matches("input")) return;
+    if (event.key === "ArrowLeft") { event.preventDefault(); loadPage(state.reader.page - 1); }
+    if (event.key === "ArrowRight") { event.preventDefault(); loadPage(state.reader.page + 1); }
+    if (["+", "="].includes(event.key)) { event.preventDefault(); setZoom(state.reader.zoom + 0.25); }
+    if (event.key === "-") { event.preventDefault(); setZoom(state.reader.zoom - 0.25); }
+    if (event.key === "0") { event.preventDefault(); setZoom(1); }
+  });
+  fullscreen.addEventListener("click", async () => {
     if (document.fullscreenElement) { await document.exitFullscreen(); return; }
     if (viewer.requestFullscreen) await viewer.requestFullscreen();
-    else window.open("/thesis/INF.MN-152863-6350.pdf", "_blank", "noopener");
   });
+  if (!viewer.requestFullscreen) fullscreen.hidden = true;
+  updateZoom();
+  fetchJson("/api/thesis/manifest").then((manifest) => {
+    state.reader.pages = manifest.pages; state.reader.pageUrl = manifest.page_url; state.reader.token = manifest.token;
+    loadPage(1);
+  }).catch(() => { state.reader.error = true; status.textContent = t("readerLoadError"); });
 }
 
 async function initData() {
@@ -229,4 +377,4 @@ async function initData() {
 }
 
 applyTranslations();
-initNavigation(); initReveal(); initEstimator(); initResultControls(); initThesis(); initData(); scheduleEstimate(0);
+initNavigation(); initReveal(); initEstimator(); initResultControls(); initAnalysis(); initThesis(); initData(); scheduleEstimate(0);

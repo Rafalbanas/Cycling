@@ -9,6 +9,18 @@ venv/
 __pycache__/
 *.zip
 config/local_paths.json
+.env
+.env.*
+*.pem
+*.key
+*.docx
+*.xdv
+*.tex
+*.bib
+tmp/
+reports/
+notebooks/
+attachments/
 
 # Control experiment: keep large artifacts and transient state outside Git.
 experiments/control_5000/cache/
@@ -34,7 +46,7 @@ experiments/control_5000/**/*.part
 *.synctex.gz
 *.lol
 *.loa
-!webapp/static/master-thesis-pl.pdf
+webapp/static/thesis-pages/
 *.lof
 *.lot
 *.toc

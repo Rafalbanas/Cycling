@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#08130f">
   <title>Cycling — FTP z danych treningowych</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/styles.css?v=20260930-2">
-  <script src="/static/app.js?v=20260930-2" defer></script>
+  <link rel="stylesheet" href="/static/styles.css?v=20260930-3">
+  <script src="/static/app.js?v=20260930-3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Przejdź do treści</a>
@@ -124,6 +124,35 @@
         </article>
       </div>
 
+      <article class="analysis-panel reveal delay-1">
+        <div class="panel-head"><div><span data-i18n="analysisKicker">Analiza XGBoost</span><strong id="analysis-title">Wariant B</strong></div><span class="panel-index">03</span></div>
+        <p class="analysis-note" data-i18n="analysisNote">Statystyki liczone na całym pliku CSV wariantu (model XGBoost); wykres pokazuje co najwyżej 120 równomiernie pobranych punktów. Filtrowanie FTP działa tylko w tym panelu i nie zmienia pozostałych wyników na stronie.</p>
+        <div class="analysis-toolbar">
+          <div class="analysis-filters">
+            <div class="analysis-field">
+              <label for="ftp-min"><span data-i18n="ftpMinLabel">FTP min [W]</span><small data-i18n="filterHint">filtruje tylko ten panel</small></label>
+              <input id="ftp-min" type="number" min="0" step="1" inputmode="decimal">
+            </div>
+            <div class="analysis-field">
+              <label for="ftp-max"><span data-i18n="ftpMaxLabel">FTP max [W]</span><small data-i18n="filterHint">filtruje tylko ten panel</small></label>
+              <input id="ftp-max" type="number" min="0" step="1" inputmode="decimal">
+            </div>
+          </div>
+          <div class="analysis-actions">
+            <button class="button compact primary" type="button" id="analysis-apply" data-i18n="analysisApply">Zastosuj</button>
+            <button class="button compact" type="button" id="analysis-reset" data-i18n="analysisReset">Wyczyść</button>
+          </div>
+        </div>
+        <p class="analysis-status" id="analysis-status" role="status" aria-live="polite"></p>
+        <div class="analysis-cards" id="analysis-cards"></div>
+        <svg id="residual-chart" viewBox="0 0 560 330" role="img" aria-label="Wykres residuali — estymacja minus rzeczywistość" data-i18n-aria="residualChart">
+          <g class="residual-grid"></g><line class="residual-zero" x1="0" x2="0"/><g class="residual-points"></g>
+          <text class="axis-label y" x="18" y="180" transform="rotate(-90 18 180)" data-i18n="residualY">residual [W]</text>
+          <text class="axis-label x" x="287" y="322" data-i18n="ftpAxis">wartość etykiety FTP [W]</text>
+        </svg>
+        <div id="residual-tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+      </article>
+
       <div class="insights-grid">
         <article class="insight-card lime reveal"><span class="card-kicker" data-i18n="topFeature">Najważniejsza cecha</span><strong id="top-feature">mmp_10min</strong><p id="top-feature-copy"></p></article>
         <article class="insight-card reveal delay-1"><span class="card-kicker" data-i18n="errorByFtp">Błąd a poziom FTP</span><div id="error-ranges" class="error-ranges"></div></article>
@@ -167,14 +196,32 @@
       </div>
       <div class="thesis-shell reveal" id="thesis-viewer">
         <div class="thesis-toolbar">
-          <div><strong data-i18n="thesisName">Model predykcji formy kolarskiej</strong><span>PDF · 87 <i data-i18n="pages">stron</i> · 3,9 MB</span></div>
+          <div><strong data-i18n="thesisName">Model predykcji formy kolarskiej</strong><span data-i18n="readerFormat">Czytnik obrazów · 87 stron</span></div>
           <div class="thesis-actions">
-            <button type="button" id="fullscreen-pdf" class="button compact" data-i18n="fullscreen">Pełny ekran</button>
-            <a class="button compact" href="/thesis/INF.MN-152863-6350.pdf" target="_blank" rel="noopener" data-i18n="openPdf">Otwórz PDF</a>
-            <a class="button primary compact" href="/thesis/INF.MN-152863-6350.pdf?download=1" download="INF.MN-152863-6350.pdf" data-i18n="download">Pobierz</a>
+            <button type="button" id="fullscreen-reader" class="button compact" data-i18n="fullscreen">Pełny ekran</button>
           </div>
         </div>
-        <iframe src="/thesis/INF.MN-152863-6350.pdf#view=FitH" title="Podgląd pracy magisterskiej w języku polskim" data-i18n-title="pdfPreview" loading="lazy"></iframe>
+        <div class="reader-controls" aria-label="Sterowanie czytnikiem" data-i18n-aria="readerControls">
+          <div class="reader-pagination">
+            <button type="button" id="reader-prev" aria-label="Poprzednia strona" data-i18n-aria="previousPage">←</button>
+            <label for="reader-page"><span data-i18n="page">Strona</span> <input id="reader-page" type="number" min="1" value="1" inputmode="numeric"> <span aria-hidden="true">/</span> <span id="reader-total">87</span></label>
+            <button type="button" id="reader-next" aria-label="Następna strona" data-i18n-aria="nextPage">→</button>
+          </div>
+          <div class="reader-zoom">
+            <button type="button" id="reader-zoom-out" aria-label="Pomniejsz" data-i18n-aria="zoomOut">−</button>
+            <output id="reader-zoom-value" aria-live="polite">100%</output>
+            <button type="button" id="reader-zoom-in" aria-label="Powiększ" data-i18n-aria="zoomIn">+</button>
+            <button type="button" id="reader-zoom-reset" data-i18n="fitPage">Dopasuj</button>
+          </div>
+        </div>
+        <div class="reader-viewport" id="reader-viewport" tabindex="0" role="region" aria-label="Czytnik pracy magisterskiej" data-i18n-aria="thesisReader">
+          <div class="reader-status" id="reader-status" role="status" aria-live="polite" data-i18n="readerLoading">Ładowanie czytnika…</div>
+          <figure class="reader-page-frame" id="reader-page-frame" hidden>
+            <img id="reader-page-image" alt="Strona 1 pracy magisterskiej" data-i18n-alt="thesisPageAlt" draggable="false">
+            <div class="reader-watermark" aria-hidden="true"><span>Rafał Banaś · cycling.banas.dev</span><span>Rafał Banaś · cycling.banas.dev</span><span>Rafał Banaś · cycling.banas.dev</span></div>
+          </figure>
+        </div>
+        <p class="reader-note" data-i18n="readerNotice">Czytnik ogranicza wygodne pobranie całego dokumentu, ale nie stanowi pełnego zabezpieczenia przed kopiowaniem treści.</p>
       </div>
     </section>
 
