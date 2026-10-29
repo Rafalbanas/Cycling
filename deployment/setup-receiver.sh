@@ -8,7 +8,7 @@ if ! id "$runner_user" >/dev/null 2>&1; then
 fi
 install -d -o root -g root -m 0755 /etc/cycling-web /var/lib/cycling-deploy
 install -o root -g root -m 0755 "$project/deployment/receive.py" /usr/local/sbin/cycling-deploy
-install -o root -g root -m 0755 "$project/deployment/runner-guard.sh" /usr/local/sbin/cycling-runner-guard
+install -o root -g root -m 0755 "$project/deployment/runner-guard.sh" /usr/local/sbin/cycling-runner-guard.sh
 if [[ ! -e /etc/cycling-web/deploy.json ]]; then
     cat > /etc/cycling-web/deploy.json <<'EOF'
 {"state_dir":"/var/lib/cycling-deploy","health_url":"http://127.0.0.1:20144","health_attempts":10,"health_interval":2}
